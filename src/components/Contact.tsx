@@ -1,4 +1,4 @@
-import { MdArrowOutward, MdCopyright } from "react-icons/md";
+            import { MdArrowOutward, MdCopyright } from "react-icons/md";
 import "./styles/Contact.css";
 import { config } from "../config";
 import gsap from "gsap";
@@ -9,37 +9,36 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Contact = () => {
   useEffect(() => {
+    // ✅ Mobile par animation skip karo — seedha visible rakho
+    if (window.innerWidth < 768) {
+      gsap.set(".contact-section h3", { opacity: 1, y: 0 });
+      gsap.set(".contact-box", { opacity: 1, y: 0 });
+      return;
+    }
+
     const contactTimeline = gsap.timeline({
       scrollTrigger: {
         trigger: ".contact-section",
         start: "top 80%",
         end: "bottom center",
         toggleActions: "play none none none",
+        // ✅ Agar trigger miss ho toh bhi visible rakhna
+        onEnter: () => {
+          gsap.set(".contact-section h3", { opacity: 1, y: 0 });
+          gsap.set(".contact-box", { opacity: 1, y: 0 });
+        },
       },
     });
 
-    // Animate title from bottom
     contactTimeline.fromTo(
       ".contact-section h3",
-      {
-        opacity: 0,
-        y: 50,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power3.out",
-      }
+      { opacity: 0, y: 50 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
     );
 
-    // Animate contact boxes with stagger from bottom
     contactTimeline.fromTo(
       ".contact-box",
-      {
-        opacity: 0,
-        y: 50,
-      },
+      { opacity: 0, y: 50 },
       {
         opacity: 1,
         y: 0,
@@ -50,7 +49,6 @@ const Contact = () => {
       "-=0.4"
     );
 
-    // Clean up
     return () => {
       contactTimeline.kill();
     };
@@ -114,7 +112,8 @@ const Contact = () => {
           </div>
           <div className="contact-box">
             <h2>
-              Designed and Developed <br /> by <span>{config.developer.fullName}</span>
+              Designed and Developed <br /> by{" "}
+              <span>{config.developer.fullName}</span>
             </h2>
             <h5>
               <MdCopyright /> {new Date().getFullYear()}
