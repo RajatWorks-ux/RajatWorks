@@ -10,14 +10,24 @@ const Loading = ({ percent }: { percent: number }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [clicked, setClicked] = useState(false);
 
-  if (percent >= 100) {
-    setTimeout(() => {
-      setLoaded(true);
-      setTimeout(() => {
-        setIsLoaded(true);
-      }, 1000);
-    }, 600);
-  }
+  // ✅ New — Placed inside useEffect to avoid render anti-patterns
+  useEffect(() => {
+    let timer2: NodeJS.Timeout;
+    
+    if (percent >= 100) {
+      const timer1 = setTimeout(() => {
+        setLoaded(true);
+        timer2 = setTimeout(() => {
+          setIsLoaded(true);
+        }, 1000);
+      }, 600);
+      
+      return () => {
+        clearTimeout(timer1);
+        if (timer2) clearTimeout(timer2);
+      };
+    }
+  }, [percent]);
 
   useEffect(() => {
     import("./utils/initialFX").then((module) => {

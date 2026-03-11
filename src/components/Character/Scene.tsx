@@ -20,6 +20,7 @@ const Scene = () => {
   const { setLoading } = useLoading();
 
   const [character, setChar] = useState<THREE.Object3D | null>(null);
+
   useEffect(() => {
     if (canvasDiv.current) {
       let rect = canvasDiv.current.getBoundingClientRect();
@@ -32,7 +33,10 @@ const Scene = () => {
         antialias: true,
       });
       renderer.setSize(container.width, container.height);
-      renderer.setPixelRatio(window.devicePixelRatio);
+      
+      // ✅ Naya — mobile par automatically quality kam karo (capped at 2)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1;
       canvasDiv.current.appendChild(renderer.domElement);
@@ -46,6 +50,12 @@ const Scene = () => {
       let headBone: THREE.Object3D | null = null;
       let screenLight: any | null = null;
       let mixer: THREE.AnimationMixer;
+      
+      // Variable to hold the character reference for the resize listener
+      let loadedCharacter: THREE.Object3D | any = null;
+
+      // ✅ Naya — named function banao
+      const onResize = () => handleResize(renderer, camera, canvasDiv, loadedCharacter);
 
       const clock = new THREE.Clock();
 
@@ -58,20 +68,23 @@ const Scene = () => {
           const animations = setAnimations(gltf);
           hoverDivRef.current && animations.hover(gltf, hoverDivRef.current);
           mixer = animations.mixer;
-          let character = gltf.scene;
-          setChar(character);
-          scene.add(character);
-          headBone = character.getObjectByName("spine006") || null;
-          screenLight = character.getObjectByName("screenlight") || null;
+          
+          loadedCharacter = gltf.scene; // Assign to outer variable
+          setChar(loadedCharacter);
+          scene.add(loadedCharacter);
+          
+          headBone = loadedCharacter.getObjectByName("spine006") || null;
+          screenLight = loadedCharacter.getObjectByName("screenlight") || null;
+          
           progress.loaded().then(() => {
             setTimeout(() => {
               light.turnOnLights();
               animations.startIntro();
             }, 2500);
           });
-          window.addEventListener("resize", () =>
-            handleResize(renderer, camera, canvasDiv, character)
-          );
+          
+          // ✅ Event listener setup
+          window.addEventListener("resize", onResize);
         }
       });
 
@@ -81,6 +94,7 @@ const Scene = () => {
       const onMouseMove = (event: MouseEvent) => {
         handleMouseMove(event, (x, y) => (mouse = { x, y }));
       };
+      
       let debounce: number | undefined;
       const onTouchStart = (event: TouchEvent) => {
         const element = event.target as HTMLElement;
@@ -98,14 +112,15 @@ const Scene = () => {
         });
       };
 
-      document.addEventListener("mousemove", (event) => {
-        onMouseMove(event);
-      });
+      // Passed direct reference instead of an anonymous function to prevent a similar memory leak here
+      document.addEventListener("mousemove", onMouseMove);
+      
       const landingDiv = document.getElementById("landingDiv");
       if (landingDiv) {
         landingDiv.addEventListener("touchstart", onTouchStart);
         landingDiv.addEventListener("touchend", onTouchEnd);
       }
+      
       const animate = () => {
         requestAnimationFrame(animate);
         if (headBone) {
@@ -125,14 +140,17 @@ const Scene = () => {
         }
         renderer.render(scene, camera);
       };
+      
       animate();
+      
       return () => {
         clearTimeout(debounce);
         scene.clear();
         renderer.dispose();
-        window.removeEventListener("resize", () =>
-          handleResize(renderer, camera, canvasDiv, character!)
-        );
+        
+        // ✅ cleanup mein: same reference
+        window.removeEventListener("resize", onResize);
+        
         if (canvasDiv.current) {
           canvasDiv.current.removeChild(renderer.domElement);
         }

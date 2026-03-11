@@ -1,13 +1,13 @@
 export const config = {
     developer: {
-        name: "Huzaif",
-        fullName: "Huzaif Ahmed",
+        name: "Rajat",
+        fullName: "Rajat  Kumar Dua",
         title: "Full Stack Developer",
         description: "Full-stack builder creating digital experiences that respect humans and scale with clarity. Accessibility is my north star."
     },
     social: {
-        github: "huzaifahmedz",
-        email: "dev.huzaif@gmail.com",
+        github: "https://github.com/RajatWorks-ux",
+        email: "rajatworks1@gmail.com",
         location: "India"
     },
     about: {
@@ -82,11 +82,11 @@ export const config = {
         }
     ],
     contact: {
-        email: "dev.huzaif@gmail.com",
-        github: "https://github.com/huzaifahmedz",
+        email: "rajatworks1@gmail.com",
+        github: "https://github.com/RajatWorks-ux",
         linkedin: "https://www.linkedin.com",
         twitter: "https://x.com",
-        instagram: "https://www.instagram.com"
+        instagram: "https://www.instagram.com/rajatworks0?igsh=MTNsYWx4NnBrdTFuZg==",
     },
     skills: {
         develop: {

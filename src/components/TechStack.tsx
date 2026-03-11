@@ -11,6 +11,9 @@ import {
   RapierRigidBody,
 } from "@react-three/rapier";
 
+// ✅ Safe check for SSR (like Next.js) to avoid "window is not defined" errors
+const isMobile = typeof window !== "undefined" ? window.innerWidth < 768 : false;
+
 const textureLoader = new THREE.TextureLoader();
 const imageUrls = [
   "/images/react2.webp",
@@ -26,7 +29,9 @@ const textures = imageUrls.map((url) => textureLoader.load(url));
 
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
 
-const spheres = [...Array(30)].map(() => ({
+// ✅ Naya — device ke hisaab se balls kam karo
+const ballCount = isMobile ? 12 : 30;
+const spheres = [...Array(ballCount)].map(() => ({
   scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
 }));
 
@@ -130,11 +135,13 @@ const TechStack = () => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
-      const threshold = document
-        .getElementById("work")!
-        .getBoundingClientRect().top;
-      setIsActive(scrollY > threshold);
+      const workElement = document.getElementById("work");
+      if (workElement) {
+        const threshold = workElement.getBoundingClientRect().top;
+        setIsActive(scrollY > threshold);
+      }
     };
+    
     document.querySelectorAll(".header a").forEach((elem) => {
       const element = elem as HTMLAnchorElement;
       element.addEventListener("click", () => {
@@ -146,11 +153,13 @@ const TechStack = () => {
         }, 1000);
       });
     });
+    
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   const materials = useMemo(() => {
     return textures.map(
       (texture) =>
@@ -172,7 +181,16 @@ const TechStack = () => {
 
       <Canvas
         shadows
-        gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
+        // ✅ Naya — mobile par aur optimize karo
+        gl={{ 
+          alpha: true, 
+          stencil: false, 
+          depth: false, 
+          antialias: !isMobile, 
+          powerPreference: "high-performance" 
+        }}
+        // ✅ Naya — dpr capped
+        dpr={typeof window !== "undefined" ? Math.min(window.devicePixelRatio, 2) : 1}
         camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
         onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
         className="tech-canvas"

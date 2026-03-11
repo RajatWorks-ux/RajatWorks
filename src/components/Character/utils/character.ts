@@ -25,9 +25,9 @@ const setCharacter = (
         let character: THREE.Object3D;
         loader.load(
           blobUrl,
-          async (gltf) => {
+          (gltf) => {
             character = gltf.scene;
-            await renderer.compileAsync(character, camera, scene);
+            
             character.traverse((child: any) => {
               if (child.isMesh) {
                 const mesh = child as THREE.Mesh;
@@ -36,11 +36,17 @@ const setCharacter = (
                 mesh.frustumCulled = true;
               }
             });
-            resolve(gltf);
-            setCharTimeline(character, camera);
-            setAllTimeline();
+
             character!.getObjectByName("footR")!.position.y = 3.36;
             character!.getObjectByName("footL")!.position.y = 3.36;
+
+            // ✅ Naya — background mein compile karo, user ko wait na karwao
+            renderer.compileAsync(character, camera, scene).then(() => {
+              resolve(gltf);
+              setCharTimeline(character, camera);
+              setAllTimeline();
+            });
+
             dracoLoader.dispose();
           },
           undefined,

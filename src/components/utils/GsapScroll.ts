@@ -6,9 +6,12 @@ export function setCharTimeline(
   camera: THREE.PerspectiveCamera
 ) {
   let intensity: number = 0;
-  setInterval(() => {
+  
+  // ✅ Naya — reference rakho
+  const intensityInterval = setInterval(() => {
     intensity = Math.random();
   }, 200);
+
   const tl1 = gsap.timeline({
     scrollTrigger: {
       trigger: ".landing-section",
@@ -18,6 +21,7 @@ export function setCharTimeline(
       invalidateOnRefresh: true,
     },
   });
+  
   const tl2 = gsap.timeline({
     scrollTrigger: {
       trigger: ".about-section",
@@ -27,6 +31,7 @@ export function setCharTimeline(
       invalidateOnRefresh: true,
     },
   });
+  
   const tl3 = gsap.timeline({
     scrollTrigger: {
       trigger: ".whatIDO",
@@ -36,6 +41,7 @@ export function setCharTimeline(
       invalidateOnRefresh: true,
     },
   });
+  
   let screenLight: any, monitor: any;
   character?.children.forEach((object: any) => {
     if (object.name === "Plane004") {
@@ -60,7 +66,9 @@ export function setCharTimeline(
       screenLight = object;
     }
   });
+  
   let neckBone = character?.getObjectByName("spine005");
+  
   if (window.innerWidth > 1024) {
     if (character) {
       tl1
@@ -130,6 +138,9 @@ export function setCharTimeline(
       tM2.to(".what-box-in", { display: "flex", duration: 0.1, delay: 0 }, 0);
     }
   }
+
+  // ✅ Function ke end mein return karo taaki bahar clear ho sake
+  return { intensityInterval };
 }
 
 export function setAllTimeline() {
@@ -142,6 +153,7 @@ export function setAllTimeline() {
       invalidateOnRefresh: true,
     },
   });
+  
   careerTimeline
     .fromTo(
       ".career-timeline",
@@ -149,7 +161,6 @@ export function setAllTimeline() {
       { maxHeight: "100%", duration: 0.5 },
       0
     )
-
     .fromTo(
       ".career-timeline",
       { opacity: 0 },
@@ -189,3 +200,4 @@ export function setAllTimeline() {
     );
   }
 }
+
