@@ -10,10 +10,10 @@ const Loading = ({ percent }: { percent: number }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [clicked, setClicked] = useState(false);
 
-  // ✅ New — Placed inside useEffect to avoid render anti-patterns
+  // ✅ Fixed — ReturnType<typeof setTimeout> instead of NodeJS.Timeout
   useEffect(() => {
-    let timer2: NodeJS.Timeout;
-    
+    let timer2: ReturnType<typeof setTimeout>;
+
     if (percent >= 100) {
       const timer1 = setTimeout(() => {
         setLoaded(true);
@@ -21,7 +21,7 @@ const Loading = ({ percent }: { percent: number }) => {
           setIsLoaded(true);
         }, 1000);
       }, 600);
-      
+
       return () => {
         clearTimeout(timer1);
         if (timer2) clearTimeout(timer2);
@@ -105,7 +105,7 @@ export default Loading;
 export const setProgress = (setLoading: (value: number) => void) => {
   let percent: number = 0;
 
-  let interval = setInterval(() => {
+  let interval: ReturnType<typeof setInterval> = setInterval(() => {
     if (percent <= 50) {
       let rand = Math.round(Math.random() * 5);
       percent = percent + rand;
