@@ -1,4 +1,4 @@
-.contact-section {
+  .contact-section {
   margin: auto;
   padding-bottom: 150px;
   margin-top: 0;
@@ -16,6 +16,8 @@
   text-transform: uppercase;
   margin: 0;
   margin-bottom: 40px;
+  /* ✅ Default visible — GSAP override karega desktop par */
+  opacity: 1;
 }
 .contact-flex {
   display: flex;
@@ -29,6 +31,8 @@
 .contact-box {
   display: flex;
   flex-direction: column;
+  /* ✅ Default visible */
+  opacity: 1;
 }
 .contact-flex p {
   margin-top: 10px;
@@ -92,9 +96,15 @@ a.contact-social {
   }
   .contact-section {
     margin-top: 50px;
-    padding-bottom: 50px;
+    padding-bottom: 80px;
   }
   .contact-container {
     width: calc(100% - 25px);
+  }
+  /* ✅ Mobile par ensure visibility */
+  .contact-section h3,
+  .contact-box {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
