@@ -201,3 +201,40 @@ body {
   }
 }
 
+
+/* ════════════════════════════════════════════════
+   CRITICAL MOBILE FIXES
+════════════════════════════════════════════════ */
+@media only screen and (max-width: 1024px) {
+  body {
+    overflow: auto !important;
+    overflow-x: hidden !important;
+  }
+  /* container-main overflow:hidden sticky/fixed tod raha tha */
+  .container-main {
+    overflow: visible !important;
+  }
+  .main-body {
+    overflow: visible !important;
+    overflow-x: hidden !important;
+  }
+  /* WhatIDo ka 100vh gap mobile pe */
+  .whatIDO {
+    height: auto !important;
+    min-height: unset !important;
+  }
+  /* TechStack ka height gap */
+  .techstack {
+    height: auto !important;
+    min-height: unset !important;
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+  }
+  .techstack h2 {
+    position: relative !important;
+    top: auto !important;
+    font-size: 32px !important;
+    margin-bottom: 30px !important;
+  }
+    }
+  
