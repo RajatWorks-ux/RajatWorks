@@ -85,14 +85,14 @@ const Landing = ({ children }: PropsWithChildren) => {
               ╔══════════════════════════════════╗
               ║  TUMHARA EK KAAM:                ║
               ║  Video ko rakho yahan:           ║
-              ║  public/videos/rajat.mp4         ║
+              ║  public/rajat.mp4         ║
               ║  (.mp4 / .webm / .mov sab chalte)║
               ╚══════════════════════════════════╝
             */}
             <video
               ref={videoRef}
               className="story-video"
-              src="/videos/rajat.mp4"
+              src="/rajat.mp4"
               autoPlay
               muted
               playsInline
@@ -136,4 +136,5 @@ const Landing = ({ children }: PropsWithChildren) => {
 };
 
 export default Landing;
+
               
