@@ -81,3 +81,60 @@
     font-size: 18px;
   }
 }
+
+/* ═══════════════════════════════════════
+   RajatWorks Logo Styles
+═══════════════════════════════════════ */
+.navbar-title {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.3px;
+  line-height: 1;
+  position: relative;
+}
+.logo-rajat {
+  font-weight: 300;
+  font-size: 17px;
+  color: #eae5ec;
+  letter-spacing: 0.5px;
+  font-family: "Geist", sans-serif;
+}
+.logo-works {
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--accentColor);
+  letter-spacing: -0.5px;
+  font-family: "Geist", sans-serif;
+  text-transform: uppercase;
+}
+.logo-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accentColor);
+  margin-left: 3px;
+  margin-bottom: 8px;
+  box-shadow: 0 0 6px 2px rgba(194, 164, 255, 0.7);
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+@media only screen and (min-width: 500px) {
+  .logo-rajat,
+  .logo-works {
+    font-size: 18px;
+  }
+}
+@media only screen and (min-width: 1200px) {
+  .logo-rajat,
+  .logo-works {
+    font-size: 20px;
+  }
+  .logo-dot {
+    width: 6px;
+    height: 6px;
+  }
+}
+
