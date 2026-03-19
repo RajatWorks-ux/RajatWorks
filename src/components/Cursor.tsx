@@ -2,6 +2,9 @@ import { useEffect, useRef } from "react";
 import "./styles/Cursor.css";
 import gsap from "gsap";
 
+// Touch device pe cursor render hi mat karo — saves CPU + fixes purple ball bug
+const isTouchDevice = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
 const Cursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -48,7 +51,9 @@ const Cursor = () => {
     });
   }, []);
 
+  if (isTouchDevice) return null;
   return <div className="cursor-main" ref={cursorRef}></div>;
 };
 
 export default Cursor;
+
