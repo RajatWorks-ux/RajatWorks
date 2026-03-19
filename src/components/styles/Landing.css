@@ -287,66 +287,72 @@ h2.landing-info-h2 {
 ══════════════════════════════════════════════════════════ */
 
 /* Desktop pe hide karo */
-.mobile-story { display: none; }
+
+/* ══════════════════════════════════════════════════
+   MOBILE VIDEO — position:fixed approach
+   (sticky overflow:hidden se toot jata tha)
+══════════════════════════════════════════════════ */
+
+/* Desktop pe hide */
+.story-fixed-wrap { display: none; }
 
 @media only screen and (max-width: 1024px) {
 
-  /* Landing section ko tall banao — scroll room ke liye */
+  /* Landing section — 300vh tall = scroll room */
   .landing-section {
     height: 300vh !important;
     max-width: 100%;
-    overflow: visible;
+    overflow: visible !important;
   }
 
-  /* Desktop text hide on mobile */
+  /* Desktop text hide */
   .landing-container { display: none !important; }
 
-  /* Story wrapper — full 300vh */
-  .mobile-story {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 300vh;
-  }
-
-  /* Sticky inner — user scroll kare toh bhi screen pe rehta hai */
-  .story-sticky {
-    position: sticky;
-    top: 0;
-    width: 100%;
+  /* Fixed video — poori screen, scroll se affect nahi */
+  .story-fixed-wrap {
+    position: fixed !important;
+    top: 0; left: 0;
+    width: 100vw;
     height: 100svh;
+    z-index: 5;
     overflow: hidden;
     background: #000;
   }
 
-  /* ── Video ── */
+  /* Video fullscreen */
   .story-video {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     object-fit: cover;
     object-position: center top;
     display: block;
   }
 
-  /* ── Gradient overlay — text readable + bottom fade ── */
+  /* Dark overlay */
   .story-overlay {
     position: absolute;
     inset: 0;
-    background:
-      linear-gradient(to top,
-        rgba(11, 8, 12, 0.97) 0%,
-        rgba(11, 8, 12, 0.55) 40%,
-        rgba(11, 8, 12, 0.10) 100%
-      );
+    background: linear-gradient(
+      to top,
+      rgba(11,8,12,0.97) 0%,
+      rgba(11,8,12,0.5)  40%,
+      rgba(11,8,12,0.10) 100%
+    );
     pointer-events: none;
     z-index: 2;
   }
 
-  /* ── Purple glow orbs ── */
+  /* Scroll progress bar */
+  .story-progress {
+    position: absolute;
+    top: 0; left: 0;
+    height: 2px; width: 0%;
+    background: linear-gradient(to right, var(--accentColor), #fb8dff);
+    z-index: 20;
+  }
+
+  /* Purple glows */
   .story-glow {
     position: absolute;
     border-radius: 50%;
@@ -356,29 +362,18 @@ h2.landing-info-h2 {
   }
   .story-glow-1 {
     width: 350px; height: 350px;
-    background: rgba(194, 164, 255, 0.25);
+    background: rgba(194,164,255,0.22);
     top: -120px; left: -120px;
     animation: sGlowPulse 7s ease-in-out infinite;
   }
   .story-glow-2 {
     width: 250px; height: 250px;
-    background: rgba(251, 141, 255, 0.18);
+    background: rgba(251,141,255,0.16);
     bottom: 22%; right: -70px;
     animation: sGlowPulse 10s ease-in-out infinite reverse;
   }
 
-  /* ── Scroll progress bar ── */
-  .story-progress {
-    position: absolute;
-    top: 0; left: 0;
-    height: 2px;
-    width: 0%;
-    background: linear-gradient(to right, var(--accentColor), #fb8dff);
-    z-index: 20;
-    transition: width 0.05s linear;
-  }
-
-  /* ── Text block ── */
+  /* Text at bottom */
   .story-text {
     position: absolute;
     bottom: 0; left: 0; right: 0;
@@ -386,8 +381,7 @@ h2.landing-info-h2 {
     z-index: 10;
   }
   .story-greeting {
-    font-size: 11px;
-    font-weight: 300;
+    font-size: 11px; font-weight: 300;
     color: var(--accentColor);
     letter-spacing: 6px;
     text-transform: uppercase;
@@ -397,54 +391,40 @@ h2.landing-info-h2 {
   }
   .story-name {
     margin: 0 0 14px;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     line-height: 1;
   }
   .sn-first {
-    font-size: 70px;
-    font-weight: 900;
-    letter-spacing: -3px;
-    color: #fff;
-    display: block;
-    opacity: 0;
+    font-size: 70px; font-weight: 900;
+    letter-spacing: -3px; color: #fff;
+    display: block; opacity: 0;
     animation: sSlideUp 0.9s ease 0.5s forwards;
   }
   .sn-last {
-    font-size: 18px;
-    font-weight: 200;
+    font-size: 18px; font-weight: 200;
     letter-spacing: 8px;
-    color: rgba(234, 229, 236, 0.55);
-    display: block;
-    margin-top: 8px;
+    color: rgba(234,229,236,0.55);
+    display: block; margin-top: 8px;
     opacity: 0;
     animation: sSlideUp 0.9s ease 0.7s forwards;
   }
   .story-role {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px 12px;
+    display: flex; flex-wrap: wrap;
+    align-items: center; gap: 8px 12px;
     font-size: 13px;
-    color: rgba(234, 229, 236, 0.42);
-    letter-spacing: 0.3px;
-    margin-bottom: 32px;
-    opacity: 0;
+    color: rgba(234,229,236,0.42);
+    margin-bottom: 32px; opacity: 0;
     animation: sSlideUp 0.9s ease 0.9s forwards;
   }
   .story-sep { color: var(--accentColor); font-size: 16px; }
 
-  /* Scroll hint */
   .story-scroll-hint {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    display: flex; align-items: center; gap: 14px;
     opacity: 0;
     animation: sFadeIn 1s ease 1.5s forwards;
   }
   .story-scroll-hint span {
-    font-size: 10px;
-    letter-spacing: 5px;
+    font-size: 10px; letter-spacing: 5px;
     text-transform: uppercase;
     color: rgba(255,255,255,0.25);
   }
@@ -455,8 +435,7 @@ h2.landing-info-h2 {
   }
   .story-scroll-line::after {
     content: "";
-    position: absolute;
-    left: -100%; top: 0;
+    position: absolute; left: -100%; top: 0;
     width: 100%; height: 100%;
     background: var(--accentColor);
     animation: sLineSweep 2s ease 2s infinite;
@@ -465,45 +444,36 @@ h2.landing-info-h2 {
   /* Floating tags */
   .story-tag {
     position: absolute;
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 11px; font-weight: 500;
     letter-spacing: 1px;
-    padding: 8px 18px;
-    border-radius: 20px;
+    padding: 8px 18px; border-radius: 20px;
     border: 1px solid rgba(194,164,255,0.2);
     background: rgba(11,8,12,0.6);
     color: var(--accentColor);
     backdrop-filter: blur(12px);
-    z-index: 10;
-    opacity: 0;
+    z-index: 10; opacity: 0;
   }
   .st-1 { top: 18%; right: 20px; animation: sTagIn 0.7s ease 1.0s forwards; }
   .st-2 { top: 26%; right: 20px; animation: sTagIn 0.7s ease 1.2s forwards; }
   .st-3 { top: 34%; right: 20px; animation: sTagIn 0.7s ease 1.4s forwards; }
-
-  /* Small phones */
-  @media only screen and (max-width: 380px) {
-    .sn-first { font-size: 56px; }
-    .sn-last  { font-size: 15px; letter-spacing: 5px; }
-  }
 }
 
-/* ── Keyframes ── */
+/* Keyframes */
 @keyframes sFadeIn  { to { opacity: 1; } }
 @keyframes sSlideUp {
   from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0);    }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes sGlowPulse {
-  0%,100% { opacity: 0.5;  transform: scale(1);    }
-  50%     { opacity: 0.95; transform: scale(1.2);  }
+  0%,100% { opacity: 0.5; transform: scale(1); }
+  50%     { opacity: 1;   transform: scale(1.2); }
 }
 @keyframes sTagIn {
   from { opacity: 0; transform: translateX(20px); }
-  to   { opacity: 1; transform: translateX(0);    }
+  to   { opacity: 1; transform: translateX(0); }
 }
 @keyframes sLineSweep {
   0%   { left: -100%; }
   100% { left:  100%; }
-}
-      
+   }
+                  
