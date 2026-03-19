@@ -356,3 +356,215 @@ h2.landing-info-h2 {
     font-size: 75px;
   }
 }
+
+
+/* ════════════════════════════════════════════════════════
+   MOBILE STORY — VIDEO SCROLL SECTION
+   Desktop pe display:none, mobile pe block
+════════════════════════════════════════════════════════ */
+
+/* Hidden on desktop */
+.mobile-story { display: none; }
+
+@media only screen and (max-width: 1024px) {
+
+  /* Hide desktop landing text on mobile */
+  .landing-container { display: none; }
+
+  /* Story container — tall so scroll has room */
+  .mobile-story {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 300vh; /* 3x viewport = smooth video scrub */
+  }
+
+  /* Sticky inner — stays on screen while user scrolls */
+  .story-sticky {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  /* ── Video ── */
+  .story-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+
+  /* ── Dark gradient so text is readable ── */
+  .story-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(11, 8, 12, 0.95) 0%,
+      rgba(11, 8, 12, 0.50) 45%,
+      rgba(11, 8, 12, 0.15) 100%
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* ── Purple glow orbs (match site) ── */
+  .story-glow {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 3;
+    filter: blur(70px);
+  }
+  .story-glow-1 {
+    width: 320px; height: 320px;
+    background: rgba(194, 164, 255, 0.28);
+    top: -100px; left: -100px;
+    animation: sGlowPulse 7s ease-in-out infinite;
+  }
+  .story-glow-2 {
+    width: 240px; height: 240px;
+    background: rgba(251, 141, 255, 0.2);
+    bottom: 20%; right: -60px;
+    animation: sGlowPulse 9s ease-in-out infinite reverse;
+  }
+
+  /* ── Text block pinned bottom ── */
+  .story-text {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    padding: 0 24px 52px;
+    z-index: 10;
+  }
+
+  .story-greeting {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--accentColor);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+    opacity: 0;
+    animation: sSlideUp 0.8s ease 0.3s forwards;
+  }
+
+  .story-name {
+    margin: 0 0 12px;
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+  .sn-first {
+    font-size: 68px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    color: #fff;
+    display: block;
+    opacity: 0;
+    animation: sSlideUp 0.9s ease 0.5s forwards;
+  }
+  .sn-last {
+    font-size: 19px;
+    font-weight: 200;
+    letter-spacing: 7px;
+    color: rgba(234, 229, 236, 0.6);
+    display: block;
+    margin-top: 6px;
+    opacity: 0;
+    animation: sSlideUp 0.9s ease 0.7s forwards;
+  }
+
+  .story-role {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(234, 229, 236, 0.45);
+    letter-spacing: 0.5px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: sSlideUp 0.9s ease 0.9s forwards;
+  }
+  .story-sep { color: var(--accentColor); }
+
+  /* Scroll indicator */
+  .story-scroll-hint {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    animation: sFadeIn 1s ease 1.6s forwards;
+  }
+  .story-scroll-hint span {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.28);
+  }
+  .story-scroll-line {
+    width: 50px; height: 1px;
+    background: rgba(194, 164, 255, 0.25);
+    position: relative; overflow: hidden;
+  }
+  .story-scroll-line::after {
+    content: "";
+    position: absolute;
+    left: -100%; top: 0;
+    width: 100%; height: 100%;
+    background: var(--accentColor);
+    animation: sLineSweep 2s ease 2.2s infinite;
+  }
+
+  /* ── Floating tech tags ── */
+  .story-tag {
+    position: absolute;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(194, 164, 255, 0.22);
+    background: rgba(11, 8, 12, 0.55);
+    color: var(--accentColor);
+    backdrop-filter: blur(12px);
+    z-index: 10;
+    opacity: 0;
+  }
+  .st-1 { top: 20%; right: 20px; animation: sTagIn 0.7s ease 1.0s forwards; }
+  .st-2 { top: 28%; right: 20px; animation: sTagIn 0.7s ease 1.2s forwards; }
+  .st-3 { top: 36%; right: 20px; animation: sTagIn 0.7s ease 1.4s forwards; }
+
+  /* Small phones */
+  @media only screen and (max-width: 380px) {
+    .sn-first { font-size: 54px; }
+    .sn-last  { font-size: 16px; letter-spacing: 5px; }
+  }
+}
+
+/* ── Keyframes ── */
+@keyframes sFadeIn  { to { opacity: 1; } }
+@keyframes sSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes sGlowPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1);    }
+  50%       { opacity: 1;    transform: scale(1.18); }
+}
+@keyframes sTagIn {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+@keyframes sLineSweep {
+  0%   { left: -100%; }
+  100% { left:  100%; }
+}
+
