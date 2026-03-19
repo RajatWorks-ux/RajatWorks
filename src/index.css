@@ -189,42 +189,15 @@ body {
   }
   
 
-/* ══════════════════════════════════════════
-   TECHSTACK MOBILE FIX — empty space hatao
-══════════════════════════════════════════ */
+/* ════════════════════════════════════
+   MOBILE SCROLL FIX
+   body overflow:hidden desktop ke liye
+   mobile pe auto hona chahiye
+════════════════════════════════════ */
 @media only screen and (max-width: 1024px) {
-  .techstack {
-    height: auto;
-    min-height: unset;
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
-  .techstack h2 {
-    position: relative;
-    top: auto;
-    font-size: 32px;
-    margin-bottom: 40px;
-    letter-spacing: 3px;
-  }
-  .tech-mobile-grid {
-    gap: 24px;
-    padding: 10px 20px 0;
-    width: 100%;
-    max-width: 420px;
-  }
-  .tech-mobile-item img {
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
-    background: rgba(194, 164, 255, 0.07);
-    border: 1px solid rgba(194, 164, 255, 0.12);
-    padding: 12px;
-  }
-  .tech-mobile-item span {
-    font-size: 12px;
-    color: rgba(234, 229, 236, 0.55);
-    font-weight: 400;
-    letter-spacing: 0.3px;
+  body {
+    overflow: auto !important;
+    overflow-x: hidden !important;
   }
 }
 
