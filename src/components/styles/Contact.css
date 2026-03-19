@@ -1,4 +1,7 @@
-  .contact-section {
+/* ════════════════════════════
+   DESKTOP — original styles
+════════════════════════════ */
+.contact-section {
   margin: auto;
   padding-bottom: 150px;
   margin-top: 0;
@@ -16,7 +19,6 @@
   text-transform: uppercase;
   margin: 0;
   margin-bottom: 40px;
-  /* ✅ Default visible — GSAP override karega desktop par */
   opacity: 1;
 }
 .contact-flex {
@@ -31,25 +33,15 @@
 .contact-box {
   display: flex;
   flex-direction: column;
-  /* ✅ Default visible */
   opacity: 1;
 }
-.contact-flex p {
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
+.contact-flex p { margin-top: 10px; margin-bottom: 20px; }
 a.contact-social {
   font-size: 25px;
   border-bottom: 1px solid #ccc;
 }
-.contact-box h2 {
-  font-weight: 400;
-  font-size: 23px;
-  margin: 0;
-}
-.contact-box h2 > span {
-  color: var(--accentColor);
-}
+.contact-box h2 { font-weight: 400; font-size: 23px; margin: 0; }
+.contact-box h2 > span { color: var(--accentColor); }
 .contact-box h5 {
   font-size: 20px;
   font-weight: 500;
@@ -59,75 +51,205 @@ a.contact-social {
   opacity: 0.5;
 }
 @media only screen and (max-width: 1600px) {
-  .contact-section h3 {
-    font-size: 50px;
-  }
-  .contact-box h2 {
-    font-size: 20px;
-  }
-  a.contact-social {
-    font-size: 22px;
-  }
+  .contact-section h3 { font-size: 50px; }
+  .contact-box h2     { font-size: 20px; }
+  a.contact-social    { font-size: 22px; }
 }
 @media only screen and (max-width: 1300px) {
-  .contact-section h3 {
-    font-size: 40px;
-  }
-  .contact-box h2 {
-    font-size: 18px;
-  }
-  a.contact-social {
-    font-size: 20px;
-  }
-  .contact-flex p {
-    margin-top: 0px;
-  }
-}
-@media only screen and (max-width: 900px) {
-  .contact-flex {
-    flex-direction: column;
-    gap: 40px;
-  }
-  .contact-flex p {
-    margin-bottom: 0px;
-  }
-  .contact-flex h4 {
-    margin-top: 20px;
-  }
-  .contact-section {
-    margin-top: 50px;
-    padding-bottom: 80px;
-  }
-  .contact-container {
-    width: calc(100% - 25px);
-  }
-  /* ✅ Mobile par ensure visibility */
-  .contact-section h3,
-  .contact-box {
-    opacity: 1 !important;
-    transform: none !important;
-  }
+  .contact-section h3 { font-size: 40px; }
+  .contact-box h2     { font-size: 18px; }
+  a.contact-social    { font-size: 20px; }
+  .contact-flex p     { margin-top: 0px; }
 }
 
-/* ════════════════════════════════
-   Contact gap fix — mobile
-════════════════════════════════ */
-@media only screen and (max-width: 1024px) {
+/* Mobile container — hide desktop, show mobile */
+.contact-mobile  { display: none; }
+.contact-desktop { display: block; }
+
+/* ════════════════════════════════════════════
+   MOBILE CONTACT — full new design
+════════════════════════════════════════════ */
+@media only screen and (max-width: 900px) {
   .contact-section {
     margin-top: 0 !important;
-    padding-top: 60px;
+    padding: 0;
     min-height: unset;
+    overflow: hidden;
   }
-  .contact-section h3 {
-    font-size: 30px;
-    margin-bottom: 28px;
+
+  /* Hide desktop layout */
+  .contact-desktop { display: none !important; }
+
+  /* Show mobile layout */
+  .contact-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 56px 28px 60px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--backgroundColor);
   }
-  a.contact-social {
+
+  /* ── Glow ── */
+  .cm-glow {
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(194, 164, 255, 0.15);
+    filter: blur(80px);
+    top: -60px; right: -80px;
+    pointer-events: none;
+    animation: cmGlow 8s ease-in-out infinite;
+  }
+  @keyframes cmGlow {
+    0%,100% { opacity: 0.6; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.2); }
+  }
+
+  /* ── Headline ── */
+  .cm-label {
+    font-size: 10px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--accentColor);
+    margin: 0 0 16px;
+    opacity: 0.8;
+  }
+  .cm-title {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -1.5px;
+    margin: 0 0 40px;
+    color: #fff;
+  }
+  .cm-title span {
+    color: var(--accentColor);
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  /* ── Email button ── */
+  .cm-email-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 18px 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(194, 164, 255, 0.25);
+    background: rgba(194, 164, 255, 0.06);
+    color: #eae5ec;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: background 0.25s, border-color 0.25s;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cm-email-btn::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(194,164,255,0.5), transparent);
+  }
+  .cm-email-btn:active {
+    background: rgba(194, 164, 255, 0.12);
+    border-color: rgba(194, 164, 255, 0.5);
+  }
+  .cm-email-icon {
+    font-size: 20px;
+    color: var(--accentColor);
+    flex-shrink: 0;
+  }
+  .cm-email-btn span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cm-email-arrow {
     font-size: 18px;
-    padding: 6px 0;
+    opacity: 0.5;
+    flex-shrink: 0;
   }
-  .contact-box h2 {
-    font-size: 16px;
+
+  /* ── Location ── */
+  .cm-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(234,229,236,0.4);
+    margin-bottom: 36px;
   }
-}
+  .cm-location svg { font-size: 16px; color: var(--accentColor); opacity: 0.6; }
+
+  /* ── Divider ── */
+  .cm-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, rgba(194,164,255,0.2), transparent);
+    margin-bottom: 30px;
+  }
+
+  /* ── Social label ── */
+  .cm-social-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(234,229,236,0.35);
+    margin: 0 0 18px;
+  }
+
+  /* ── Social buttons ── */
+  .cm-socials {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+  .cm-social-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border-radius: 50px;
+    border: 1px solid rgba(234,229,236,0.1);
+    background: rgba(255,255,255,0.03);
+    color: rgba(234,229,236,0.65);
+    font-size: 13px;
+    font-weight: 400;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .cm-social-btn svg { font-size: 16px; }
+  .cm-social-btn:active {
+    border-color: var(--accentColor);
+    color: var(--accentColor);
+    background: rgba(194,164,255,0.08);
+  }
+
+  /* ── Footer ── */
+  .cm-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(234,229,236,0.25);
+    width: 100%;
+  }
+  .cm-footer strong { font-weight: 500; color: rgba(234,229,236,0.4); }
+  .cm-copy {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+  }
+    }
 
