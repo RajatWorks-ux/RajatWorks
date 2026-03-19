@@ -1,7 +1,7 @@
 export const config = {
     developer: {
         name: "Rajat",
-        fullName: "Rajat  Kumar Dua",
+        fullName: "Rajat Kumar Dua",
         title: "Full Stack Developer",
         description: "Full-stack builder creating digital experiences that respect humans and scale with clarity. Accessibility is my north star."
     },
@@ -103,5 +103,8 @@ export const config = {
         }
     }
 };
+
+
+
 
 
