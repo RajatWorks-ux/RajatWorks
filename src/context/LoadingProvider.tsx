@@ -6,6 +6,7 @@ import {
   useEffect,
 } from "react";
 import Loading from "../components/Loading";
+import { initialFX } from "../components/utils/initialFX";
 
 interface LoadingType {
   isLoading: boolean;
@@ -15,26 +16,22 @@ interface LoadingType {
 
 export const LoadingContext = createContext<LoadingType | null>(null);
 
-// Mobile pe character load nahi hota — loading skip karo
 const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
 
 export const LoadingProvider = ({ children }: PropsWithChildren) => {
-  // Mobile pe isLoading seedha false — no loading screen
+  // Mobile pe seedha false — loading screen nahi dikhega
   const [isLoading, setIsLoading] = useState(!isMobile);
-  const [loading, setLoading] = useState(0);
+  const [loading, setLoading]     = useState(0);
 
   useEffect(() => {
-    if (isMobile) {
-      // Mobile pe koi loading nahi — seedha site dikhao
-      setIsLoading(false);
-    }
+    if (!isMobile) return;
+    // Mobile pe: body dark karo + lenis start karo seedha
+    document.body.style.backgroundColor = "#0b080c";
+    document.body.style.overflowY = "auto";
+    initialFX();
   }, []);
 
-  const value = {
-    isLoading,
-    setIsLoading,
-    setLoading,
-  };
+  const value = { isLoading, setIsLoading, setLoading };
 
   return (
     <LoadingContext.Provider value={value as LoadingType}>
@@ -46,9 +43,6 @@ export const LoadingProvider = ({ children }: PropsWithChildren) => {
 
 export const useLoading = () => {
   const context = useContext(LoadingContext);
-  if (!context) {
-    throw new Error("useLoading must be used within a LoadingProvider");
-  }
+  if (!context) throw new Error("useLoading must be used within a LoadingProvider");
   return context;
 };
-
