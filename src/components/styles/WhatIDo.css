@@ -391,3 +391,28 @@
     line-height: 6.8rem;
   }
 }
+
+/* Mobile fix: what-box-in display:none GSAP se handle hota tha —
+   lekin agar character load nahi hua toh section hidden rehta tha.
+   Mobile pe seedha show karo. */
+@media only screen and (max-width: 1024px) {
+  .whatIDO {
+    height: auto;
+    min-height: 100vh;
+    flex-direction: column;
+    padding: 40px 0;
+  }
+  .what-box {
+    width: 100%;
+  }
+  .what-box-in {
+    display: flex !important;
+    margin-left: 0;
+    height: auto;
+  }
+  .what-content {
+    height: auto;
+    min-height: unset;
+  }
+}
+
