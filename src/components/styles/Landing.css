@@ -1,3 +1,6 @@
+/* ═══════════════════════════════
+   ORIGINAL DESKTOP STYLES
+═══════════════════════════════ */
 .landing-section {
   width: 100%;
   max-width: var(--cMaxWidth);
@@ -30,25 +33,16 @@
   top: 0;
   width: 100%;
   height: 130px;
-  background-image: linear-gradient(
-    0deg,
-    transparent,
-    var(--backgroundColor) 70%
-  );
+  background-image: linear-gradient(0deg, transparent, var(--backgroundColor) 70%);
   pointer-events: none;
   z-index: 12;
   opacity: 0;
   left: 0;
 }
 @keyframes loadingCircle {
-  0% {
-    transform: translate(-95%, -75%) rotateZ(0deg);
-  }
-  100% {
-    transform: translate(-95%, -75%) rotateZ(360deg);
-  }
+  0%   { transform: translate(-95%, -75%) rotateZ(0deg); }
+  100% { transform: translate(-95%, -75%) rotateZ(360deg); }
 }
-
 .landing-circle2 {
   top: 50%;
   right: 0%;
@@ -65,9 +59,7 @@
   animation: loadingCircle2 5s linear infinite;
 }
 @keyframes loadingCircle2 {
-  100% {
-    transform: translate(calc(100% - 2px), -50%) rotate(360deg);
-  }
+  100% { transform: translate(calc(100% - 2px), -50%) rotate(360deg); }
 }
 .landing-video,
 .landing-image {
@@ -114,11 +106,7 @@
   content: "";
   width: 100vw;
   height: 250px;
-  background-image: linear-gradient(
-    to bottom,
-    transparent,
-    var(--backgroundColor) 70%
-  );
+  background-image: linear-gradient(to bottom, transparent, var(--backgroundColor) 70%);
   bottom: -50px;
   left: 50%;
   transform: translateX(-50%);
@@ -169,7 +157,6 @@
   font-weight: 300;
   letter-spacing: 2px;
 }
-
 .landing-intro h1 {
   margin: 0;
   letter-spacing: 2px;
@@ -178,11 +165,6 @@
   font-weight: 500;
   font-family: "Geist", sans-serif;
 }
-
-/* .landing-intro h1 span {
-   font-weight: 200; 
-} */
-
 .landing-info {
   position: absolute;
   right: 50%;
@@ -236,60 +218,26 @@ h2.landing-info-h2 {
   width: 100%;
   height: 120%;
   z-index: 3;
-  background-image: linear-gradient(
-    0deg,
-    var(--backgroundColor) 40%,
-    rgba(0, 0, 0, 0) 110%
-  );
+  background-image: linear-gradient(0deg, var(--backgroundColor) 40%, rgba(0, 0, 0, 0) 110%);
   top: 0;
   left: 0;
 }
 @media screen and (min-width: 500px) {
-  .landing-circle2 {
-    display: block;
-  }
-  .character-model {
-    z-index: 0;
-  }
-  .landing-info h3 {
-    font-size: 18px;
-  }
-  .landing-intro h2 {
-    font-size: 18px;
-  }
-  .landing-intro h1 {
-    font-size: 30px;
-    line-height: 30px;
-  }
-  .landing-info h2 {
-    font-size: 35px;
-    line-height: 40px;
-  }
-  h2.landing-info-h2 {
-    font-size: 38px;
-  }
+  .landing-circle2 { display: block; }
+  .character-model { z-index: 0; }
+  .landing-info h3 { font-size: 18px; }
+  .landing-intro h2 { font-size: 18px; }
+  .landing-intro h1 { font-size: 30px; line-height: 30px; }
+  .landing-info h2 { font-size: 35px; line-height: 40px; }
+  h2.landing-info-h2 { font-size: 38px; }
 }
 @media screen and (min-width: 768px) {
-  .character-model {
-    height: 80vh;
-  }
-  .landing-intro h2 {
-    font-size: 25px;
-  }
-  .landing-intro h1 {
-    font-size: 40px;
-    line-height: 35px;
-  }
-  .landing-info h3 {
-    font-size: 25px;
-  }
-  .landing-info h2 {
-    font-size: 45px;
-    line-height: 42px;
-  }
-  h2.landing-info-h2 {
-    font-size: 55px;
-  }
+  .character-model { height: 80vh; }
+  .landing-intro h2 { font-size: 25px; }
+  .landing-intro h1 { font-size: 40px; line-height: 35px; }
+  .landing-info h3 { font-size: 25px; }
+  .landing-info h2 { font-size: 45px; line-height: 42px; }
+  h2.landing-info-h2 { font-size: 55px; }
 }
 @media screen and (min-width: 1025px) {
   .character-model {
@@ -299,16 +247,13 @@ h2.landing-info-h2 {
     position: fixed;
   }
   .character-model::after,
-  .character-model::before {
-    display: none;
-  }
+  .character-model::before { display: none; }
   .landing-intro {
     top: 50%;
     left: auto;
     right: 66%;
     transform: translate(0%, -50%);
   }
-
   .landing-info {
     bottom: auto;
     top: 51%;
@@ -320,72 +265,60 @@ h2.landing-info-h2 {
   }
 }
 @media screen and (min-width: 1200px) {
-  .landing-intro {
-    top: 50%;
-    left: auto;
-    right: 70%;
-    transform: translate(0%, -50%);
-  }
-
-  .landing-info {
-    bottom: auto;
-    top: 51%;
-    z-index: inherit;
-    text-align: left;
-    transform: translate(0%, -50%);
-    right: auto;
-    left: 70%;
-  }
+  .landing-intro { top: 50%; left: auto; right: 70%; transform: translate(0%, -50%); }
+  .landing-info  { bottom: auto; top: 51%; z-index: inherit; text-align: left; transform: translate(0%, -50%); right: auto; left: 70%; }
 }
 @media screen and (min-width: 1600px) {
-  .landing-intro h2 {
-    font-size: 35px;
-  }
-  .landing-intro h1 {
-    font-size: 60px;
-    line-height: 55px;
-  }
-  .landing-info h3 {
-    font-size: 35px;
-  }
-  .landing-info h2 {
-    font-size: 65px;
-    line-height: 62px;
-  }
-  h2.landing-info-h2 {
-    font-size: 75px;
-  }
+  .landing-intro h2  { font-size: 35px; }
+  .landing-intro h1  { font-size: 60px; line-height: 55px; }
+  .landing-info h3   { font-size: 35px; }
+  .landing-info h2   { font-size: 65px; line-height: 62px; }
+  h2.landing-info-h2 { font-size: 75px; }
 }
 
+/* ══════════════════════════════════════════════════════════
+   MOBILE VIDEO SCROLL STORY  —  only ≤1024px
+   
+   HOW IT WORKS:
+   • landing-section height: 300vh  → scroll space milta hai
+   • mobile-story is sticky         → screen pe pinned rehta hai
+   • JS scroll handler              → video.currentTime update karta hai
+   • About section aata hai         → 300vh ke baad naturally
+══════════════════════════════════════════════════════════ */
 
-/* ════════════════════════════════════════════════════════
-   MOBILE STORY — VIDEO SCROLL SECTION
-   Desktop pe display:none, mobile pe block
-════════════════════════════════════════════════════════ */
-
-/* Hidden on desktop */
+/* Desktop pe hide karo */
 .mobile-story { display: none; }
 
 @media only screen and (max-width: 1024px) {
 
-  /* Hide desktop landing text on mobile */
-  .landing-container { display: none; }
-
-  /* Story container — tall so scroll has room */
-  .mobile-story {
-    display: block;
-    position: relative;
-    width: 100%;
-    height: 300vh; /* 3x viewport = smooth video scrub */
+  /* Landing section ko tall banao — scroll room ke liye */
+  .landing-section {
+    height: 300vh !important;
+    max-width: 100%;
+    overflow: visible;
   }
 
-  /* Sticky inner — stays on screen while user scrolls */
+  /* Desktop text hide on mobile */
+  .landing-container { display: none !important; }
+
+  /* Story wrapper — full 300vh */
+  .mobile-story {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 300vh;
+  }
+
+  /* Sticky inner — user scroll kare toh bhi screen pe rehta hai */
   .story-sticky {
     position: sticky;
     top: 0;
     width: 100%;
     height: 100svh;
     overflow: hidden;
+    background: #000;
   }
 
   /* ── Video ── */
@@ -399,119 +332,125 @@ h2.landing-info-h2 {
     display: block;
   }
 
-  /* ── Dark gradient so text is readable ── */
+  /* ── Gradient overlay — text readable + bottom fade ── */
   .story-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(11, 8, 12, 0.95) 0%,
-      rgba(11, 8, 12, 0.50) 45%,
-      rgba(11, 8, 12, 0.15) 100%
-    );
+    background:
+      linear-gradient(to top,
+        rgba(11, 8, 12, 0.97) 0%,
+        rgba(11, 8, 12, 0.55) 40%,
+        rgba(11, 8, 12, 0.10) 100%
+      );
     pointer-events: none;
     z-index: 2;
   }
 
-  /* ── Purple glow orbs (match site) ── */
+  /* ── Purple glow orbs ── */
   .story-glow {
     position: absolute;
     border-radius: 50%;
     pointer-events: none;
     z-index: 3;
-    filter: blur(70px);
+    filter: blur(75px);
   }
   .story-glow-1 {
-    width: 320px; height: 320px;
-    background: rgba(194, 164, 255, 0.28);
-    top: -100px; left: -100px;
+    width: 350px; height: 350px;
+    background: rgba(194, 164, 255, 0.25);
+    top: -120px; left: -120px;
     animation: sGlowPulse 7s ease-in-out infinite;
   }
   .story-glow-2 {
-    width: 240px; height: 240px;
-    background: rgba(251, 141, 255, 0.2);
-    bottom: 20%; right: -60px;
-    animation: sGlowPulse 9s ease-in-out infinite reverse;
+    width: 250px; height: 250px;
+    background: rgba(251, 141, 255, 0.18);
+    bottom: 22%; right: -70px;
+    animation: sGlowPulse 10s ease-in-out infinite reverse;
   }
 
-  /* ── Text block pinned bottom ── */
+  /* ── Scroll progress bar ── */
+  .story-progress {
+    position: absolute;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(to right, var(--accentColor), #fb8dff);
+    z-index: 20;
+    transition: width 0.05s linear;
+  }
+
+  /* ── Text block ── */
   .story-text {
     position: absolute;
-    bottom: 0;
-    left: 0; right: 0;
-    padding: 0 24px 52px;
+    bottom: 0; left: 0; right: 0;
+    padding: 0 28px 56px;
     z-index: 10;
   }
-
   .story-greeting {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 300;
     color: var(--accentColor);
-    letter-spacing: 5px;
+    letter-spacing: 6px;
     text-transform: uppercase;
-    margin: 0 0 10px;
+    margin: 0 0 12px;
     opacity: 0;
     animation: sSlideUp 0.8s ease 0.3s forwards;
   }
-
   .story-name {
-    margin: 0 0 12px;
+    margin: 0 0 14px;
     display: flex;
     flex-direction: column;
     line-height: 1;
   }
   .sn-first {
-    font-size: 68px;
+    font-size: 70px;
     font-weight: 900;
-    letter-spacing: -2px;
+    letter-spacing: -3px;
     color: #fff;
     display: block;
     opacity: 0;
     animation: sSlideUp 0.9s ease 0.5s forwards;
   }
   .sn-last {
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 200;
-    letter-spacing: 7px;
-    color: rgba(234, 229, 236, 0.6);
+    letter-spacing: 8px;
+    color: rgba(234, 229, 236, 0.55);
     display: block;
-    margin-top: 6px;
+    margin-top: 8px;
     opacity: 0;
     animation: sSlideUp 0.9s ease 0.7s forwards;
   }
-
   .story-role {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px 10px;
-    font-size: 12px;
-    font-weight: 400;
-    color: rgba(234, 229, 236, 0.45);
-    letter-spacing: 0.5px;
-    margin-bottom: 28px;
+    gap: 8px 12px;
+    font-size: 13px;
+    color: rgba(234, 229, 236, 0.42);
+    letter-spacing: 0.3px;
+    margin-bottom: 32px;
     opacity: 0;
     animation: sSlideUp 0.9s ease 0.9s forwards;
   }
-  .story-sep { color: var(--accentColor); }
+  .story-sep { color: var(--accentColor); font-size: 16px; }
 
-  /* Scroll indicator */
+  /* Scroll hint */
   .story-scroll-hint {
     display: flex;
     align-items: center;
     gap: 14px;
     opacity: 0;
-    animation: sFadeIn 1s ease 1.6s forwards;
+    animation: sFadeIn 1s ease 1.5s forwards;
   }
   .story-scroll-hint span {
     font-size: 10px;
-    letter-spacing: 4px;
+    letter-spacing: 5px;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.28);
+    color: rgba(255,255,255,0.25);
   }
   .story-scroll-line {
-    width: 50px; height: 1px;
-    background: rgba(194, 164, 255, 0.25);
+    width: 55px; height: 1px;
+    background: rgba(194,164,255,0.2);
     position: relative; overflow: hidden;
   }
   .story-scroll-line::after {
@@ -520,51 +459,51 @@ h2.landing-info-h2 {
     left: -100%; top: 0;
     width: 100%; height: 100%;
     background: var(--accentColor);
-    animation: sLineSweep 2s ease 2.2s infinite;
+    animation: sLineSweep 2s ease 2s infinite;
   }
 
-  /* ── Floating tech tags ── */
+  /* Floating tags */
   .story-tag {
     position: absolute;
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 1px;
-    padding: 7px 16px;
+    padding: 8px 18px;
     border-radius: 20px;
-    border: 1px solid rgba(194, 164, 255, 0.22);
-    background: rgba(11, 8, 12, 0.55);
+    border: 1px solid rgba(194,164,255,0.2);
+    background: rgba(11,8,12,0.6);
     color: var(--accentColor);
     backdrop-filter: blur(12px);
     z-index: 10;
     opacity: 0;
   }
-  .st-1 { top: 20%; right: 20px; animation: sTagIn 0.7s ease 1.0s forwards; }
-  .st-2 { top: 28%; right: 20px; animation: sTagIn 0.7s ease 1.2s forwards; }
-  .st-3 { top: 36%; right: 20px; animation: sTagIn 0.7s ease 1.4s forwards; }
+  .st-1 { top: 18%; right: 20px; animation: sTagIn 0.7s ease 1.0s forwards; }
+  .st-2 { top: 26%; right: 20px; animation: sTagIn 0.7s ease 1.2s forwards; }
+  .st-3 { top: 34%; right: 20px; animation: sTagIn 0.7s ease 1.4s forwards; }
 
   /* Small phones */
   @media only screen and (max-width: 380px) {
-    .sn-first { font-size: 54px; }
-    .sn-last  { font-size: 16px; letter-spacing: 5px; }
+    .sn-first { font-size: 56px; }
+    .sn-last  { font-size: 15px; letter-spacing: 5px; }
   }
 }
 
 /* ── Keyframes ── */
 @keyframes sFadeIn  { to { opacity: 1; } }
 @keyframes sSlideUp {
-  from { opacity: 0; transform: translateY(28px); }
+  from { opacity: 0; transform: translateY(30px); }
   to   { opacity: 1; transform: translateY(0);    }
 }
 @keyframes sGlowPulse {
-  0%, 100% { opacity: 0.55; transform: scale(1);    }
-  50%       { opacity: 1;    transform: scale(1.18); }
+  0%,100% { opacity: 0.5;  transform: scale(1);    }
+  50%     { opacity: 0.95; transform: scale(1.2);  }
 }
 @keyframes sTagIn {
-  from { opacity: 0; transform: translateX(18px); }
+  from { opacity: 0; transform: translateX(20px); }
   to   { opacity: 1; transform: translateX(0);    }
 }
 @keyframes sLineSweep {
   0%   { left: -100%; }
   100% { left:  100%; }
 }
-
+      
