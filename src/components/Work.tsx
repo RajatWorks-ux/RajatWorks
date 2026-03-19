@@ -9,6 +9,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Work = () => {
   useEffect(() => {
+    // Mobile pe horizontal scroll band — seedha vertical layout
+    if (window.innerWidth < 1025) return;
+
     let translateX: number = 0;
 
     function setTranslateX() {
