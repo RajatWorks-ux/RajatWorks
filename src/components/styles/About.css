@@ -69,3 +69,92 @@
     line-height: 2.7rem;
   }
 }
+
+/* ════════════════════════
+   Stats Cards
+════════════════════════ */
+.about-stats {
+  display: flex;
+  gap: 14px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+.about-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 18px 22px;
+  border-radius: 12px;
+  border: 1px solid rgba(194, 164, 255, 0.18);
+  background: rgba(194, 164, 255, 0.04);
+  flex: 1;
+  min-width: 80px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, background 0.3s;
+}
+/* Shimmer top border */
+.about-stat::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(194, 164, 255, 0.55),
+    transparent
+  );
+}
+.about-stat:hover {
+  border-color: rgba(194, 164, 255, 0.45);
+  background: rgba(194, 164, 255, 0.08);
+}
+.astat-num {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--accentColor);
+  line-height: 1;
+  font-family: "Geist", sans-serif;
+}
+.astat-lbl {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(234, 229, 236, 0.45);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ── Skill Tags ── */
+.about-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.about-tag {
+  font-size: 12px;
+  font-weight: 400;
+  padding: 6px 15px;
+  border-radius: 20px;
+  border: 1px solid rgba(234, 229, 236, 0.12);
+  color: rgba(234, 229, 236, 0.5);
+  letter-spacing: 0.4px;
+  transition: 0.3s;
+  cursor: default;
+}
+.about-tag:hover {
+  border-color: var(--accentColor);
+  color: var(--accentColor);
+}
+
+@media only screen and (min-width: 1025px) {
+  .about-stats { margin-top: 40px; gap: 18px; }
+  .astat-num   { font-size: 36px; }
+  .astat-lbl   { font-size: 12px; }
+}
+@media only screen and (max-width: 400px) {
+  .astat-num { font-size: 24px; }
+  .about-stat { padding: 14px 16px; }
+}
+
