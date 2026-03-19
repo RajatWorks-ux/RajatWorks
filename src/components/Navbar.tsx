@@ -54,11 +54,12 @@ const Navbar = () => {
   return (
     <>
       <div className="header">
-        {/* ── RajatWorks Logo ── */}
-        <a href="/#" className="navbar-title" data-cursor="disable">
-          <span className="logo-rajat">Rajat</span>
-          <span className="logo-works">Works</span>
-          <span className="logo-dot"></span>
+
+        {/* ══ RajatWorks Logo ══ */}
+        <a href="/#" className="navbar-title rw-logo" data-cursor="disable">
+          <span className="rw-logo-thin">Rajat</span>
+          <span className="rw-logo-bold">Works</span>
+          <span className="rw-logo-dot" />
         </a>
 
         <a
@@ -68,22 +69,11 @@ const Navbar = () => {
         >
           rajatworks1@gmail.com
         </a>
+
         <ul>
-          <li>
-            <a data-href="#about" href="#about">
-              <HoverLinks text="ABOUT" />
-            </a>
-          </li>
-          <li>
-            <a data-href="#work" href="#work">
-              <HoverLinks text="WORK" />
-            </a>
-          </li>
-          <li>
-            <a data-href="#contact" href="#contact">
-              <HoverLinks text="CONTACT" />
-            </a>
-          </li>
+          <li><a data-href="#about" href="#about"><HoverLinks text="ABOUT" /></a></li>
+          <li><a data-href="#work"  href="#work" ><HoverLinks text="WORK"  /></a></li>
+          <li><a data-href="#contact" href="#contact"><HoverLinks text="CONTACT" /></a></li>
         </ul>
       </div>
 
@@ -95,4 +85,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
+        
