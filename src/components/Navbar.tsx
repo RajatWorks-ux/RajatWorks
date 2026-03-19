@@ -8,6 +8,8 @@ import "./styles/Navbar.css";
 gsap.registerPlugin(ScrollTrigger);
 export let lenis: Lenis | null = null;
 
+const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+
 const Navbar = () => {
   useEffect(() => {
     lenis = new Lenis({
@@ -21,7 +23,14 @@ const Navbar = () => {
       infinite: false,
     });
 
-    lenis.stop();
+    // ✅ MAIN FIX:
+    // Desktop pe lenis.stop() — loading khatam hone tak ruka rehta hai
+    // Mobile pe seedha lenis.start() — koi loading nahi, scroll seedha
+    if (isMobile) {
+      lenis.start();
+    } else {
+      lenis.stop();
+    }
 
     function raf(time: number) {
       lenis?.raf(time);
@@ -71,8 +80,8 @@ const Navbar = () => {
         </a>
 
         <ul>
-          <li><a data-href="#about" href="#about"><HoverLinks text="ABOUT" /></a></li>
-          <li><a data-href="#work"  href="#work" ><HoverLinks text="WORK"  /></a></li>
+          <li><a data-href="#about"   href="#about"  ><HoverLinks text="ABOUT"   /></a></li>
+          <li><a data-href="#work"    href="#work"   ><HoverLinks text="WORK"    /></a></li>
           <li><a data-href="#contact" href="#contact"><HoverLinks text="CONTACT" /></a></li>
         </ul>
       </div>
@@ -85,4 +94,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
         
