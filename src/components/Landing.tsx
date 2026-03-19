@@ -3,40 +3,50 @@ import "./styles/Landing.css";
 import { config } from "../config";
 
 const Landing = ({ children }: PropsWithChildren) => {
-  const nameParts = config.developer.fullName.split(" ");
-  const firstName = nameParts[0] || config.developer.name;
-  const lastName  = nameParts.slice(1).join(" ") || "";
+  const nameParts  = config.developer.fullName.split(" ");
+  const firstName  = nameParts[0] || config.developer.name;
+  const lastName   = nameParts.slice(1).join(" ") || "";
 
-  const videoRef  = useRef<HTMLVideoElement>(null);
-  const storyRef  = useRef<HTMLDivElement>(null);
+  const videoRef    = useRef<HTMLVideoElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Only on mobile
     if (window.innerWidth >= 1025) return;
 
-    const video = videoRef.current;
+    const video    = videoRef.current;
+    const progress = progressRef.current;
     if (!video) return;
 
-    // Pause auto-play — scroll se drive karenge
-    const onLoaded = () => {
+    // Video ko pause rakho — scroll se drive karenge
+    const onMeta = () => {
       video.pause();
       video.currentTime = 0;
     };
-    video.addEventListener("loadedmetadata", onLoaded);
+    video.addEventListener("loadedmetadata", onMeta);
 
-    // Scroll → video progress
+    // Scroll → video currentTime + progress bar
     const onScroll = () => {
-      if (!video.duration || !storyRef.current) return;
-      const rect     = storyRef.current.getBoundingClientRect();
-      const scrolled = -rect.top;                          // kitna scroll hua
-      const total    = rect.height - window.innerHeight;   // total scrollable
-      const progress = Math.max(0, Math.min(1, scrolled / total));
-      video.currentTime = progress * video.duration;
+      if (!video.duration) return;
+
+      // landing-section ki height 300vh hai
+      // pehla vh video hai, baaki 2vh scroll room
+      const scrollY  = window.scrollY;
+      const oneVh    = window.innerHeight;
+      const scrollIn = Math.max(0, scrollY);           // kitna scroll hua
+      const maxScroll = oneVh * 2;                     // 200vh = poori video
+      const pct      = Math.min(1, scrollIn / maxScroll);
+
+      video.currentTime = pct * video.duration;
+
+      if (progress) {
+        progress.style.width = `${pct * 100}%`;
+      }
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
+
     return () => {
-      video.removeEventListener("loadedmetadata", onLoaded);
+      video.removeEventListener("loadedmetadata", onMeta);
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
@@ -45,7 +55,7 @@ const Landing = ({ children }: PropsWithChildren) => {
     <>
       <div className="landing-section" id="landingDiv">
 
-        {/* ── Desktop text (same as before) ── */}
+        {/* ── Desktop text (same as original) ── */}
         <div className="landing-container">
           <div className="landing-intro">
             <h2>Hello! I'm</h2>
@@ -69,25 +79,24 @@ const Landing = ({ children }: PropsWithChildren) => {
         </div>
 
         {/* ══════════════════════════════════════════
-            MOBILE STORYTELLING  —  only <1025px
-            300vh height = scroll space for video
+            MOBILE VIDEO SCROLL  —  ≤1024px only
+            300vh tall, sticky inner, scroll = video
         ═════════════════════════════════════════ */}
-        <div className="mobile-story" ref={storyRef}>
-
-          {/* Sticky video wrapper */}
+        <div className="mobile-story">
           <div className="story-sticky">
 
-            {/* Purple glows — match site vibe */}
+            {/* Scroll progress bar — top mein thin purple line */}
+            <div className="story-progress" ref={progressRef} />
+
+            {/* Purple glows */}
             <div className="story-glow story-glow-1" />
             <div className="story-glow story-glow-2" />
 
             {/*
-              ╔══════════════════════════════════╗
-              ║  TUMHARA EK KAAM:                ║
-              ║  Video ko rakho yahan:           ║
-              ║  public/rajat.mp4         ║
-              ║  (.mp4 / .webm / .mov sab chalte)║
-              ╚══════════════════════════════════╝
+              ╔══════════════════════════════════════╗
+              ║  Video path: public/rajat.mp4        ║
+              ║  (GitHub mein public/ ke andar)      ║
+              ╚══════════════════════════════════════╝
             */}
             <video
               ref={videoRef}
@@ -100,10 +109,10 @@ const Landing = ({ children }: PropsWithChildren) => {
               preload="auto"
             />
 
-            {/* Dark gradient overlay */}
+            {/* Bottom gradient */}
             <div className="story-overlay" />
 
-            {/* Text at bottom */}
+            {/* Text */}
             <div className="story-text">
               <p className="story-greeting">Hello, I'm</p>
               <h1 className="story-name">
@@ -121,14 +130,14 @@ const Landing = ({ children }: PropsWithChildren) => {
               </div>
             </div>
 
-            {/* Floating tech tags */}
+            {/* Floating tags */}
             <span className="story-tag st-1">React</span>
             <span className="story-tag st-2">Node.js</span>
             <span className="story-tag st-3">Next.js</span>
           </div>
         </div>
 
-        {/* Desktop: 3D character (unchanged) */}
+        {/* Desktop: 3D character */}
         {children}
       </div>
     </>
@@ -136,5 +145,6 @@ const Landing = ({ children }: PropsWithChildren) => {
 };
 
 export default Landing;
+
 
               
