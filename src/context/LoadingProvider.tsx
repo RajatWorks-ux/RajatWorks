@@ -1,8 +1,9 @@
- import {
+import {
   createContext,
   PropsWithChildren,
   useContext,
   useState,
+  useEffect,
 } from "react";
 import Loading from "../components/Loading";
 
@@ -14,9 +15,20 @@ interface LoadingType {
 
 export const LoadingContext = createContext<LoadingType | null>(null);
 
+// Mobile pe character load nahi hota — loading skip karo
+const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+
 export const LoadingProvider = ({ children }: PropsWithChildren) => {
-  const [isLoading, setIsLoading] = useState(true);
+  // Mobile pe isLoading seedha false — no loading screen
+  const [isLoading, setIsLoading] = useState(!isMobile);
   const [loading, setLoading] = useState(0);
+
+  useEffect(() => {
+    if (isMobile) {
+      // Mobile pe koi loading nahi — seedha site dikhao
+      setIsLoading(false);
+    }
+  }, []);
 
   const value = {
     isLoading,
@@ -39,3 +51,4 @@ export const useLoading = () => {
   }
   return context;
 };
+
