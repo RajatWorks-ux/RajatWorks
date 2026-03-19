@@ -6,7 +6,6 @@ import {
   useEffect,
 } from "react";
 import Loading from "../components/Loading";
-import { initialFX } from "../components/utils/initialFX";
 
 interface LoadingType {
   isLoading: boolean;
@@ -19,16 +18,30 @@ export const LoadingContext = createContext<LoadingType | null>(null);
 const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
 
 export const LoadingProvider = ({ children }: PropsWithChildren) => {
-  // Mobile pe seedha false — loading screen nahi dikhega
   const [isLoading, setIsLoading] = useState(!isMobile);
   const [loading, setLoading]     = useState(0);
 
   useEffect(() => {
     if (!isMobile) return;
-    // Mobile pe: body dark karo + lenis start karo seedha
+
+    // Body dark + scroll enable — seedha, koi lenis dependency nahi
     document.body.style.backgroundColor = "#0b080c";
-    document.body.style.overflowY = "auto";
-    initialFX();
+    document.body.style.overflow        = "auto";
+    document.body.style.overflowX       = "hidden";
+
+    // Thoda wait karo taaki Navbar mount ho aur lenis ready ho
+    const timer = setTimeout(() => {
+      // Header visible karo
+      const header = document.querySelector(".header") as HTMLElement;
+      if (header) header.style.opacity = "1";
+
+      // Lenis import karke start karo
+      import("../components/Navbar").then(({ lenis }) => {
+        if (lenis) lenis.start();
+      });
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const value = { isLoading, setIsLoading, setLoading };
@@ -46,3 +59,4 @@ export const useLoading = () => {
   if (!context) throw new Error("useLoading must be used within a LoadingProvider");
   return context;
 };
+
