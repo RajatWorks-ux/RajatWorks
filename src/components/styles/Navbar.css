@@ -1,4 +1,4 @@
-  .header {
+.header {
   display: flex;
   max-width: var(--cMaxWidth);
   width: var(--cWidth);
@@ -107,7 +107,6 @@
   letter-spacing: -0.5px;
   text-transform: uppercase;
 }
-/* Glowing dot after "Works" */
 .rw-logo-dot {
   display: inline-block;
   width: 5px;
@@ -135,207 +134,10 @@
 }
 
 /* ════════════════════════════════════════════════════════
-   HAMBURGER BUTTON  — only visible on ≤ 768px
-   (Desktop: display none enforced below)
-════════════════════════════════════════════════════════ */
-.hamburger-btn {
-  display: none; /* hidden everywhere by default */
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 38px;
-  height: 38px;
-  background: rgba(194, 164, 255, 0.07);
-  border: 1px solid rgba(194, 164, 255, 0.18);
-  border-radius: 8px;
-  cursor: pointer;
-  padding: 0;
-  z-index: 10001;
-  flex-shrink: 0;
-  transition: background 0.2s, border-color 0.2s;
-}
-.hamburger-btn:active {
-  background: rgba(194, 164, 255, 0.15);
-}
-.hamburger-btn span {
-  display: block;
-  width: 18px;
-  height: 1.5px;
-  background: #eae5ec;
-  border-radius: 2px;
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity   0.25s ease,
-              width     0.3s ease;
-  transform-origin: center;
-}
-/* Animate to X when open */
-.hamburger-btn.is-open span:nth-child(1) {
-  transform: translateY(6.5px) rotate(45deg);
-}
-.hamburger-btn.is-open span:nth-child(2) {
-  opacity: 0;
-  width: 0;
-}
-.hamburger-btn.is-open span:nth-child(3) {
-  transform: translateY(-6.5px) rotate(-45deg);
-}
-
-/* Show only on phones */
-@media only screen and (max-width: 768px) {
-  .hamburger-btn { display: flex; }
-  /* Hide desktop nav links on phones */
-  .header > ul { display: none !important; }
-}
-
-/* ════════════════════════════════════════════════════════
-   MOBILE SLIDE-IN DRAWER
-════════════════════════════════════════════════════════ */
-.mobile-drawer {
-  display: none; /* hidden on desktop */
-}
-
-@media only screen and (max-width: 768px) {
-  .mobile-drawer {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 100dvh;
-    width: 78vw;
-    max-width: 310px;
-    background: rgba(10, 7, 12, 0.97);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-left: 1px solid rgba(194, 164, 255, 0.12);
-    z-index: 10000;
-    padding: 80px 36px 50px;
-    box-sizing: border-box;
-    transform: translateX(110%);
-    transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-  }
-  .mobile-drawer.is-open {
-    transform: translateX(0);
-  }
-
-  /* Brand in drawer */
-  .md-brand {
-    font-size: 15px;
-    margin-bottom: 48px;
-    display: flex;
-    align-items: flex-end;
-    gap: 1px;
-    opacity: 0.6;
-  }
-  .md-brand .rw-logo-thin {
-    font-weight: 200;
-    color: #eae5ec;
-  }
-  .md-brand .rw-logo-bold {
-    font-weight: 900;
-    color: var(--accentColor);
-    text-transform: uppercase;
-  }
-
-  /* Nav list */
-  .mobile-drawer ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: 0;
-  }
-  .mobile-drawer ul li {
-    border-bottom: 1px solid rgba(194, 164, 255, 0.08);
-  }
-  .mobile-drawer ul li a {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 22px 0;
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: rgba(234, 229, 236, 0.85);
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: color 0.25s, letter-spacing 0.25s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .mobile-drawer ul li a:active {
-    color: var(--accentColor);
-    letter-spacing: 3px;
-  }
-  .md-num {
-    font-size: 10px;
-    font-weight: 300;
-    color: var(--accentColor);
-    letter-spacing: 1px;
-    opacity: 0.7;
-    flex-shrink: 0;
-  }
-
-  /* Footer email */
-  .md-footer {
-    margin-top: auto;
-    padding-top: 30px;
-  }
-  .md-email {
-    font-size: 11px;
-    color: rgba(234, 229, 236, 0.3);
-    letter-spacing: 0.5px;
-    text-decoration: none;
-    word-break: break-all;
-  }
-
-  /* Decorative glow blob inside drawer */
-  .md-glow {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: rgba(194, 164, 255, 0.06);
-    filter: blur(50px);
-    bottom: -60px;
-    right: -60px;
-    pointer-events: none;
-  }
-}
-
-/* ════════════════════════════════════════════════════════
-   TAP OVERLAY (behind drawer)
-════════════════════════════════════════════════════════ */
-.nav-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-}
-@media only screen and (max-width: 768px) {
-  .nav-overlay {
-    display: block;
-    pointer-events: none;
-  }
-  .nav-overlay.is-visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
-/* ════════════════════════════════════════════════════════
-   SCROLL PROGRESS BAR — thin line at very top, mobile only
+   SCROLL PROGRESS BAR — thin purple line at top, mobile only
 ════════════════════════════════════════════════════════ */
 #scroll-progress-bar {
-  display: none; /* hidden on desktop */
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -356,3 +158,4 @@
   #scroll-progress-bar { display: block; }
 }
 
+  
