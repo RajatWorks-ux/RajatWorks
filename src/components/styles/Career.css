@@ -214,3 +214,46 @@
     justify-content: left;
   }
 }
+
+/* ════════════════════════════════════
+   MOBILE ANIMATIONS — Career Section
+════════════════════════════════════ */
+@media only screen and (max-width: 1024px) {
+
+  /* Career heading */
+  .career-section h2 {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: mFadeUp 0.9s ease forwards;
+    animation-play-state: paused;
+  }
+  .career-section.in-view h2 {
+    animation-play-state: running;
+  }
+
+  /* Each career card — stagger */
+  .career-info-box {
+    opacity: 0;
+    transform: translateX(-30px);
+    animation: mSlideRight 0.7s ease forwards;
+    animation-play-state: paused;
+  }
+  .career-info-box:nth-child(1) { animation-delay: 0.1s; }
+  .career-info-box:nth-child(2) { animation-delay: 0.25s; }
+  .career-info-box:nth-child(3) { animation-delay: 0.4s; }
+
+  .career-section.in-view .career-info-box {
+    animation-play-state: running;
+  }
+
+  /* Timeline line draw animation */
+  .career-section.in-view .career-timeline {
+    animation: timelineDraw 1.2s ease 0.3s forwards;
+  }
+
+  @keyframes timelineDraw {
+    from { max-height: 0%; opacity: 0; }
+    to   { max-height: 100%; opacity: 1; }
+  }
+}
+
