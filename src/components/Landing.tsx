@@ -94,29 +94,31 @@ const Landing = ({ children }: PropsWithChildren) => {
       reveal(".story-scroll-hint", p >= 0.75 && p <= 0.97);
     };
 
-    // ── UNLOCK: animation complete → hide hero → scroll to About ──
+    // ── UNLOCK: animation complete → hero becomes static, normal scroll starts ──
     const unlock = () => {
       if (!lockedRef.current) return;
       lockedRef.current = false;
 
-      // Hide the fixed hero overlay
       const wrap = document.querySelector(".story-fixed-wrap") as HTMLElement | null;
+
+      // Step 1: Restore body scroll first
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width    = "";
+
+      // Step 2: Convert hero from fixed → static block
+      // So it stays at top of page — user can scroll back up to see it
       if (wrap) {
-        wrap.style.transition = "opacity 0.4s ease";
-        wrap.style.opacity    = "0";
-        setTimeout(() => { wrap.style.display = "none"; }, 420);
+        wrap.style.position = "relative";
+        wrap.style.height   = "100svh";
+        wrap.style.zIndex   = "1";
       }
 
-      // Restore body scroll
-      document.body.style.overflow  = "";
-      document.body.style.position  = "";
-      document.body.style.width     = "";
-
-      // Scroll to About section
+      // Step 3: Smoothly scroll to About
       setTimeout(() => {
         const about = document.getElementById("about");
         if (about) about.scrollIntoView({ behavior: "smooth" });
-      }, 440);
+      }, 80);
     };
 
     // ── LOCK: freeze page scroll while hero is active ──
