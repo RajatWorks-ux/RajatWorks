@@ -1,38 +1,39 @@
-// ════════════════════════════════════════════════
-// useInView.ts — Mobile scroll animation trigger
-// Path: src/utils/useInView.ts
+// ════════════════════════════════════════════════════════════
+// useInView.ts — Mobile scroll animation trigger (FIXED)
 //
-// Kaise use karo:
-//   import { initInView } from "../utils/useInView";
-//   useEffect(() => { initInView(); }, []);
-// ════════════════════════════════════════════════
+// What changed:
+//   • Added .whatIDO to observed targets
+//   • Double-RAF ensures DOM is fully painted before observing
+//   • Lower rootMargin for better trigger timing on small screens
+// ════════════════════════════════════════════════════════════
 
 export function initInView() {
-  // Mobile only
+  // Desktop: no-op
   if (window.innerWidth >= 1025) return;
 
-  const targets = document.querySelectorAll(
-    ".about-section, .career-section, .work-section, .contact-section, .techstack"
-  );
+  // Double requestAnimationFrame = guaranteed post-paint
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const targets = document.querySelectorAll(
+        ".about-section, .whatIDO, .career-section, .work-section, .contact-section, .techstack"
+      );
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("in-view");
-          // Ek baar trigger ho gaya — unobserve karo
-          observer.unobserve(entry.target);
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in-view");
+              observer.unobserve(entry.target); // Fire once
+            }
+          });
+        },
+        {
+          threshold: 0.08,                // Trigger when 8% visible
+          rootMargin: "0px 0px -20px 0px", // Small negative bottom margin
         }
-      });
-    },
-    {
-      threshold: 0.12, // 12% visible hote hi animation start
-      rootMargin: "0px 0px -50px 0px",
-    }
-  );
+      );
 
-  targets.forEach((el) => observer.observe(el));
-
-  return () => observer.disconnect();
+      targets.forEach((el) => observer.observe(el));
+    });
+  });
 }
-
