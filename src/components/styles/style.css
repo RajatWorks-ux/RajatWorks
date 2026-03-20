@@ -1,29 +1,17 @@
-.hover-link {
-  position: relative;
-  display: flex;
-  text-wrap: nowrap;
-  overflow: hidden;
-}
-.hover-in {
-  position: relative;
-  transition: 0.3s;
-}
-.hover-in div {
-  display: flex;
-  position: absolute;
-  top: 100%;
-  left: 0;
-}
-.hover-link:hover .hover-in {
-  transform: translateY(-100%);
-  color: var(--accentColor);
-}
+/* ════════════════════════════════════════════════
+   style.css — Global shared styles + mobile polish
+════════════════════════════════════════════════ */
 
-/* ══════════════════════════════════════════════════════════
+/* ── Hover link (desktop menu effect) ── */
+.hover-link { position: relative; display: flex; text-wrap: nowrap; overflow: hidden; }
+.hover-in   { position: relative; transition: 0.3s; }
+.hover-in div { display: flex; position: absolute; top: 100%; left: 0; }
+.hover-link:hover .hover-in { transform: translateY(-100%); color: var(--accentColor); }
+
+/* ════════════════════════════════════════════════
    GLOBAL MOBILE KEYFRAMES
-   Used across About, Career, Work, WhatIDo, TechStack, Contact
-   Defined here once so every component can use them.
-══════════════════════════════════════════════════════════ */
+   Used across all sections — defined once here
+════════════════════════════════════════════════ */
 @keyframes mFadeUp {
   from { opacity: 0; transform: translateY(35px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -34,33 +22,104 @@
 }
 @keyframes mScaleUp {
   from { opacity: 0; transform: translateY(25px) scale(0.93); }
-  to   { opacity: 1; transform: translateY(0)    scale(1); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes mFadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-/* ══════════════════════════════════════════════════════════
-   TAP RIPPLE — mobile touch feedback on all tappable elements
-══════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════
+   MOBILE GLOBAL POLISH  (max-width: 1024px)
+════════════════════════════════════════════════ */
 @media only screen and (max-width: 1024px) {
-  a,
-  button {
+
+  /* ── Remove tap highlight globally ── */
+  *, *::before, *::after {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── Smooth scrolling optimisation ── */
+  html {
+    scroll-behavior: smooth;
+    /* Momentum scroll on iOS */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body {
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Safe area padding — respects notch */
+    padding-left:  env(safe-area-inset-left,  0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* ── GPU-accelerated elements ── */
+  .story-fixed-wrap,
+  .frame-sticky,
+  .frame-canvas,
+  .about-section,
+  .career-section,
+  .work-section,
+  .contact-section,
+  .techstack {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* ── Tap ripple effect ── */
+  a, button {
     -webkit-tap-highlight-color: transparent;
   }
   .tap-ripple {
     position: absolute;
     border-radius: 50%;
-    background: rgba(194, 164, 255, 0.25);
+    background: rgba(194, 164, 255, 0.22);
     transform: scale(0);
     animation: rippleEffect 0.55s ease-out forwards;
     pointer-events: none;
     z-index: 9999;
     mix-blend-mode: screen;
   }
+
+  /* ── Global font rendering ── */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ── Section spacing — consistent vertical rhythm ── */
+  .about-section,
+  .whatIDO,
+  .career-section,
+  .work-section,
+  .techstack {
+    position: relative;
+  }
+
+  /* ── Links — tappable area ── */
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* ── Resume sidebar — hide on very small screens ── */
+  .resume-sidebar {
+    display: none !important;
+  }
 }
+
+/* ── Ripple animation (used on all screen sizes) ── */
 @keyframes rippleEffect {
   to { transform: scale(4); opacity: 0; }
+}
+
+/* ── Safe area utility class ── */
+.safe-bottom {
+  padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
 }
 
