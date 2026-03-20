@@ -1,52 +1,56 @@
 /* ════════════════════════════════════════════════════════════════════
    TechStack.css
-   ─────────────────────────────────────────────────────────────────
-   DESKTOP  →  untouched (no media query wrapping = global)
-   MOBILE   →  everything inside @media (max-width: 1024px)
+   DESKTOP  →  inside @media (min-width: 1025px)  — untouched logic
+   MOBILE   →  inside @media (max-width: 1024px)
 ════════════════════════════════════════════════════════════════════ */
 
-/* ══════════════════════════════════════════
-   DESKTOP — original styles (no changes)
-══════════════════════════════════════════ */
+/* ── Shared base ── */
 .techstack {
   width: var(--cWidth);
   max-width: var(--cMaxWidth);
   margin: auto;
 }
-.techstack h2 {
-  font-size: 70px;
-  font-weight: 400;
-  text-align: center;
-}
-.tech-canvas {
-  width: 100% !important;
-  height: 600px !important;
+
+/* ══ FIX 3: Desktop h2 wrapped in min-width so it doesn't bleed into mobile ══ */
+@media only screen and (min-width: 1025px) {
+  .techstack h2 {
+    font-size: 70px;
+    font-weight: 400;
+    text-align: center;
+  }
+  .tech-canvas {
+    width: 100% !important;
+    height: 600px !important;
+  }
 }
 
-
-/* ══════════════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════
    MOBILE ONLY  (max-width: 1024px)
-══════════════════════════════════════════════════════════════════ */
+════════════════════════════════════════════════ */
 @media only screen and (max-width: 1024px) {
 
   /* ── Section wrapper ── */
   .techstack {
-    padding: 56px 0 64px;
+    padding: 72px 0 64px;
     width: 100%;
     max-width: 100%;
     margin: 0;
+    position: relative;
+    z-index: 1;
   }
 
   /* ── Section title ── */
   .ts-title {
-    font-size: 42px;
+    font-size: 38px;
     font-weight: 700;
     letter-spacing: -1px;
     line-height: 1;
-    margin: 0 0 36px;
-    padding: 0 24px;
+    margin: 0 0 32px;
+    padding: 0 20px;
     color: #fff;
-    /* Slide up on reveal */
+    display: block;
+    position: relative;
+    z-index: 2;
     opacity: 0;
     transform: translateY(32px);
     transition: opacity 0.7s ease, transform 0.7s ease;
@@ -55,7 +59,7 @@
     opacity: 1;
     transform: translateY(0);
   }
-  /* Accent word — gradient */
+  /* Gradient accent word */
   .ts-title-accent {
     background: linear-gradient(135deg, #c2a4ff 0%, #fb8dff 100%);
     -webkit-background-clip: text;
@@ -79,16 +83,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 16px;
     padding: 28px 16px 24px;
-    min-height: 140px;
-    border-radius: 18px;
+    min-height: 170px;
+    border-radius: 20px;
     border: 1px solid rgba(194, 164, 255, 0.10);
     background: rgba(194, 164, 255, 0.04);
     overflow: hidden;
     cursor: default;
-
-    /* IntersectionObserver will add tc-visible */
     opacity: 0;
     transform: translateY(30px) scale(0.94);
     transition:
@@ -97,8 +99,6 @@
       border-color 0.25s ease,
       background  0.25s ease;
   }
-
-  /* Revealed state */
   .tech-mobile-item.tc-visible {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -111,91 +111,68 @@
     top: 0; left: 10%; right: 10%;
     height: 1px;
     background: linear-gradient(
-      to right,
-      transparent,
-      rgba(194, 164, 255, 0.45),
-      transparent
+      to right, transparent, rgba(194,164,255,0.45), transparent
     );
     border-radius: 1px;
   }
 
-  /* Tap / active state — glow pulse */
+  /* Tap glow */
   .tech-mobile-item:active {
-    border-color: rgba(194, 164, 255, 0.45);
-    background: rgba(194, 164, 255, 0.10);
+    border-color: rgba(194,164,255,0.45);
+    background: rgba(194,164,255,0.10);
     transform: scale(0.96);
     transition: transform 0.12s ease;
   }
 
-  /* Tap ripple background layer */
+  /* Tap ripple bg */
   .tmi-tap-bg {
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(
-      circle at 50% 50%,
-      rgba(194, 164, 255, 0.14) 0%,
-      transparent 70%
-    );
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
+    position: absolute; inset: 0; border-radius: inherit;
+    background: radial-gradient(circle at 50% 50%, rgba(194,164,255,0.14) 0%, transparent 70%);
+    opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
   }
-  .tech-mobile-item:active .tmi-tap-bg {
-    opacity: 1;
-  }
+  .tech-mobile-item:active .tmi-tap-bg { opacity: 1; }
 
-  /* ── Icon wrapper ── */
+  /* ── Icon wrapper — 88px for crisp display ── */
   .tmi-icon-wrap {
     position: relative;
-    width: 64px;
-    height: 64px;
+    width: 88px;
+    height: 88px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
   }
 
-  /* Icon */
+  /* Icon image — 84px, sharp rendering */
   .tmi-icon-wrap img {
-    width: 60px;
-    height: 60px;
+    width: 84px;
+    height: 84px;
     object-fit: contain;
     display: block;
     position: relative;
     z-index: 1;
-    transition: transform 0.3s cubic-bezier(0.34, 1.5, 0.64, 1);
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
   }
   .tech-mobile-item.tc-visible .tmi-icon-wrap img {
     animation: tIconPop 0.5s cubic-bezier(0.34, 1.6, 0.64, 1) both;
-    animation-delay: inherit;
   }
 
-  /* Icon glow blob behind icon */
+  /* Glow behind icon */
   .tmi-icon-glow {
-    position: absolute;
-    inset: -8px;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle,
-      rgba(194, 164, 255, 0.20) 0%,
-      transparent 70%
-    );
-    filter: blur(10px);
-    z-index: 0;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    position: absolute; inset: -8px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(194,164,255,0.22) 0%, transparent 70%);
+    filter: blur(10px); z-index: 0;
+    opacity: 0; transition: opacity 0.3s ease;
   }
   .tech-mobile-item:active .tmi-icon-glow,
-  .tech-mobile-item.tc-visible .tmi-icon-glow {
-    opacity: 1;
-  }
+  .tech-mobile-item.tc-visible .tmi-icon-glow { opacity: 1; }
 
   /* ── Label ── */
   .tmi-label {
     font-size: 13px;
     font-weight: 500;
-    color: rgba(234, 229, 236, 0.65);
+    color: rgba(234,229,236,0.65);
     letter-spacing: 0.6px;
     text-align: center;
     text-transform: uppercase;
@@ -203,35 +180,22 @@
   }
 
   /* ── Canvas hidden on mobile ── */
-  .tech-canvas {
-    display: none !important;
-  }
+  .tech-canvas { display: none !important; }
 
-  /* ── Very small phones (≤380px) — keep 2 cols but smaller padding ── */
+  /* Very small phones */
   @media (max-width: 380px) {
-    .tech-mobile-grid {
-      gap: 10px;
-      padding: 0 14px;
-    }
-    .tech-mobile-item {
-      min-height: 120px;
-      padding: 22px 10px 18px;
-    }
-    .tmi-icon-wrap img {
-      width: 50px;
-      height: 50px;
-    }
-    .tmi-label {
-      font-size: 11px;
-    }
+    .tech-mobile-grid { gap: 10px; padding: 0 14px; }
+    .tech-mobile-item { min-height: 140px; padding: 26px 10px 20px; }
+    .tmi-icon-wrap    { width: 68px; height: 68px; }
+    .tmi-icon-wrap img { width: 64px; height: 64px; }
+    .tmi-label        { font-size: 11px; }
   }
 }
 
-/* ─────────────────────────────────────────────────────────
-   KEYFRAMES
-───────────────────────────────────────────────────────── */
+/* ── Keyframes ── */
 @keyframes tIconPop {
   0%   { transform: scale(0.7) translateY(8px); opacity: 0; }
   70%  { transform: scale(1.12) translateY(-2px); opacity: 1; }
   100% { transform: scale(1) translateY(0); opacity: 1; }
-         }
+                       }
+
