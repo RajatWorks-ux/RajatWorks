@@ -1,13 +1,13 @@
 /* ════════════════════════════════════════════════════════════════
-   TechStack — Mobile grid styles & animations
-   All rules are inside @media (max-width: 1024px) — desktop untouched
+   TechStack — Mobile grid styles
+   All rules inside @media max-width:1024px — desktop untouched
 ════════════════════════════════════════════════════════════════ */
 
 @media only screen and (max-width: 1024px) {
 
-  /* Section wrapper */
+  /* Section wrapper — tight, no extra space */
   .techstack {
-    padding: 60px 0 40px;
+    padding: 40px 0 50px;
     width: var(--cWidth);
     max-width: calc(100% - 50px);
     margin: auto;
@@ -17,137 +17,81 @@
   .techstack h2 {
     font-size: 40px;
     font-weight: 500;
-    margin: 0 0 30px;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: mFadeUp 0.8s ease forwards;
-    animation-play-state: paused;
-  }
-  .techstack.in-view h2 {
-    animation-play-state: running;
+    margin: 0 0 24px;
   }
 
   /* 4-column grid */
   .tech-mobile-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    gap: 10px;
   }
 
-  /* ── Each tech card ── */
+  /* ── Each tech card — VISIBLE by default ── */
   .tech-mobile-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 14px 6px;
+    padding: 16px 6px 12px;
     border-radius: 12px;
-    border: 1px solid rgba(194, 164, 255, 0.1);
-    background: rgba(194, 164, 255, 0.03);
+    border: 1px solid rgba(194, 164, 255, 0.12);
+    background: rgba(194, 164, 255, 0.04);
     position: relative;
     overflow: hidden;
     cursor: default;
-    transition: border-color 0.3s ease, background 0.3s ease,
-                transform 0.25s ease;
-
-    /* Entrance animation — paused until in-view */
+    /* Staggered entrance — visible immediately as fallback */
     opacity: 0;
-    transform: translateY(22px) scale(0.88);
-    animation: techCardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    animation-play-state: paused;
+    animation: techCardIn 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
   }
 
-  /* Stagger each of the 8 items */
-  .tech-mobile-item:nth-child(1) { animation-delay: 0.06s; }
-  .tech-mobile-item:nth-child(2) { animation-delay: 0.12s; }
-  .tech-mobile-item:nth-child(3) { animation-delay: 0.18s; }
-  .tech-mobile-item:nth-child(4) { animation-delay: 0.24s; }
-  .tech-mobile-item:nth-child(5) { animation-delay: 0.30s; }
-  .tech-mobile-item:nth-child(6) { animation-delay: 0.36s; }
-  .tech-mobile-item:nth-child(7) { animation-delay: 0.42s; }
-  .tech-mobile-item:nth-child(8) { animation-delay: 0.48s; }
+  /* Stagger delays */
+  .tech-mobile-item:nth-child(1) { animation-delay: 0.1s; }
+  .tech-mobile-item:nth-child(2) { animation-delay: 0.17s; }
+  .tech-mobile-item:nth-child(3) { animation-delay: 0.24s; }
+  .tech-mobile-item:nth-child(4) { animation-delay: 0.31s; }
+  .tech-mobile-item:nth-child(5) { animation-delay: 0.38s; }
+  .tech-mobile-item:nth-child(6) { animation-delay: 0.45s; }
+  .tech-mobile-item:nth-child(7) { animation-delay: 0.52s; }
+  .tech-mobile-item:nth-child(8) { animation-delay: 0.59s; }
 
-  /* Fire when section is in-view */
-  .techstack.in-view .tech-mobile-item {
-    animation-play-state: running;
-  }
-
-  /* ── Shimmer sweep on each card after load ── */
-  .tech-mobile-item::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 70%;
-    height: 100%;
-    background: linear-gradient(
-      105deg,
-      transparent 30%,
-      rgba(194, 164, 255, 0.12) 50%,
-      transparent 70%
-    );
-    animation: techShimmer 2.5s ease 0.8s infinite;
-    pointer-events: none;
-  }
-
-  /* ── Top edge glow line ── */
+  /* Top shimmer line */
   .tech-mobile-item::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(
-      to right,
-      transparent,
-      rgba(194, 164, 255, 0.4),
-      transparent
-    );
+    background: linear-gradient(to right, transparent, rgba(194,164,255,0.35), transparent);
   }
 
-  /* Tap / hover glow */
-  .tech-mobile-item:active,
-  .tech-mobile-item:hover {
-    border-color: rgba(194, 164, 255, 0.35);
-    background: rgba(194, 164, 255, 0.08);
-    transform: translateY(-2px) scale(1.04);
+  /* Tap glow */
+  .tech-mobile-item:active {
+    border-color: rgba(194, 164, 255, 0.4);
+    background: rgba(194, 164, 255, 0.1);
+    transform: scale(0.97);
   }
 
-  /* Icon */
+  /* Icon — bigger and clear */
   .tech-mobile-item img {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     object-fit: contain;
-    transition: transform 0.3s ease;
-    position: relative;
-    z-index: 1;
-  }
-  .tech-mobile-item:active img,
-  .tech-mobile-item:hover img {
-    transform: scale(1.12);
+    display: block;
   }
 
   /* Label */
   .tech-mobile-item span {
     font-size: 9px;
     font-weight: 500;
-    color: rgba(234, 229, 236, 0.45);
-    letter-spacing: 0.4px;
+    color: rgba(234, 229, 236, 0.5);
+    letter-spacing: 0.5px;
     text-align: center;
     text-transform: uppercase;
-    position: relative;
-    z-index: 1;
-    transition: color 0.25s;
-  }
-  .tech-mobile-item:active span,
-  .tech-mobile-item:hover span {
-    color: rgba(194, 164, 255, 0.9);
   }
 }
 
-/* ── Smaller phones: 2-col grid ── */
+/* ── Very small phones: 2-column ── */
 @media only screen and (max-width: 360px) {
   .tech-mobile-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -155,15 +99,9 @@
   }
 }
 
-/* ── Keyframes (scoped, won't affect desktop) ── */
+/* ── Entrance animation ── */
 @keyframes techCardIn {
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-@keyframes techShimmer {
-  0%        { left: -150%; }
-  60%, 100% { left: 160%; }
+  from { opacity: 0; transform: translateY(18px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
 }
 
