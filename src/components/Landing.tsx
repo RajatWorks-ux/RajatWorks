@@ -94,21 +94,29 @@ const Landing = ({ children }: PropsWithChildren) => {
       reveal(".story-scroll-hint", p >= 0.75 && p <= 0.97);
     };
 
-    // ── UNLOCK: animation complete → scroll user to About ──
+    // ── UNLOCK: animation complete → hide hero → scroll to About ──
     const unlock = () => {
       if (!lockedRef.current) return;
       lockedRef.current = false;
+
+      // Hide the fixed hero overlay
+      const wrap = document.querySelector(".story-fixed-wrap") as HTMLElement | null;
+      if (wrap) {
+        wrap.style.transition = "opacity 0.4s ease";
+        wrap.style.opacity    = "0";
+        setTimeout(() => { wrap.style.display = "none"; }, 420);
+      }
 
       // Restore body scroll
       document.body.style.overflow  = "";
       document.body.style.position  = "";
       document.body.style.width     = "";
 
-      // Smoothly scroll to About section
-      const about = document.getElementById("about");
-      if (about) {
-        about.scrollIntoView({ behavior: "smooth" });
-      }
+      // Scroll to About section
+      setTimeout(() => {
+        const about = document.getElementById("about");
+        if (about) about.scrollIntoView({ behavior: "smooth" });
+      }, 440);
     };
 
     // ── LOCK: freeze page scroll while hero is active ──
@@ -237,4 +245,4 @@ const Landing = ({ children }: PropsWithChildren) => {
 };
 
 export default Landing;
-                                                         
+
