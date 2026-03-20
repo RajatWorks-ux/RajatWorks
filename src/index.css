@@ -209,3 +209,54 @@ body {
 }
 
 
+
+/* ════════════════════════════════════════════════════
+   GLOBAL MOBILE ANIMATION KEYFRAMES
+════════════════════════════════════════════════════ */
+@keyframes mFadeUp {
+  from { opacity: 0; transform: translateY(35px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes mSlideRight {
+  from { opacity: 0; transform: translateX(-25px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes mScaleUp {
+  from { opacity: 0; transform: translateY(25px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* TechStack shimmer on icons */
+@media only screen and (max-width: 1024px) {
+  .tech-mobile-item img {
+    opacity: 0;
+    animation: mScaleUp 0.5s ease forwards;
+    animation-play-state: paused;
+  }
+  .tech-mobile-item:nth-child(1) img { animation-delay: 0.05s; }
+  .tech-mobile-item:nth-child(2) img { animation-delay: 0.10s; }
+  .tech-mobile-item:nth-child(3) img { animation-delay: 0.15s; }
+  .tech-mobile-item:nth-child(4) img { animation-delay: 0.20s; }
+  .tech-mobile-item:nth-child(5) img { animation-delay: 0.25s; }
+  .tech-mobile-item:nth-child(6) img { animation-delay: 0.30s; }
+  .tech-mobile-item:nth-child(7) img { animation-delay: 0.35s; }
+  .tech-mobile-item:nth-child(8) img { animation-delay: 0.40s; }
+
+  .techstack.in-view .tech-mobile-item img {
+    animation-play-state: running;
+  }
+
+  /* Shimmer border effect on icons */
+  .tech-mobile-item img::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(194,164,255,0.2), transparent);
+    animation: shimmerMove 2s infinite;
+  }
+  @keyframes shimmerMove {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+}
+
