@@ -18,3 +18,49 @@
   transform: translateY(-100%);
   color: var(--accentColor);
 }
+
+/* ══════════════════════════════════════════════════════════
+   GLOBAL MOBILE KEYFRAMES
+   Used across About, Career, Work, WhatIDo, TechStack, Contact
+   Defined here once so every component can use them.
+══════════════════════════════════════════════════════════ */
+@keyframes mFadeUp {
+  from { opacity: 0; transform: translateY(35px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes mSlideRight {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes mScaleUp {
+  from { opacity: 0; transform: translateY(25px) scale(0.93); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+@keyframes mFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   TAP RIPPLE — mobile touch feedback on all tappable elements
+══════════════════════════════════════════════════════════ */
+@media only screen and (max-width: 1024px) {
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tap-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(194, 164, 255, 0.25);
+    transform: scale(0);
+    animation: rippleEffect 0.55s ease-out forwards;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: screen;
+  }
+}
+@keyframes rippleEffect {
+  to { transform: scale(4); opacity: 0; }
+}
+
