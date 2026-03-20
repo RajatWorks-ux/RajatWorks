@@ -14,33 +14,109 @@ import "./styles/TechStack.css";
 
 const isMobile = typeof window !== "undefined" ? window.innerWidth < 1025 : false;
 
-// --- MOBILE: Static Tech Grid ---
+// ─────────────────────────────────────────────
+//  SHARED DATA
+// ─────────────────────────────────────────────
 const techItems = [
-  { name: "React", img: "/images/react2.webp" },
-  { name: "Next.js", img: "/images/next2.webp" },
-  { name: "Node.js", img: "/images/node2.webp" },
-  { name: "Express", img: "/images/express.webp" },
-  { name: "MongoDB", img: "/images/mongo.webp" },
-  { name: "MySQL", img: "/images/mysql.webp" },
-  { name: "TypeScript", img: "/images/typescript.webp" },
-  { name: "JavaScript", img: "/images/javascript.webp" },
+  { name: "React",      img: "/images/react2.webp"      },
+  { name: "Next.js",    img: "/images/next2.webp"       },
+  { name: "Node.js",    img: "/images/node2.webp"       },
+  { name: "Express",    img: "/images/express.webp"     },
+  { name: "MongoDB",    img: "/images/mongo.webp"       },
+  { name: "MySQL",      img: "/images/mysql.webp"       },
+  { name: "TypeScript", img: "/images/typescript.webp"  },
+  { name: "JavaScript", img: "/images/javascript.webp"  },
 ];
 
-const MobileTechStack = () => (
-  <div className="techstack">
-    <h2>My Techstack</h2>
-    <div className="tech-mobile-grid">
-      {techItems.map((tech) => (
-        <div key={tech.name} className="tech-mobile-item">
-          <img src={tech.img} alt={tech.name} loading="lazy" />
-          <span>{tech.name}</span>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+// ─────────────────────────────────────────────
+//  MOBILE — New 2-column grid with IntersectionObserver
+// ─────────────────────────────────────────────
+const MobileTechStack = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const titleRef   = useRef<HTMLHeadingElement>(null);
 
-// --- DESKTOP: 3D Physics Balls ---
+  useEffect(() => {
+    // ── Title reveal ──
+    const titleEl = titleRef.current;
+    if (titleEl) {
+      const titleObs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            titleEl.classList.add("ts-title-visible");
+            titleObs.disconnect();
+          }
+        },
+        { threshold: 0.4 }
+      );
+      titleObs.observe(titleEl);
+    }
+
+    // ── Cards staggered reveal ──
+    const cards = sectionRef.current?.querySelectorAll<HTMLDivElement>(".tech-mobile-item");
+    if (!cards?.length) return;
+
+    const cardObs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const card = entry.target as HTMLElement;
+            // delay is set via data-index in JSX
+            const delay = Number(card.dataset.delay ?? 0);
+            setTimeout(() => {
+              card.classList.add("tc-visible");
+            }, delay);
+            cardObs.unobserve(card);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    cards.forEach((card) => cardObs.observe(card));
+
+    return () => {
+      cardObs.disconnect();
+    };
+  }, []);
+
+  return (
+    <div className="techstack" ref={sectionRef}>
+      {/* Section title */}
+      <h2 className="ts-title" ref={titleRef}>
+        My <span className="ts-title-accent">Techstack</span>
+      </h2>
+
+      {/* 2-column grid */}
+      <div className="tech-mobile-grid">
+        {techItems.map((tech, i) => (
+          <div
+            key={tech.name}
+            className="tech-mobile-item"
+            data-delay={i * 80}   /* stagger: 0, 80, 160 … ms */
+          >
+            {/* Top shimmer line — CSS ::before */}
+            {/* Icon */}
+            <div className="tmi-icon-wrap">
+              <img src={tech.img} alt={tech.name} loading="lazy" />
+              {/* Glow behind icon */}
+              <span className="tmi-icon-glow" />
+            </div>
+
+            {/* Label */}
+            <span className="tmi-label">{tech.name}</span>
+
+            {/* Tap ripple layer */}
+            <span className="tmi-tap-bg" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────
+//  DESKTOP — 3D Physics Balls (completely untouched)
+// ─────────────────────────────────────────────
 const textureLoader = new THREE.TextureLoader();
 const imageUrls = [
   "/images/react2.webp",
@@ -159,10 +235,13 @@ const DesktopTechStack = () => {
   );
 };
 
+// ─────────────────────────────────────────────
+//  ROOT EXPORT
+// ─────────────────────────────────────────────
 const TechStack = () => {
   if (isMobile) return <MobileTechStack />;
   return <DesktopTechStack />;
 };
 
 export default TechStack;
-
+    
