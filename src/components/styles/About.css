@@ -158,3 +158,16 @@
   .about-stat { padding: 14px 16px; }
 }
 
+
+/* ── Mobile gap fix ── */
+@media only screen and (max-width: 1024px) {
+  .about-section {
+    padding-top: 50px !important;
+    margin-top: 0 !important;
+    height: auto !important;
+  }
+  .about-me {
+    padding-top: 0 !important;
+  }
+}
+
