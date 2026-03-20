@@ -9,6 +9,7 @@ import SocialIcons from "./SocialIcons";
 import WhatIDo from "./WhatIDo";
 import Work from "./Work";
 import setSplitText from "./utils/splitText";
+import { initInView } from "../utils/useInView";
 
 const TechStack = lazy(() => import("./TechStack"));
 
@@ -24,29 +25,25 @@ const MainContainer = ({ children }: PropsWithChildren) => {
     };
     resizeHandler();
     window.addEventListener("resize", resizeHandler);
-    return () => {
-      window.removeEventListener("resize", resizeHandler);
-    };
-  }, []); // ✅ dependency array empty — resize handler baar baar re-subscribe nahi hoga
+    return () => window.removeEventListener("resize", resizeHandler);
+  }, []);
+
+  useEffect(() => {
+    // Mobile scroll animations — sections visible hongi toh animate hongi
+    // Thoda delay taaki saara DOM render ho jaye
+    const timer = setTimeout(() => {
+      initInView();
+    }, 600);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="container-main">
       <Cursor />
       <Navbar />
       <SocialIcons />
-
-      {/* 
-        ✅ FIX: Desktop pe sirf character render hoga (fixed position)
-        Mobile pe bilkul nahi — video storytelling handle karegi 
-      */}
       {isDesktopView && children}
-
       <div className="container-main">
-        {/* 
-          ✅ FIX: Landing ko koi children nahi dene — 
-          Mobile pe video apna kaam kar rahi hai
-          Desktop pe character upar wale {isDesktopView && children} se aa raha hai
-        */}
         <Landing />
         <About />
         <WhatIDo />
