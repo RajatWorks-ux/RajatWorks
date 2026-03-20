@@ -2,19 +2,10 @@ import { PropsWithChildren, useEffect, useRef } from "react";
 import "./styles/Landing.css";
 import { config } from "../config";
 
-// ─────────────────────────────────────────────
-//  CONSTANTS
-// ─────────────────────────────────────────────
 const TOTAL_FRAMES = 77;
-const isMobile =
-  typeof window !== "undefined" && window.innerWidth <= 1024;
-
-// Module-level frame cache — survives re-renders, no double loading
+const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
 const frameImgs: HTMLImageElement[] = new Array(TOTAL_FRAMES).fill(null);
 
-// ─────────────────────────────────────────────
-//  COMPONENT
-// ─────────────────────────────────────────────
 const Landing = ({ children }: PropsWithChildren) => {
   const nameParts = config.developer.fullName.split(" ");
   const firstName = nameParts[0] || config.developer.name;
@@ -24,7 +15,6 @@ const Landing = ({ children }: PropsWithChildren) => {
   const wrapperRef  = useRef<HTMLDivElement>(null);
   const curFrameRef = useRef(0);
 
-  // ── MOBILE: Frame sequence + scroll-reveal ──
   useEffect(() => {
     if (!isMobile) return;
 
@@ -33,38 +23,56 @@ const Landing = ({ children }: PropsWithChildren) => {
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    // ── Draw one frame — object-fit: cover logic ──
+    // ─── HIGH QUALITY rendering settings ───
+    ctx.imageSmoothingEnabled  = true;
+    ctx.imageSmoothingQuality  = "high";
+
+    // ─── Canvas sizing — CSS pixels only, NO DPR scaling ───
+    // Frames are 540x960 portrait — we let CSS handle display scaling
+    // This avoids blur from double-scaling
+    const setCanvasSize = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      canvas.width  = w;
+      canvas.height = h;
+      canvas.style.width  = w + "px";
+      canvas.style.height = h + "px";
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+    };
+
+    // ─── Draw frame — portrait frames, cover fill, face at top-center ───
     const drawImg = (img: HTMLImageElement) => {
       if (!img?.complete || !img.naturalWidth) return;
-      const cw = canvas.width  || window.innerWidth;
-      const ch = canvas.height || window.innerHeight;
-      const iw = img.naturalWidth;
-      const ih = img.naturalHeight;
+      const cw = canvas.width;
+      const ch = canvas.height;
+      const iw = img.naturalWidth;  // 540
+      const ih = img.naturalHeight; // 960
+
+      // object-fit: cover — fill canvas keeping aspect ratio
       const scale = Math.max(cw / iw, ch / ih);
       const sw = iw * scale;
       const sh = ih * scale;
+      // Center horizontally, slight top bias (face stays visible)
       const sx = (cw - sw) / 2;
-      // Face upper-center: 15% from top
-      const sy = (ch - sh) * 0.15;
+      const sy = (ch - sh) * 0.10;
+
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, cw, ch);
       ctx.drawImage(img, sx, sy, sw, sh);
     };
 
-    // ── Resize canvas ──
     const resize = () => {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
+      setCanvasSize();
       drawImg(frameImgs[curFrameRef.current]);
     };
 
-    // ── Preload frames ──
-    // Frame 0 (first) loads priority → shows immediately
+    // ─── Load frames ───
     const loadFrame = (i: number) => {
-      if (frameImgs[i]?.src) return;       // already queued
-      const img  = new Image();
-      const num  = String(i + 1).padStart(3, "0");
-      img.src    = `/frames/frame_${num}.jpg`;
+      if (frameImgs[i]?.src) return;
+      const img = new Image();
+      const num = String(i + 1).padStart(3, "0");
+      img.src = `/frames/ezgif-frame-${num}.jpg`;
       img.onload = () => {
         frameImgs[i] = img;
         if (i === 0) { resize(); }
@@ -72,29 +80,23 @@ const Landing = ({ children }: PropsWithChildren) => {
       frameImgs[i] = img;
     };
 
-    // Priority load first frame, then the rest
+    setCanvasSize();
     loadFrame(0);
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       for (let i = 1; i < TOTAL_FRAMES; i++) loadFrame(i);
-    });
+    }, 60);
 
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // ── Scroll-reveal helper ──
+    // ─── Reveal helper ───
     const reveal = (sel: string, show: boolean) => {
       const el = document.querySelector(sel) as HTMLElement | null;
       if (!el) return;
-      if (show) {
-        el.classList.remove("s-hidden");
-        el.classList.add("s-visible");
-      } else {
-        el.classList.remove("s-visible");
-        el.classList.add("s-hidden");
-      }
+      if (show) { el.classList.remove("s-hidden"); el.classList.add("s-visible"); }
+      else       { el.classList.remove("s-visible"); el.classList.add("s-hidden"); }
     };
 
-    // ── Scroll handler ──
+    // ─── Scroll handler ───
+    // story-fixed-wrap is 300vh — sticky child stays pinned
+    // User scrolls 300vh → frames play → About section appears naturally after
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
@@ -104,11 +106,11 @@ const Landing = ({ children }: PropsWithChildren) => {
         if (!wrapper) { ticking = false; return; }
 
         const wrapTop     = wrapper.getBoundingClientRect().top + window.scrollY;
-        const scrolled    = window.scrollY - wrapTop;
+        const scrolled    = Math.max(0, window.scrollY - wrapTop);
         const totalScroll = wrapper.offsetHeight - window.innerHeight;
-        const p = Math.max(0, Math.min(1, scrolled / Math.max(totalScroll, 1)));
+        const p = Math.min(1, scrolled / Math.max(totalScroll, 1));
 
-        // Frame index
+        // Frame index — maps scroll 0→1 to frame 0→76
         const idx = Math.min(TOTAL_FRAMES - 1, Math.round(p * (TOTAL_FRAMES - 1)));
         if (idx !== curFrameRef.current) {
           curFrameRef.current = idx;
@@ -116,15 +118,15 @@ const Landing = ({ children }: PropsWithChildren) => {
           if (img?.complete && img.naturalWidth) drawImg(img);
         }
 
-        // Text reveals — each tied to scroll depth
-        reveal(".story-greeting",    p >= 0.06);
-        reveal(".sn-first",          p >= 0.14);
-        reveal(".sn-last",           p >= 0.22);
-        reveal(".story-role",        p >= 0.30);
-        reveal(".st-1",              p >= 0.40);
-        reveal(".st-2",              p >= 0.50);
-        reveal(".st-3",              p >= 0.58);
-        reveal(".story-scroll-hint", p >= 0.72 && p <= 0.95);
+        // Text elements reveal at scroll milestones
+        reveal(".story-greeting",    p >= 0.08);
+        reveal(".sn-first",          p >= 0.18);
+        reveal(".sn-last",           p >= 0.26);
+        reveal(".story-role",        p >= 0.36);
+        reveal(".st-1",              p >= 0.45);
+        reveal(".st-2",              p >= 0.54);
+        reveal(".st-3",              p >= 0.62);
+        reveal(".story-scroll-hint", p >= 0.75 && p <= 0.97);
 
         ticking = false;
       });
@@ -142,26 +144,21 @@ const Landing = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-      {/* ══ MOBILE HERO — 300vh scroll space, sticky canvas inside ══ */}
+      {/*
+        MOBILE HERO
+        story-fixed-wrap → 300vh scroll space
+        frame-sticky     → sticky, pinned to screen while parent scrolls
+        After 300vh, About section appears naturally below
+      */}
       <div className="story-fixed-wrap" ref={wrapperRef}>
         <div className="frame-sticky">
-
-          {/* Canvas — frame renderer */}
           <canvas ref={canvasRef} className="frame-canvas" />
-
-          {/* Ambient purple glows */}
           <div className="story-glow story-glow-1" />
           <div className="story-glow story-glow-2" />
-
-          {/* Dark gradient overlay */}
           <div className="story-overlay" />
-
-          {/* Floating glassmorphism tech tags */}
           <span className="story-tag st-1 s-hidden">React</span>
           <span className="story-tag st-2 s-hidden">Node.js</span>
           <span className="story-tag st-3 s-hidden">Next.js</span>
-
-          {/* Text block — pinned to bottom */}
           <div className="story-text">
             <p className="story-greeting s-hidden">Hello, I'm</p>
             <h1 className="story-name">
@@ -180,11 +177,10 @@ const Landing = ({ children }: PropsWithChildren) => {
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* ══ DESKTOP SECTION — completely untouched ══ */}
+      {/* DESKTOP — completely untouched */}
       <div className="landing-section" id="landingDiv">
         <div className="landing-container">
           <div className="landing-intro">
@@ -214,4 +210,4 @@ const Landing = ({ children }: PropsWithChildren) => {
 };
 
 export default Landing;
-            
+
