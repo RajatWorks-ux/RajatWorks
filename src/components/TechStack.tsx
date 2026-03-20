@@ -10,6 +10,7 @@ import {
   CylinderCollider,
   RapierRigidBody,
 } from "@react-three/rapier";
+import "./styles/TechStack.css";
 
 const isMobile = typeof window !== "undefined" ? window.innerWidth < 1025 : false;
 
@@ -164,3 +165,4 @@ const TechStack = () => {
 };
 
 export default TechStack;
+
