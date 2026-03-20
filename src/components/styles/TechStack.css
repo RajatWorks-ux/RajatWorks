@@ -1,107 +1,237 @@
-/* ════════════════════════════════════════════════════════════════
-   TechStack — Mobile grid styles
-   All rules inside @media max-width:1024px — desktop untouched
-════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════════
+   TechStack.css
+   ─────────────────────────────────────────────────────────────────
+   DESKTOP  →  untouched (no media query wrapping = global)
+   MOBILE   →  everything inside @media (max-width: 1024px)
+════════════════════════════════════════════════════════════════════ */
 
+/* ══════════════════════════════════════════
+   DESKTOP — original styles (no changes)
+══════════════════════════════════════════ */
+.techstack {
+  width: var(--cWidth);
+  max-width: var(--cMaxWidth);
+  margin: auto;
+}
+.techstack h2 {
+  font-size: 70px;
+  font-weight: 400;
+  text-align: center;
+}
+.tech-canvas {
+  width: 100% !important;
+  height: 600px !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE ONLY  (max-width: 1024px)
+══════════════════════════════════════════════════════════════════ */
 @media only screen and (max-width: 1024px) {
 
-  /* Section wrapper — tight, no extra space */
+  /* ── Section wrapper ── */
   .techstack {
-    padding: 40px 0 50px;
-    width: var(--cWidth);
-    max-width: calc(100% - 50px);
-    margin: auto;
+    padding: 56px 0 64px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
   }
 
-  /* Section heading */
-  .techstack h2 {
-    font-size: 40px;
-    font-weight: 500;
-    margin: 0 0 24px;
+  /* ── Section title ── */
+  .ts-title {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin: 0 0 36px;
+    padding: 0 24px;
+    color: #fff;
+    /* Slide up on reveal */
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .ts-title.ts-title-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Accent word — gradient */
+  .ts-title-accent {
+    background: linear-gradient(135deg, #c2a4ff 0%, #fb8dff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
   }
 
-  /* 4-column grid */
+  /* ── 2-column grid ── */
   .tech-mobile-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    padding: 0 20px;
   }
 
-  /* ── Each tech card — VISIBLE by default ── */
+  /* ── Each card ── */
   .tech-mobile-item {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 16px 6px 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(194, 164, 255, 0.12);
+    gap: 14px;
+    padding: 28px 16px 24px;
+    min-height: 140px;
+    border-radius: 18px;
+    border: 1px solid rgba(194, 164, 255, 0.10);
     background: rgba(194, 164, 255, 0.04);
-    position: relative;
     overflow: hidden;
     cursor: default;
-    /* Staggered entrance — visible immediately as fallback */
+
+    /* IntersectionObserver will add tc-visible */
     opacity: 0;
-    animation: techCardIn 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+    transform: translateY(30px) scale(0.94);
+    transition:
+      opacity  0.55s cubic-bezier(0.34, 1.3, 0.64, 1),
+      transform 0.55s cubic-bezier(0.34, 1.3, 0.64, 1),
+      border-color 0.25s ease,
+      background  0.25s ease;
   }
 
-  /* Stagger delays */
-  .tech-mobile-item:nth-child(1) { animation-delay: 0.1s; }
-  .tech-mobile-item:nth-child(2) { animation-delay: 0.17s; }
-  .tech-mobile-item:nth-child(3) { animation-delay: 0.24s; }
-  .tech-mobile-item:nth-child(4) { animation-delay: 0.31s; }
-  .tech-mobile-item:nth-child(5) { animation-delay: 0.38s; }
-  .tech-mobile-item:nth-child(6) { animation-delay: 0.45s; }
-  .tech-mobile-item:nth-child(7) { animation-delay: 0.52s; }
-  .tech-mobile-item:nth-child(8) { animation-delay: 0.59s; }
+  /* Revealed state */
+  .tech-mobile-item.tc-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 
   /* Top shimmer line */
   .tech-mobile-item::before {
     content: "";
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0; left: 10%; right: 10%;
     height: 1px;
-    background: linear-gradient(to right, transparent, rgba(194,164,255,0.35), transparent);
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(194, 164, 255, 0.45),
+      transparent
+    );
+    border-radius: 1px;
   }
 
-  /* Tap glow */
+  /* Tap / active state — glow pulse */
   .tech-mobile-item:active {
-    border-color: rgba(194, 164, 255, 0.4);
-    background: rgba(194, 164, 255, 0.1);
-    transform: scale(0.97);
+    border-color: rgba(194, 164, 255, 0.45);
+    background: rgba(194, 164, 255, 0.10);
+    transform: scale(0.96);
+    transition: transform 0.12s ease;
   }
 
-  /* Icon — bigger and clear */
-  .tech-mobile-item img {
-    width: 44px;
-    height: 44px;
+  /* Tap ripple background layer */
+  .tmi-tap-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(194, 164, 255, 0.14) 0%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .tech-mobile-item:active .tmi-tap-bg {
+    opacity: 1;
+  }
+
+  /* ── Icon wrapper ── */
+  .tmi-icon-wrap {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Icon */
+  .tmi-icon-wrap img {
+    width: 60px;
+    height: 60px;
     object-fit: contain;
     display: block;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s cubic-bezier(0.34, 1.5, 0.64, 1);
+  }
+  .tech-mobile-item.tc-visible .tmi-icon-wrap img {
+    animation: tIconPop 0.5s cubic-bezier(0.34, 1.6, 0.64, 1) both;
+    animation-delay: inherit;
   }
 
-  /* Label */
-  .tech-mobile-item span {
-    font-size: 9px;
+  /* Icon glow blob behind icon */
+  .tmi-icon-glow {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(194, 164, 255, 0.20) 0%,
+      transparent 70%
+    );
+    filter: blur(10px);
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .tech-mobile-item:active .tmi-icon-glow,
+  .tech-mobile-item.tc-visible .tmi-icon-glow {
+    opacity: 1;
+  }
+
+  /* ── Label ── */
+  .tmi-label {
+    font-size: 13px;
     font-weight: 500;
-    color: rgba(234, 229, 236, 0.5);
-    letter-spacing: 0.5px;
+    color: rgba(234, 229, 236, 0.65);
+    letter-spacing: 0.6px;
     text-align: center;
     text-transform: uppercase;
+    line-height: 1;
+  }
+
+  /* ── Canvas hidden on mobile ── */
+  .tech-canvas {
+    display: none !important;
+  }
+
+  /* ── Very small phones (≤380px) — keep 2 cols but smaller padding ── */
+  @media (max-width: 380px) {
+    .tech-mobile-grid {
+      gap: 10px;
+      padding: 0 14px;
+    }
+    .tech-mobile-item {
+      min-height: 120px;
+      padding: 22px 10px 18px;
+    }
+    .tmi-icon-wrap img {
+      width: 50px;
+      height: 50px;
+    }
+    .tmi-label {
+      font-size: 11px;
+    }
   }
 }
 
-/* ── Very small phones: 2-column ── */
-@media only screen and (max-width: 360px) {
-  .tech-mobile-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-}
-
-/* ── Entrance animation ── */
-@keyframes techCardIn {
-  from { opacity: 0; transform: translateY(18px) scale(0.9); }
-  to   { opacity: 1; transform: translateY(0)    scale(1);   }
-}
-
+/* ─────────────────────────────────────────────────────────
+   KEYFRAMES
+───────────────────────────────────────────────────────── */
+@keyframes tIconPop {
+  0%   { transform: scale(0.7) translateY(8px); opacity: 0; }
+  70%  { transform: scale(1.12) translateY(-2px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+         }
