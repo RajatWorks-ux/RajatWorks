@@ -11,6 +11,7 @@ interface Props {
 const WorkImage = (props: Props) => {
   const [isVideo, setIsVideo] = useState(false);
   const [video, setVideo] = useState("");
+
   const handleMouseEnter = async () => {
     if (props.video) {
       setIsVideo(true);
@@ -36,11 +37,13 @@ const WorkImage = (props: Props) => {
             <MdArrowOutward />
           </div>
         )}
-        <img src={props.image} alt={props.alt} />
-        {isVideo && <video src={video} autoPlay muted playsInline loop></video>}
+        {/* ✅ lazy loading added */}
+        <img src={props.image} alt={props.alt} loading="lazy" />
+        {isVideo && <video src={video} autoPlay muted playsInline loop />}
       </a>
     </div>
   );
 };
 
 export default WorkImage;
+
