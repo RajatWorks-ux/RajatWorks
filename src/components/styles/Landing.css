@@ -287,20 +287,18 @@ h2.landing-info-h2 {
 ══════════════════════════════════════════════════════════ */
 
 /* Desktop pe hide karo */
-
-/* ══════════════════════════════════════════════════
-   MOBILE VIDEO — position:fixed approach
-   (sticky overflow:hidden se toot jata tha)
-══════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   MOBILE HERO — Image version
+══════════════════════════════════════════════ */
 
 /* Desktop pe hide */
 .story-fixed-wrap { display: none; }
 
 @media only screen and (max-width: 1024px) {
 
-  /* Landing section — 300vh tall = scroll room */
+  /* Landing section — sirf 1vh, scroll space nahi chahiye image ke liye */
   .landing-section {
-    height: 300vh !important;
+    height: 100svh !important;
     max-width: 100%;
     overflow: visible !important;
   }
@@ -308,48 +306,39 @@ h2.landing-info-h2 {
   /* Desktop text hide */
   .landing-container { display: none !important; }
 
-  /* Fixed video — poori screen, scroll se affect nahi */
+  /* Fixed hero — poori screen */
   .story-fixed-wrap {
-    position: fixed !important;
-    top: 0; left: 0;
-    width: 100vw;
+    display: block;
+    position: relative;
+    width: 100%;
     height: 100svh;
-    z-index: 5;
     overflow: hidden;
     background: #000;
   }
 
-  /* Video fullscreen */
-  .story-video {
+  /* Image fullscreen */
+  .story-image {
     position: absolute;
     inset: 0;
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     object-position: center top;
     display: block;
   }
 
-  /* Dark overlay */
+  /* Dark gradient */
   .story-overlay {
     position: absolute;
     inset: 0;
     background: linear-gradient(
       to top,
       rgba(11,8,12,0.97) 0%,
-      rgba(11,8,12,0.5)  40%,
+      rgba(11,8,12,0.45) 45%,
       rgba(11,8,12,0.10) 100%
     );
     pointer-events: none;
     z-index: 2;
-  }
-
-  /* Scroll progress bar */
-  .story-progress {
-    position: absolute;
-    top: 0; left: 0;
-    height: 2px; width: 0%;
-    background: linear-gradient(to right, var(--accentColor), #fb8dff);
-    z-index: 20;
   }
 
   /* Purple glows */
@@ -362,18 +351,18 @@ h2.landing-info-h2 {
   }
   .story-glow-1 {
     width: 350px; height: 350px;
-    background: rgba(194,164,255,0.22);
+    background: rgba(194,164,255,0.28);
     top: -120px; left: -120px;
     animation: sGlowPulse 7s ease-in-out infinite;
   }
   .story-glow-2 {
     width: 250px; height: 250px;
-    background: rgba(251,141,255,0.16);
+    background: rgba(251,141,255,0.18);
     bottom: 22%; right: -70px;
     animation: sGlowPulse 10s ease-in-out infinite reverse;
   }
 
-  /* Text at bottom */
+  /* Text */
   .story-text {
     position: absolute;
     bottom: 0; left: 0; right: 0;
@@ -383,10 +372,8 @@ h2.landing-info-h2 {
   .story-greeting {
     font-size: 11px; font-weight: 300;
     color: var(--accentColor);
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    margin: 0 0 12px;
-    opacity: 0;
+    letter-spacing: 6px; text-transform: uppercase;
+    margin: 0 0 12px; opacity: 0;
     animation: sSlideUp 0.8s ease 0.3s forwards;
   }
   .story-name {
@@ -404,8 +391,7 @@ h2.landing-info-h2 {
     font-size: 18px; font-weight: 200;
     letter-spacing: 8px;
     color: rgba(234,229,236,0.55);
-    display: block; margin-top: 8px;
-    opacity: 0;
+    display: block; margin-top: 8px; opacity: 0;
     animation: sSlideUp 0.9s ease 0.7s forwards;
   }
   .story-role {
@@ -458,7 +444,6 @@ h2.landing-info-h2 {
   .st-3 { top: 34%; right: 20px; animation: sTagIn 0.7s ease 1.4s forwards; }
 }
 
-/* Keyframes */
 @keyframes sFadeIn  { to { opacity: 1; } }
 @keyframes sSlideUp {
   from { opacity: 0; transform: translateY(30px); }
@@ -476,4 +461,4 @@ h2.landing-info-h2 {
   0%   { left: -100%; }
   100% { left:  100%; }
    }
-                  
+     
