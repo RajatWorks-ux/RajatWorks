@@ -567,5 +567,5 @@ h2.landing-info-h2 {
   15%  { opacity: 1;                }
   85%  { opacity: 1;                }
   100% { left: calc(100% + 10px); opacity: 0; }
-                  }
-     
+                     }
+   
