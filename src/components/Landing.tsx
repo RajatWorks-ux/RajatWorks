@@ -2,8 +2,8 @@ import { PropsWithChildren, useEffect, useRef } from "react";
 import "./styles/Landing.css";
 import { config } from "../config";
 
-const TOTAL_FRAMES = 77;
-const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+const TOTAL_FRAMES  = 77;
+const isMobile      = typeof window !== "undefined" && window.innerWidth <= 1024;
 const frameImgs: HTMLImageElement[] = new Array(TOTAL_FRAMES).fill(null);
 
 const Landing = ({ children }: PropsWithChildren) => {
@@ -11,9 +11,10 @@ const Landing = ({ children }: PropsWithChildren) => {
   const firstName = nameParts[0] || config.developer.name;
   const lastName  = nameParts.slice(1).join(" ") || "";
 
-  const canvasRef   = useRef<HTMLCanvasElement>(null);
-  const wrapperRef  = useRef<HTMLDivElement>(null);
-  const curFrameRef = useRef(0);
+  const canvasRef    = useRef<HTMLCanvasElement>(null);
+  const progressRef  = useRef(0);   // virtual scroll progress 0→1
+  const lockedRef    = useRef(true); // true = scroll locked in hero
+  const touchStartY  = useRef(0);
 
   useEffect(() => {
     if (!isMobile) return;
@@ -23,70 +24,50 @@ const Landing = ({ children }: PropsWithChildren) => {
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    // ─── HIGH QUALITY rendering settings ───
-    ctx.imageSmoothingEnabled  = true;
-    ctx.imageSmoothingQuality  = "high";
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
 
-    // ─── Canvas sizing — CSS pixels only, NO DPR scaling ───
-    // Frames are 540x960 portrait — we let CSS handle display scaling
-    // This avoids blur from double-scaling
+    // ── Canvas size ──
     const setCanvasSize = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      canvas.width  = w;
-      canvas.height = h;
-      canvas.style.width  = w + "px";
-      canvas.style.height = h + "px";
+      canvas.width        = window.innerWidth;
+      canvas.height       = window.innerHeight;
+      canvas.style.width  = window.innerWidth  + "px";
+      canvas.style.height = window.innerHeight + "px";
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
     };
 
-    // ─── Draw frame — portrait frames, cover fill, face at top-center ───
+    // ── Draw frame ──
     const drawImg = (img: HTMLImageElement) => {
       if (!img?.complete || !img.naturalWidth) return;
-      const cw = canvas.width;
-      const ch = canvas.height;
-      const iw = img.naturalWidth;  // 540
-      const ih = img.naturalHeight; // 960
-
-      // object-fit: cover — fill canvas keeping aspect ratio
+      const cw = canvas.width, ch = canvas.height;
+      const iw = img.naturalWidth, ih = img.naturalHeight;
       const scale = Math.max(cw / iw, ch / ih);
-      const sw = iw * scale;
-      const sh = ih * scale;
-      // Center horizontally, slight top bias (face stays visible)
+      const sw = iw * scale, sh = ih * scale;
       const sx = (cw - sw) / 2;
       const sy = (ch - sh) * 0.10;
-
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, cw, ch);
       ctx.drawImage(img, sx, sy, sw, sh);
     };
 
-    const resize = () => {
-      setCanvasSize();
-      drawImg(frameImgs[curFrameRef.current]);
-    };
-
-    // ─── Load frames ───
+    // ── Load frames ──
     const loadFrame = (i: number) => {
       if (frameImgs[i]?.src) return;
       const img = new Image();
-      const num = String(i + 1).padStart(3, "0");
-      img.src = `/frames/ezgif-frame-${num}.jpg`;
+      img.src = `/frames/ezgif-frame-${String(i + 1).padStart(3, "0")}.jpg`;
       img.onload = () => {
         frameImgs[i] = img;
-        if (i === 0) { resize(); }
+        if (i === 0) { setCanvasSize(); drawImg(img); }
       };
       frameImgs[i] = img;
     };
 
     setCanvasSize();
     loadFrame(0);
-    setTimeout(() => {
-      for (let i = 1; i < TOTAL_FRAMES; i++) loadFrame(i);
-    }, 60);
+    setTimeout(() => { for (let i = 1; i < TOTAL_FRAMES; i++) loadFrame(i); }, 60);
 
-    // ─── Reveal helper ───
+    // ── Reveal helper ──
     const reveal = (sel: string, show: boolean) => {
       const el = document.querySelector(sel) as HTMLElement | null;
       if (!el) return;
@@ -94,63 +75,109 @@ const Landing = ({ children }: PropsWithChildren) => {
       else       { el.classList.remove("s-visible"); el.classList.add("s-hidden"); }
     };
 
-    // ─── Scroll handler ───
-    // story-fixed-wrap is 300vh — sticky child stays pinned
-    // User scrolls 300vh → frames play → About section appears naturally after
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const wrapper = wrapperRef.current;
-        if (!wrapper) { ticking = false; return; }
-
-        const wrapTop     = wrapper.getBoundingClientRect().top + window.scrollY;
-        const scrolled    = Math.max(0, window.scrollY - wrapTop);
-        const totalScroll = wrapper.offsetHeight - window.innerHeight;
-        const p = Math.min(1, scrolled / Math.max(totalScroll, 1));
-
-        // Frame index — maps scroll 0→1 to frame 0→76
-        const idx = Math.min(TOTAL_FRAMES - 1, Math.round(p * (TOTAL_FRAMES - 1)));
-        if (idx !== curFrameRef.current) {
-          curFrameRef.current = idx;
-          const img = frameImgs[idx];
-          if (img?.complete && img.naturalWidth) drawImg(img);
-        }
-
-        // Text elements reveal at scroll milestones
-        reveal(".story-greeting",    p >= 0.08);
-        reveal(".sn-first",          p >= 0.18);
-        reveal(".sn-last",           p >= 0.26);
-        reveal(".story-role",        p >= 0.36);
-        reveal(".st-1",              p >= 0.45);
-        reveal(".st-2",              p >= 0.54);
-        reveal(".st-3",              p >= 0.62);
-        reveal(".story-scroll-hint", p >= 0.75 && p <= 0.97);
-
-        ticking = false;
-      });
+    // ── Update frame + text from progress p (0→1) ──
+    let lastIdx = -1;
+    const applyProgress = (p: number) => {
+      const idx = Math.min(TOTAL_FRAMES - 1, Math.round(p * (TOTAL_FRAMES - 1)));
+      if (idx !== lastIdx) {
+        lastIdx = idx;
+        const img = frameImgs[idx];
+        if (img?.complete && img.naturalWidth) drawImg(img);
+      }
+      reveal(".story-greeting",    p >= 0.08);
+      reveal(".sn-first",          p >= 0.18);
+      reveal(".sn-last",           p >= 0.26);
+      reveal(".story-role",        p >= 0.36);
+      reveal(".st-1",              p >= 0.45);
+      reveal(".st-2",              p >= 0.54);
+      reveal(".st-3",              p >= 0.62);
+      reveal(".story-scroll-hint", p >= 0.75 && p <= 0.97);
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", resize,   { passive: true });
-    onScroll();
+    // ── UNLOCK: animation complete → scroll user to About ──
+    const unlock = () => {
+      if (!lockedRef.current) return;
+      lockedRef.current = false;
+
+      // Restore body scroll
+      document.body.style.overflow  = "";
+      document.body.style.position  = "";
+      document.body.style.width     = "";
+
+      // Smoothly scroll to About section
+      const about = document.getElementById("about");
+      if (about) {
+        about.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+
+    // ── LOCK: freeze page scroll while hero is active ──
+    const lockBody = () => {
+      document.body.style.overflow  = "hidden";
+      document.body.style.position  = "fixed";
+      document.body.style.width     = "100%";
+    };
+    lockBody();
+
+    // How much virtual scroll per wheel tick / touch px
+    const WHEEL_FACTOR = 1 / 900;   // ~900px total wheel to finish
+    const TOUCH_FACTOR = 1 / 700;   // ~700px drag to finish
+
+    // ── Wheel handler ──
+    const onWheel = (e: WheelEvent) => {
+      if (!lockedRef.current) return;
+      e.preventDefault();
+      progressRef.current = Math.min(1, progressRef.current + Math.abs(e.deltaY) * WHEEL_FACTOR);
+      applyProgress(progressRef.current);
+      if (progressRef.current >= 1) unlock();
+    };
+
+    // ── Touch handlers ──
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (!lockedRef.current) return;
+      e.preventDefault();
+      const dy = touchStartY.current - e.touches[0].clientY; // positive = scroll down
+      touchStartY.current = e.touches[0].clientY;
+      if (dy <= 0) return; // ignore upward swipes
+      progressRef.current = Math.min(1, progressRef.current + dy * TOUCH_FACTOR);
+      applyProgress(progressRef.current);
+      if (progressRef.current >= 1) unlock();
+    };
+
+    // ── Resize ──
+    const onResize = () => {
+      setCanvasSize();
+      const img = frameImgs[lastIdx >= 0 ? lastIdx : 0];
+      if (img?.complete && img.naturalWidth) drawImg(img);
+    };
+
+    window.addEventListener("wheel",      onWheel,      { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true  });
+    window.addEventListener("touchmove",  onTouchMove,  { passive: false });
+    window.addEventListener("resize",     onResize,     { passive: true  });
+
+    // Draw first frame on load
+    applyProgress(0);
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", resize);
+      // Always restore scroll on unmount
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width    = "";
+      window.removeEventListener("wheel",      onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove",  onTouchMove);
+      window.removeEventListener("resize",     onResize);
     };
   }, []);
 
   return (
     <>
-      {/*
-        MOBILE HERO
-        story-fixed-wrap → 300vh scroll space
-        frame-sticky     → sticky, pinned to screen while parent scrolls
-        After 300vh, About section appears naturally below
-      */}
-      <div className="story-fixed-wrap" ref={wrapperRef}>
+      {/* ══ MOBILE HERO — fullscreen, scroll-locked until frames done ══ */}
+      <div className="story-fixed-wrap">
         <div className="frame-sticky">
           <canvas ref={canvasRef} className="frame-canvas" />
           <div className="story-glow story-glow-1" />
@@ -180,7 +207,7 @@ const Landing = ({ children }: PropsWithChildren) => {
         </div>
       </div>
 
-      {/* DESKTOP — completely untouched */}
+      {/* ══ DESKTOP — completely untouched ══ */}
       <div className="landing-section" id="landingDiv">
         <div className="landing-container">
           <div className="landing-intro">
