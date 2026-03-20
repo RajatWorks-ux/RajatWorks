@@ -78,7 +78,7 @@
     max-width: 100%;
     left: 0;
     transform: none;
-    padding: 8px 16px;
+    padding: 8px max(12px, 3vw);
     height: auto;
     margin-bottom: 0;
     display: flex;
@@ -91,20 +91,24 @@
     padding-top: max(8px, env(safe-area-inset-top, 8px));
   }
 
-  /* ── Logo — floating pill ── */
+  /* ── Logo — floating pill, same height as nav ── */
   .rw-logo {
     background: rgba(11, 8, 14, 0.72);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(194, 164, 255, 0.14);
     border-radius: 50px;
-    padding: 6px 14px;
+    padding: 5px 14px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.35),
                 inset 0 1px 0 rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    height: 32px;
+    box-sizing: border-box;
   }
-  .rw-logo-thin { font-size: 13px; }
-  .rw-logo-bold { font-size: 13px; }
-  .rw-logo-dot  { width: 4px; height: 4px; margin-bottom: 2px; }
+  .rw-logo-thin { font-size: clamp(11px, 3vw, 13px); }
+  .rw-logo-bold { font-size: clamp(11px, 3vw, 13px); }
+  .rw-logo-dot  { width: 4px; height: 4px; margin-bottom: 1px; }
 
   /* ── Nav — floating pill (right side) ── */
   .header ul {
@@ -113,8 +117,10 @@
     gap: 0;
     column-gap: 0;
     margin: 0;
-    padding: 5px 6px;
+    padding: 0 6px;
     list-style: none;
+    height: 32px;
+    box-sizing: border-box;
     background: rgba(11, 8, 14, 0.72);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -125,12 +131,12 @@
   }
 
   .header ul li {
-    font-size: 11px;
+    font-size: clamp(9px, 2.5vw, 12px);
     font-weight: 600;
     letter-spacing: 0.8px;
     text-transform: uppercase;
     color: rgba(234, 229, 236, 0.55);
-    padding: 5px 11px;
+    padding: 5px clamp(8px, 2.5vw, 12px);
     border-radius: 50px;
     transition: color 0.2s ease, background 0.2s ease;
     cursor: pointer;
