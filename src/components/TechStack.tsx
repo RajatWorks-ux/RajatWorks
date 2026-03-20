@@ -1,201 +1,247 @@
-/* ════════════════════════════════════════════════════════════════════
-   TechStack.css
-   DESKTOP  →  inside @media (min-width: 1025px)  — untouched logic
-   MOBILE   →  inside @media (max-width: 1024px)
-════════════════════════════════════════════════════════════════════ */
+import * as THREE from "three";
+import { useRef, useMemo, useState, useEffect } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Environment } from "@react-three/drei";
+import { EffectComposer, N8AO } from "@react-three/postprocessing";
+import {
+  BallCollider,
+  Physics,
+  RigidBody,
+  CylinderCollider,
+  RapierRigidBody,
+} from "@react-three/rapier";
+import "./styles/TechStack.css";
 
-/* ── Shared base ── */
-.techstack {
-  width: var(--cWidth);
-  max-width: var(--cMaxWidth);
-  margin: auto;
-}
+const isMobile = typeof window !== "undefined" ? window.innerWidth < 1025 : false;
 
-/* ══ FIX 3: Desktop h2 wrapped in min-width so it doesn't bleed into mobile ══ */
-@media only screen and (min-width: 1025px) {
-  .techstack h2 {
-    font-size: 70px;
-    font-weight: 400;
-    text-align: center;
-  }
-  .tech-canvas {
-    width: 100% !important;
-    height: 600px !important;
-  }
-}
+// ─────────────────────────────────────────────
+//  SHARED DATA
+// ─────────────────────────────────────────────
+const techItems = [
+  { name: "React",      img: "/images/react2.webp"      },
+  { name: "Next.js",    img: "/images/next2.webp"       },
+  { name: "Node.js",    img: "/images/node2.webp"       },
+  { name: "Express",    img: "/images/express.webp"     },
+  { name: "MongoDB",    img: "/images/mongo.webp"       },
+  { name: "MySQL",      img: "/images/mysql.webp"       },
+  { name: "TypeScript", img: "/images/typescript.webp"  },
+  { name: "JavaScript", img: "/images/javascript.webp"  },
+];
 
-/* ════════════════════════════════════════════════
-   MOBILE ONLY  (max-width: 1024px)
-════════════════════════════════════════════════ */
-@media only screen and (max-width: 1024px) {
+// ─────────────────────────────────────────────
+//  MOBILE — New 2-column grid with IntersectionObserver
+// ─────────────────────────────────────────────
+const MobileTechStack = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const titleRef   = useRef<HTMLHeadingElement>(null);
 
-  /* ── Section wrapper ── */
-  .techstack {
-    padding: 72px 0 64px;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    position: relative;
-    z-index: 1;
-  }
+  useEffect(() => {
+    // ── Title reveal ──
+    const titleEl = titleRef.current;
+    if (titleEl) {
+      const titleObs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            titleEl.classList.add("ts-title-visible");
+            titleObs.disconnect();
+          }
+        },
+        { threshold: 0.4 }
+      );
+      titleObs.observe(titleEl);
+    }
 
-  /* ── Section title ── */
-  .ts-title {
-    font-size: 38px;
-    font-weight: 700;
-    letter-spacing: -1px;
-    line-height: 1;
-    margin: 0 0 32px;
-    padding: 0 20px;
-    color: #fff;
-    display: block;
-    position: relative;
-    z-index: 2;
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .ts-title.ts-title-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  /* Gradient accent word */
-  .ts-title-accent {
-    background: linear-gradient(135deg, #c2a4ff 0%, #fb8dff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-  }
+    // ── Cards staggered reveal ──
+    const cards = sectionRef.current?.querySelectorAll<HTMLDivElement>(".tech-mobile-item");
+    if (!cards?.length) return;
 
-  /* ── 2-column grid ── */
-  .tech-mobile-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    padding: 0 20px;
-  }
-
-  /* ── Each card ── */
-  .tech-mobile-item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 28px 16px 24px;
-    min-height: 170px;
-    border-radius: 20px;
-    border: 1px solid rgba(194, 164, 255, 0.10);
-    background: rgba(194, 164, 255, 0.04);
-    overflow: hidden;
-    cursor: default;
-    opacity: 0;
-    transform: translateY(30px) scale(0.94);
-    transition:
-      opacity  0.55s cubic-bezier(0.34, 1.3, 0.64, 1),
-      transform 0.55s cubic-bezier(0.34, 1.3, 0.64, 1),
-      border-color 0.25s ease,
-      background  0.25s ease;
-  }
-  .tech-mobile-item.tc-visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  /* Top shimmer line */
-  .tech-mobile-item::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 10%; right: 10%;
-    height: 1px;
-    background: linear-gradient(
-      to right, transparent, rgba(194,164,255,0.45), transparent
+    const cardObs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const card = entry.target as HTMLElement;
+            // delay is set via data-index in JSX
+            const delay = Number(card.dataset.delay ?? 0);
+            setTimeout(() => {
+              card.classList.add("tc-visible");
+            }, delay);
+            cardObs.unobserve(card);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
     );
-    border-radius: 1px;
-  }
 
-  /* Tap glow */
-  .tech-mobile-item:active {
-    border-color: rgba(194,164,255,0.45);
-    background: rgba(194,164,255,0.10);
-    transform: scale(0.96);
-    transition: transform 0.12s ease;
-  }
+    cards.forEach((card) => cardObs.observe(card));
 
-  /* Tap ripple bg */
-  .tmi-tap-bg {
-    position: absolute; inset: 0; border-radius: inherit;
-    background: radial-gradient(circle at 50% 50%, rgba(194,164,255,0.14) 0%, transparent 70%);
-    opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
-  }
-  .tech-mobile-item:active .tmi-tap-bg { opacity: 1; }
+    return () => {
+      cardObs.disconnect();
+    };
+  }, []);
 
-  /* ── Icon wrapper — 88px for crisp display ── */
-  .tmi-icon-wrap {
-    position: relative;
-    width: 88px;
-    height: 88px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
+  return (
+    <div className="techstack" ref={sectionRef}>
+      {/* Section title */}
+      <h2 className="ts-title" ref={titleRef}>
+        My <span className="ts-title-accent">Techstack</span>
+      </h2>
 
-  /* Icon image — 84px, sharp rendering */
-  .tmi-icon-wrap img {
-    width: 84px;
-    height: 84px;
-    object-fit: contain;
-    display: block;
-    position: relative;
-    z-index: 1;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-  }
-  .tech-mobile-item.tc-visible .tmi-icon-wrap img {
-    animation: tIconPop 0.5s cubic-bezier(0.34, 1.6, 0.64, 1) both;
-  }
+      {/* 2-column grid */}
+      <div className="tech-mobile-grid">
+        {techItems.map((tech, i) => (
+          <div
+            key={tech.name}
+            className="tech-mobile-item"
+            data-delay={i * 80}   /* stagger: 0, 80, 160 … ms */
+          >
+            {/* Top shimmer line — CSS ::before */}
+            {/* Icon */}
+            <div className="tmi-icon-wrap">
+              <img src={tech.img} alt={tech.name} loading="lazy" />
+              {/* Glow behind icon */}
+              <span className="tmi-icon-glow" />
+            </div>
 
-  /* Glow behind icon */
-  .tmi-icon-glow {
-    position: absolute; inset: -8px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(194,164,255,0.22) 0%, transparent 70%);
-    filter: blur(10px); z-index: 0;
-    opacity: 0; transition: opacity 0.3s ease;
-  }
-  .tech-mobile-item:active .tmi-icon-glow,
-  .tech-mobile-item.tc-visible .tmi-icon-glow { opacity: 1; }
+            {/* Label */}
+            <span className="tmi-label">{tech.name}</span>
 
-  /* ── Label ── */
-  .tmi-label {
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(234,229,236,0.65);
-    letter-spacing: 0.6px;
-    text-align: center;
-    text-transform: uppercase;
-    line-height: 1;
-  }
+            {/* Tap ripple layer */}
+            <span className="tmi-tap-bg" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
-  /* ── Canvas hidden on mobile ── */
-  .tech-canvas { display: none !important; }
+// ─────────────────────────────────────────────
+//  DESKTOP — 3D Physics Balls (completely untouched)
+// ─────────────────────────────────────────────
+const textureLoader = new THREE.TextureLoader();
+const imageUrls = [
+  "/images/react2.webp",
+  "/images/next2.webp",
+  "/images/node2.webp",
+  "/images/express.webp",
+  "/images/mongo.webp",
+  "/images/mysql.webp",
+  "/images/typescript.webp",
+  "/images/javascript.webp",
+];
+const textures = imageUrls.map((url) => textureLoader.load(url));
+const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
+const spheres = [...Array(30)].map(() => ({
+  scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
+}));
+const materialIndices = spheres.map(() => Math.floor(Math.random() * imageUrls.length));
 
-  /* Very small phones */
-  @media (max-width: 380px) {
-    .tech-mobile-grid { gap: 10px; padding: 0 14px; }
-    .tech-mobile-item { min-height: 140px; padding: 26px 10px 20px; }
-    .tmi-icon-wrap    { width: 68px; height: 68px; }
-    .tmi-icon-wrap img { width: 64px; height: 64px; }
-    .tmi-label        { font-size: 11px; }
-  }
+type SphereProps = {
+  vec?: THREE.Vector3;
+  scale: number;
+  r?: typeof THREE.MathUtils.randFloatSpread;
+  material: THREE.MeshPhysicalMaterial;
+  isActive: boolean;
+};
+
+function SphereGeo({
+  vec = new THREE.Vector3(),
+  scale,
+  r = THREE.MathUtils.randFloatSpread,
+  material,
+  isActive,
+}: SphereProps) {
+  const api = useRef<RapierRigidBody | null>(null);
+  useFrame((_state, delta) => {
+    if (!isActive) return;
+    delta = Math.min(0.1, delta);
+    const impulse = vec
+      .copy(api.current!.translation())
+      .normalize()
+      .multiply(new THREE.Vector3(-50 * delta * scale, -150 * delta * scale, -50 * delta * scale));
+    api.current?.applyImpulse(impulse, true);
+  });
+  return (
+    <RigidBody linearDamping={0.75} angularDamping={0.15} friction={0.2}
+      position={[r(20), r(20) - 25, r(20) - 10]} ref={api} colliders={false}>
+      <BallCollider args={[scale]} />
+      <CylinderCollider rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 1.2 * scale]}
+        args={[0.15 * scale, 0.275 * scale]} />
+      <mesh castShadow receiveShadow scale={scale} geometry={sphereGeometry}
+        material={material} rotation={[0.3, 1, 1]} />
+    </RigidBody>
+  );
 }
 
-/* ── Keyframes ── */
-@keyframes tIconPop {
-  0%   { transform: scale(0.7) translateY(8px); opacity: 0; }
-  70%  { transform: scale(1.12) translateY(-2px); opacity: 1; }
-  100% { transform: scale(1) translateY(0); opacity: 1; }
-      }
-    
+function Pointer({ vec = new THREE.Vector3(), isActive }: { vec?: THREE.Vector3; isActive: boolean }) {
+  const ref = useRef<RapierRigidBody>(null);
+  useFrame(({ pointer, viewport }) => {
+    if (!isActive) return;
+    const targetVec = vec.lerp(
+      new THREE.Vector3((pointer.x * viewport.width) / 2, (pointer.y * viewport.height) / 2, 0), 0.2);
+    ref.current?.setNextKinematicTranslation(targetVec);
+  });
+  return (
+    <RigidBody position={[100, 100, 100]} type="kinematicPosition" colliders={false} ref={ref}>
+      <BallCollider args={[2]} />
+    </RigidBody>
+  );
+}
+
+const DesktopTechStack = () => {
+  const [isActive, setIsActive] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      const workElement = document.getElementById("work");
+      if (workElement) setIsActive(workElement.getBoundingClientRect().top < 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const materials = useMemo(() =>
+    textures.map((texture) => new THREE.MeshPhysicalMaterial({
+      map: texture, emissive: "#ffffff", emissiveMap: texture,
+      emissiveIntensity: 0.3, metalness: 0.5, roughness: 1, clearcoat: 0.1,
+    })), []);
+
+  return (
+    <div className="techstack">
+      <h2>My Techstack</h2>
+      <Canvas shadows
+        gl={{ alpha: true, stencil: false, depth: false, antialias: true, powerPreference: "high-performance" }}
+        dpr={Math.min(window.devicePixelRatio, 2)}
+        camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
+        onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
+        className="tech-canvas" style={{ position: "relative", zIndex: 2 }}>
+        <ambientLight intensity={1} />
+        <spotLight position={[20, 20, 25]} penumbra={1} angle={0.2} color="white"
+          castShadow shadow-mapSize={[512, 512]} />
+        <directionalLight position={[0, 5, -4]} intensity={2} />
+        <Physics gravity={[0, 0, 0]}>
+          <Pointer isActive={isActive} />
+          {spheres.map((props, i) => (
+            <SphereGeo key={i} {...props}
+              material={materials[materialIndices[i]]}
+              isActive={isActive} />
+          ))}
+        </Physics>
+        <Environment files="/models/char_enviorment.hdr"
+          environmentIntensity={0.5} environmentRotation={[0, 4, 2]} />
+        <EffectComposer enableNormalPass={false}>
+          <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
+        </EffectComposer>
+      </Canvas>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────
+//  ROOT EXPORT
+// ─────────────────────────────────────────────
+const TechStack = () => {
+  if (isMobile) return <MobileTechStack />;
+  return <DesktopTechStack />;
+};
+
+export default TechStack;
+
