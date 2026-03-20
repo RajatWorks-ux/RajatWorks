@@ -171,3 +171,76 @@
   }
 }
 
+
+/* ════════════════════════════════════════════
+   MOBILE ANIMATIONS — About Section
+   Pure CSS Intersection Observer approach
+   (CSS @keyframes + animation-play-state)
+════════════════════════════════════════════ */
+@media only screen and (max-width: 1024px) {
+
+  /* About title — fade + slide up */
+  .about-me h3 {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: mFadeUp 0.7s ease forwards;
+    animation-play-state: paused;
+  }
+
+  /* About paragraph — fade + slide */
+  .about-me p {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: mFadeUp 0.8s ease 0.15s forwards;
+    animation-play-state: paused;
+  }
+
+  /* Stats — stagger ek ek karke */
+  .about-stat:nth-child(1) {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    animation: mScaleUp 0.6s ease 0.1s forwards;
+    animation-play-state: paused;
+  }
+  .about-stat:nth-child(2) {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    animation: mScaleUp 0.6s ease 0.22s forwards;
+    animation-play-state: paused;
+  }
+  .about-stat:nth-child(3) {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    animation: mScaleUp 0.6s ease 0.34s forwards;
+    animation-play-state: paused;
+  }
+
+  /* Tags — slide from left */
+  .about-tag {
+    opacity: 0;
+    transform: translateX(-15px);
+    animation: mSlideRight 0.5s ease forwards;
+    animation-play-state: paused;
+  }
+
+  /* When section is visible — start all animations */
+  .about-section.in-view .about-me h3,
+  .about-section.in-view .about-me p,
+  .about-section.in-view .about-stat,
+  .about-section.in-view .about-tag {
+    animation-play-state: running;
+  }
+
+  /* Stat number counter glow effect */
+  .about-section.in-view .astat-num {
+    animation: numGlow 1.5s ease 0.3s forwards;
+  }
+}
+
+/* Counter number animation */
+@keyframes numGlow {
+  0%   { color: rgba(194,164,255,0.3); }
+  60%  { color: var(--accentColor); text-shadow: 0 0 20px rgba(194,164,255,0.6); }
+  100% { color: var(--accentColor); text-shadow: none; }
+}
+
