@@ -29,12 +29,46 @@ const MainContainer = ({ children }: PropsWithChildren) => {
   }, []);
 
   useEffect(() => {
-    // Mobile scroll animations — sections visible hongi toh animate hongi
-    // Thoda delay taaki saara DOM render ho jaye
+    // Reduced timeout: 300ms is enough after DOM paints
+    // initInView itself uses double-RAF for extra safety
     const timer = setTimeout(() => {
       initInView();
-    }, 600);
+    }, 300);
     return () => clearTimeout(timer);
+  }, []);
+
+  // ── Tap ripple effect — mobile micro-interaction ──
+  useEffect(() => {
+    if (window.innerWidth > 1024) return;
+
+    const handleTouch = (e: TouchEvent) => {
+      const target = e.target as HTMLElement;
+      const tappable = target.closest("a, button") as HTMLElement | null;
+      if (!tappable) return;
+
+      // Only add ripple if element can have absolute children
+      const style = window.getComputedStyle(tappable);
+      if (style.position === "static") {
+        tappable.style.position = "relative";
+      }
+      tappable.style.overflow = "hidden";
+
+      const rect = tappable.getBoundingClientRect();
+      const touch = e.touches[0];
+      const size = Math.max(rect.width, rect.height) * 2;
+      const x = touch.clientX - rect.left - size / 2;
+      const y = touch.clientY - rect.top - size / 2;
+
+      const ripple = document.createElement("span");
+      ripple.className = "tap-ripple";
+      ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
+      tappable.appendChild(ripple);
+
+      setTimeout(() => ripple.remove(), 600);
+    };
+
+    document.addEventListener("touchstart", handleTouch, { passive: true });
+    return () => document.removeEventListener("touchstart", handleTouch);
   }, []);
 
   return (
@@ -59,4 +93,3 @@ const MainContainer = ({ children }: PropsWithChildren) => {
 };
 
 export default MainContainer;
-
