@@ -71,54 +71,61 @@
 ════════════════════════════════════════════════ */
 @media only screen and (max-width: 1024px) {
 
-  /* ── Navbar bar — full width, backdrop blur ── */
+  /* ── Navbar — premium glassmorphism ── */
   .header {
     width: 100%;
     max-width: 100%;
     left: 0;
     transform: none;
-    padding: 0 20px;
-    height: 56px;
+    padding: 0 22px;
+    height: 58px;
     margin-bottom: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* Frosted glass */
-    background: rgba(11, 8, 12, 0.75);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(194, 164, 255, 0.08);
+    /* Premium frosted glass */
+    background: rgba(8, 5, 10, 0.60);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid rgba(194, 164, 255, 0.10);
     box-sizing: border-box;
-    /* Safe area — notch phones */
+    z-index: 9999;
+    /* Safe area top — notch phones */
     padding-top: env(safe-area-inset-top, 0px);
   }
 
-  /* ── Logo — same size ── */
-  .rw-logo-thin, .rw-logo-bold { font-size: 16px; }
-  .rw-logo-dot { width: 5px; height: 5px; }
+  /* ── Logo ── */
+  .rw-logo-thin { font-size: 15px; }
+  .rw-logo-bold { font-size: 15px; }
+  .rw-logo-dot  { width: 5px; height: 5px; margin-bottom: 2px; }
 
-  /* ── Nav links — horizontal, smaller, right-aligned ── */
+  /* ── Nav links ── */
   .header ul {
     flex-direction: row;
     align-items: center;
     gap: 0;
-    column-gap: 20px;
-    font-size: 12px;
+    column-gap: 22px;
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.8px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
   }
-  .header ul li { color: rgba(234, 229, 236, 0.75); }
+  .header ul li {
+    color: rgba(234, 229, 236, 0.55);
+    transition: color 0.2s ease;
+    padding: 6px 0;
+  }
+  .header ul li:active {
+    color: var(--accentColor);
+  }
 
-  /* ── Hide connect button — no space on mobile ── */
+  /* ── Hide connect label ── */
   .navbar-connect { display: none !important; }
-
-  /* ── Touch tap feedback ── */
-  .header ul li:active { color: var(--accentColor); }
 }
 
-/* Very small screens — compact nav */
+/* Very small screens */
 @media only screen and (max-width: 360px) {
-  .header ul { column-gap: 14px; font-size: 11px; }
-  .header { padding: 0 14px; }
+  .header { padding: 0 14px; height: 52px; }
+  .header ul { column-gap: 16px; font-size: 10px; }
 }
 
