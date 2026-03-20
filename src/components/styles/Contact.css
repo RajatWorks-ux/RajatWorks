@@ -253,3 +253,82 @@ a.contact-social {
   }
     }
 
+
+/* ════════════════════════════════════════════════
+   MOBILE ANIMATIONS — Contact Section
+   Uses .in-view class added by initInView()
+════════════════════════════════════════════════ */
+@media only screen and (max-width: 900px) {
+
+  /* Headline block */
+  .contact-mobile .cm-headline {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: mFadeUp 0.85s ease forwards;
+    animation-play-state: paused;
+  }
+
+  /* Big email CTA */
+  .contact-mobile .cm-email-btn {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: mFadeUp 0.7s ease 0.2s forwards;
+    animation-play-state: paused;
+  }
+
+  /* Location row */
+  .contact-mobile .cm-location {
+    opacity: 0;
+    animation: mFadeIn 0.6s ease 0.35s forwards;
+    animation-play-state: paused;
+  }
+
+  /* Divider */
+  .contact-mobile .cm-divider {
+    opacity: 0;
+    animation: mFadeIn 0.5s ease 0.4s forwards;
+    animation-play-state: paused;
+  }
+
+  /* Social label + buttons */
+  .contact-mobile .cm-social-label {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: mFadeUp 0.6s ease 0.5s forwards;
+    animation-play-state: paused;
+  }
+  .contact-mobile .cm-socials {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: mFadeUp 0.7s ease 0.55s forwards;
+    animation-play-state: paused;
+  }
+
+  /* Footer */
+  .contact-mobile .cm-footer {
+    opacity: 0;
+    animation: mFadeIn 0.6s ease 0.75s forwards;
+    animation-play-state: paused;
+  }
+
+  /* Fire all when section scrolls into view */
+  .contact-section.in-view .cm-headline,
+  .contact-section.in-view .cm-email-btn,
+  .contact-section.in-view .cm-location,
+  .contact-section.in-view .cm-divider,
+  .contact-section.in-view .cm-social-label,
+  .contact-section.in-view .cm-socials,
+  .contact-section.in-view .cm-footer {
+    animation-play-state: running;
+  }
+
+  /* Glow blob entrance */
+  .contact-section.in-view .cm-glow {
+    animation: cmGlowIn 1.2s ease 0.3s forwards;
+  }
+  @keyframes cmGlowIn {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+}
+
