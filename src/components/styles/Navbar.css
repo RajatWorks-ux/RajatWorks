@@ -1,161 +1,124 @@
+/* ════════════════════════════════════════════════
+   Navbar.css — DESKTOP (untouched)
+════════════════════════════════════════════════ */
 .header {
-  display: flex;
-  max-width: var(--cMaxWidth);
-  width: var(--cWidth);
-  justify-content: space-between;
-  padding: 20px 0px;
-  margin-bottom: -100px;
-  box-sizing: border-box;
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 0;
-  z-index: 9999;
+  display: flex; max-width: var(--cMaxWidth); width: var(--cWidth);
+  justify-content: space-between; padding: 20px 0;
+  margin-bottom: -100px; box-sizing: border-box;
+  position: fixed; left: 50%; transform: translateX(-50%);
+  top: 0; z-index: 9999;
 }
 .header ul {
-  font-size: 12px;
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  column-gap: 40px;
-  row-gap: 8px;
-  align-items: end;
+  font-size: 12px; display: flex; flex-direction: column;
+  margin: 0; padding: 0; list-style: none;
+  column-gap: 40px; row-gap: 8px; align-items: end;
 }
 .header ul li {
-  margin-left: 0px;
-  letter-spacing: 1px;
-  color: #ccc;
-  font-weight: 600;
-  cursor: pointer;
+  margin-left: 0; letter-spacing: 1px;
+  color: #ccc; font-weight: 600; cursor: pointer;
 }
 .navbar-connect {
-  position: absolute;
-  display: none;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 15px;
-  letter-spacing: 1px;
-  font-weight: 500;
+  position: absolute; display: none; left: 50%; top: 50%;
+  transform: translate(-50%,-50%); font-size: 15px;
+  letter-spacing: 1px; font-weight: 500;
 }
-.navbar-title {
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.2px;
-}
+.navbar-title { font-weight: 700; font-size: 14px; letter-spacing: 0.2px; }
+
 @media only screen and (min-width: 500px) {
+  .header { padding: 20px 0; }
+  .header ul { flex-direction: row; align-items: center; font-size: 14px; }
+  .header ul li { color: #eae5ec; }
+  .navbar-title { font-size: 16px; }
+}
+@media only screen and (min-width: 900px) { .navbar-connect { display: block; } }
+@media only screen and (min-width: 1200px) {
+  .header { padding: 35px 0; }
+  .header ul { column-gap: 80px; font-size: 16px; }
+  .navbar-connect { font-size: 16px; }
+  .navbar-title { font-size: 18px; }
+}
+
+/* ── Logo ── */
+.rw-logo { display: flex; align-items: flex-end; gap: 0; line-height: 1; letter-spacing: 0; }
+.rw-logo-thin { font-family: "Geist", sans-serif; font-weight: 200; font-size: 16px; color: #eae5ec; letter-spacing: 0.5px; }
+.rw-logo-bold { font-family: "Geist", sans-serif; font-weight: 900; font-size: 16px; color: var(--accentColor); letter-spacing: -0.5px; text-transform: uppercase; }
+.rw-logo-dot {
+  display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accentColor); margin-left: 2px; margin-bottom: 3px;
+  box-shadow: 0 0 6px 2px rgba(194,164,255,0.8), 0 0 14px 4px rgba(194,164,255,0.3);
+  flex-shrink: 0; animation: dotPulse 3s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%,100% { box-shadow: 0 0 6px 2px rgba(194,164,255,0.8), 0 0 14px 4px rgba(194,164,255,0.3); }
+  50%      { box-shadow: 0 0 10px 4px rgba(194,164,255,1),  0 0 22px 8px rgba(194,164,255,0.5); }
+}
+@media only screen and (min-width: 500px)  { .rw-logo-thin,.rw-logo-bold { font-size: 18px; } .rw-logo-dot { width: 6px; height: 6px; } }
+@media only screen and (min-width: 1200px) { .rw-logo-thin,.rw-logo-bold { font-size: 20px; } }
+
+/* ── Scroll progress bar (mobile only) ── */
+#scroll-progress-bar {
+  display: none; position: fixed; top: 0; left: 0;
+  height: 2px; width: 0%;
+  background: linear-gradient(to right, var(--accentColor), #fb8dff 60%, var(--accentColor));
+  z-index: 99999; border-radius: 0 1px 1px 0;
+  transition: width 0.06s linear;
+  box-shadow: 0 0 6px rgba(194,164,255,0.6);
+}
+@media only screen and (max-width: 1024px) { #scroll-progress-bar { display: block; } }
+
+/* ════════════════════════════════════════════════
+   MOBILE ONLY  (max-width: 1024px)
+════════════════════════════════════════════════ */
+@media only screen and (max-width: 1024px) {
+
+  /* ── Navbar bar — full width, backdrop blur ── */
   .header {
-    padding: 20px 0px;
+    width: 100%;
+    max-width: 100%;
+    left: 0;
+    transform: none;
+    padding: 0 20px;
+    height: 56px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Frosted glass */
+    background: rgba(11, 8, 12, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(194, 164, 255, 0.08);
+    box-sizing: border-box;
+    /* Safe area — notch phones */
+    padding-top: env(safe-area-inset-top, 0px);
   }
+
+  /* ── Logo — same size ── */
+  .rw-logo-thin, .rw-logo-bold { font-size: 16px; }
+  .rw-logo-dot { width: 5px; height: 5px; }
+
+  /* ── Nav links — horizontal, smaller, right-aligned ── */
   .header ul {
     flex-direction: row;
     align-items: center;
-    font-size: 14px;
+    gap: 0;
+    column-gap: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
   }
-  .header ul li {
-    color: #eae5ec;
-  }
-  .navbar-title {
-    font-size: 16px;
-  }
-}
-@media only screen and (min-width: 900px) {
-  .navbar-connect {
-    display: block;
-  }
-}
-@media only screen and (min-width: 1200px) {
-  .header {
-    padding: 35px 0px;
-  }
-  .header ul {
-    column-gap: 80px;
-    font-size: 16px;
-  }
-  .navbar-connect {
-    font-size: 16px;
-  }
-  .navbar-title {
-    font-size: 18px;
-  }
+  .header ul li { color: rgba(234, 229, 236, 0.75); }
+
+  /* ── Hide connect button — no space on mobile ── */
+  .navbar-connect { display: none !important; }
+
+  /* ── Touch tap feedback ── */
+  .header ul li:active { color: var(--accentColor); }
 }
 
-/* ════════════════════════════════
-   RajatWorks Logo
-════════════════════════════════ */
-.rw-logo {
-  display: flex;
-  align-items: flex-end;
-  gap: 0;
-  line-height: 1;
-  letter-spacing: 0;
-}
-.rw-logo-thin {
-  font-family: "Geist", sans-serif;
-  font-weight: 200;
-  font-size: 16px;
-  color: #eae5ec;
-  letter-spacing: 0.5px;
-}
-.rw-logo-bold {
-  font-family: "Geist", sans-serif;
-  font-weight: 900;
-  font-size: 16px;
-  color: var(--accentColor);
-  letter-spacing: -0.5px;
-  text-transform: uppercase;
-}
-.rw-logo-dot {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accentColor);
-  margin-left: 2px;
-  margin-bottom: 3px;
-  box-shadow:
-    0 0 6px 2px rgba(194, 164, 255, 0.8),
-    0 0 14px 4px rgba(194, 164, 255, 0.3);
-  flex-shrink: 0;
-  animation: dotPulse 3s ease-in-out infinite;
-}
-@keyframes dotPulse {
-  0%, 100% { box-shadow: 0 0 6px 2px rgba(194,164,255,0.8), 0 0 14px 4px rgba(194,164,255,0.3); }
-  50%       { box-shadow: 0 0 10px 4px rgba(194,164,255,1),  0 0 22px 8px rgba(194,164,255,0.5); }
-}
-@media only screen and (min-width: 500px) {
-  .rw-logo-thin, .rw-logo-bold { font-size: 18px; }
-  .rw-logo-dot { width: 6px; height: 6px; }
-}
-@media only screen and (min-width: 1200px) {
-  .rw-logo-thin, .rw-logo-bold { font-size: 20px; }
+/* Very small screens — compact nav */
+@media only screen and (max-width: 360px) {
+  .header ul { column-gap: 14px; font-size: 11px; }
+  .header { padding: 0 14px; }
 }
 
-/* ════════════════════════════════════════════════════════
-   SCROLL PROGRESS BAR — thin purple line at top, mobile only
-════════════════════════════════════════════════════════ */
-#scroll-progress-bar {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 2px;
-  width: 0%;
-  background: linear-gradient(
-    to right,
-    var(--accentColor),
-    #fb8dff 60%,
-    var(--accentColor)
-  );
-  z-index: 99999;
-  border-radius: 0 1px 1px 0;
-  transition: width 0.06s linear;
-  box-shadow: 0 0 6px rgba(194, 164, 255, 0.6);
-}
-@media only screen and (max-width: 1024px) {
-  #scroll-progress-bar { display: block; }
-}
-
-  
