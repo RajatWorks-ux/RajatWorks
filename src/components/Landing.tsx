@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import "./styles/Landing.css";
 import { config } from "../config";
 
@@ -6,6 +6,29 @@ const Landing = ({ children }: PropsWithChildren) => {
   const nameParts = config.developer.fullName.split(" ");
   const firstName = nameParts[0] || config.developer.name;
   const lastName  = nameParts.slice(1).join(" ") || "";
+
+  // ── Mobile parallax: hero image scrolls slower than page ──
+  useEffect(() => {
+    if (window.innerWidth > 1024) return;
+    const img = document.querySelector(".story-image") as HTMLElement | null;
+    if (!img) return;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const vh = window.innerHeight;
+        if (y < vh) {
+          // Subtle upward drift: image moves 20% as fast as scroll
+          img.style.transform = `translateY(${y * 0.2}px)`;
+        }
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
@@ -25,6 +48,9 @@ const Landing = ({ children }: PropsWithChildren) => {
           src="/images/rajat.webp"
           alt="Rajat Kumar Dua"
           className="story-image"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
         />
 
         <div className="story-overlay" />
@@ -86,4 +112,5 @@ export default Landing;
 
 
 
-              
+
+
