@@ -97,6 +97,17 @@
 /* ════════════════════════════════════════════════
    MOBILE ONLY  (max-width: 1024px)
 ════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════
+   DESKTOP WORD-SPLIT RESET
+   Mobile pe .word spans animation ke liye split hote hain
+   Desktop pe inhe normal inline text banana hai — spaces wapas aayein
+════════════════════════════════════════════════ */
+@media only screen and (min-width: 1025px) {
+  .about-me p .word       { display: inline; overflow: visible; vertical-align: baseline; }
+  .about-me p .word-inner { display: inline; opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
 @media only screen and (max-width: 1024px) {
 
   .about-section {
@@ -238,4 +249,5 @@
   60%  { color: var(--accentColor); text-shadow: 0 0 20px rgba(194,164,255,0.6); }
   100% { color: var(--accentColor); text-shadow: none; }
 }
+
 
