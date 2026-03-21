@@ -11,7 +11,6 @@ export class TextSplitter {
     const type = vars?.type || "chars,words,lines";
     const linesClass = vars?.linesClass || "split-line";
 
-    // Get elements
     let elements: Element[] = [];
     if (typeof target === "string") {
       elements = Array.from(document.querySelectorAll(target));
@@ -27,11 +26,9 @@ export class TextSplitter {
     this.elements = elements;
 
     elements.forEach((element) => {
-      // Store original HTML for revert
       this.originalHTML.set(element, element.innerHTML);
 
       if (type.includes("chars") && type.includes("words")) {
-        // Split into words first, then chars
         this.splitWords(element);
         this.splitCharsFromWords(element);
       } else if (type.includes("chars")) {
@@ -49,11 +46,12 @@ export class TextSplitter {
   private splitChars(element: Element) {
     const text = element.textContent || "";
     const chars = text.split("");
-    
+
     element.innerHTML = chars
       .map((char) => {
         if (char === " ") {
-          return '<span class="split-char"> </span>';
+          // FIX: wrap space in span so it is a movable DOM element
+          return '<span class="split-space"> </span>';
         }
         if (char === "\n") {
           return "<br>";
@@ -72,7 +70,11 @@ export class TextSplitter {
     element.innerHTML = words
       .map((word) => {
         if (word.trim().length === 0) {
-          return word; // Preserve whitespace
+          // FIX: wrap whitespace in a span instead of leaving it as a raw
+          // text node. Raw text nodes are NOT moved by splitLines() into the
+          // line wrapper — so words end up touching with no spaces between them.
+          // A span element IS moved correctly, preserving the spaces.
+          return `<span class="split-space">${word}</span>`;
         }
         return `<span class="split-word">${word}</span>`;
       })
@@ -94,9 +96,11 @@ export class TextSplitter {
   }
 
   private splitLines(element: Element, linesClass: string) {
-    // Use requestAnimationFrame to ensure layout is complete
     requestAnimationFrame(() => {
-      const items = element.querySelectorAll(".split-word, .split-char");
+      // FIX: include .split-space so spaces are moved into line wrappers
+      // alongside word spans — previously spaces stayed outside the wrapper
+      // causing words to render without gaps.
+      const items = element.querySelectorAll(".split-word, .split-char, .split-space");
       if (items.length === 0) return;
 
       let currentLine: Element[] = [];
@@ -104,13 +108,19 @@ export class TextSplitter {
       let currentTop = 0;
 
       items.forEach((item) => {
+        // Spaces: attach to current line without affecting line-break detection
+        if (item.classList.contains("split-space")) {
+          currentLine.push(item);
+          return;
+        }
+
         const rect = item.getBoundingClientRect();
         if (currentTop === 0) {
           currentTop = rect.top;
         }
 
         if (Math.abs(rect.top - currentTop) > 5) {
-          // New line
+          // New visual line detected
           if (currentLine.length > 0) {
             lines.push([...currentLine]);
           }
@@ -125,7 +135,7 @@ export class TextSplitter {
         lines.push(currentLine);
       }
 
-      // Wrap lines
+      // Wrap each line — all items including spaces move into the wrapper
       lines.forEach((line) => {
         if (line.length === 0) return;
         const lineWrapper = document.createElement("span");
