@@ -1,139 +1,330 @@
-import "./styles/Work.css";
-import WorkImage from "./WorkImage";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useState } from "react";
-import { config } from "../config";
+import { useState, useEffect } from "react";
+import { MdArrowOutward } from "react-icons/md";
 
-gsap.registerPlugin(ScrollTrigger);
+interface Props {
+  images: string[];
+  alt?: string;
+  link?: string;
+}
 
-// ─── Show More / Less per card ──────────────────────────────
-const WorkCard = ({
-  project,
-  index,
+// ─── Lightbox ───────────────────────────────────────────────
+const Lightbox = ({
+  images,
+  startIndex,
+  onClose,
 }: {
-  project: (typeof config.projects)[0];
-  index: number;
+  images: string[];
+  startIndex: number;
+  onClose: () => void;
 }) => {
-  const [expanded, setExpanded] = useState(false);
+  const [current, setCurrent] = useState(startIndex);
 
-  // Split description into first paragraph and the rest
-  const paragraphs = project.description.split("\n\n");
-  const shortDesc = paragraphs[0];
-  const extraDesc = paragraphs.slice(1).join("\n\n");
+  const prev = () => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1));
+  const next = () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
 
-  return (
-    <div className="work-box">
-      <div className="work-info">
-        <div className="work-title">
-          <h3>0{index + 1}</h3>
-          <div>
-            <h4>{project.title}</h4>
-            <p>{project.subtitle || project.category}</p>
-          </div>
-        </div>
-
-        {/* Description with show more / show less */}
-        <div className="work-desc">
-          <p className="work-desc-text">{shortDesc}</p>
-
-          {expanded && extraDesc && (
-            <p className="work-desc-extra">{extraDesc}</p>
-          )}
-
-          {/* Warning badge */}
-          {expanded && project.warning && (
-            <div className="work-warning">
-              <span>⚠️</span>
-              <span>{project.warning}</span>
-            </div>
-          )}
-
-          {(extraDesc || project.warning) && (
-            <button
-              className="work-show-btn"
-              onClick={() => setExpanded((v) => !v)}
-            >
-              {expanded ? "Show Less ↑" : "Show More ↓"}
-            </button>
-          )}
-        </div>
-
-        <h4>Tools and features</h4>
-        <p>{project.technologies}</p>
-      </div>
-
-      <WorkImage
-        images={project.images}
-        alt={project.title}
-        link={project.link}
-      />
-    </div>
-  );
-};
-
-// ─── Main Work Section ───────────────────────────────────────
-const Work = () => {
   useEffect(() => {
-    // Mobile pe horizontal scroll band — seedha vertical layout
-    if (window.innerWidth < 1025) return;
-
-    let translateX: number = 0;
-
-    function setTranslateX() {
-      const box = document.getElementsByClassName("work-box");
-      if (box.length === 0) return;
-      const rectLeft = document
-        .querySelector(".work-container")!
-        .getBoundingClientRect().left;
-      const rect = box[0].getBoundingClientRect();
-      const parentWidth = box[0].parentElement!.getBoundingClientRect().width;
-      let padding: number =
-        parseInt(window.getComputedStyle(box[0]).padding) / 2;
-      translateX =
-        rect.width * box.length - (rectLeft + parentWidth) + padding;
-    }
-
-    setTranslateX();
-
-    let timeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".work-section",
-        start: "top top",
-        end: `+=${translateX}`,
-        scrub: true,
-        pin: true,
-        id: "work",
-      },
-    });
-
-    timeline.to(".work-flex", {
-      x: -translateX,
-      ease: "none",
-    });
-
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    window.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
     return () => {
-      timeline.kill();
-      ScrollTrigger.getById("work")?.kill();
+      window.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
     };
   }, []);
 
   return (
-    <div className="work-section" id="work">
-      <div className="work-container section-container">
-        <h2>
-          My <span>Work</span>
-        </h2>
-        <div className="work-flex">
-          {config.projects.map((project, index) => (
-            <WorkCard key={project.id} project={project} index={index} />
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        background: "rgba(0,0,0,0.95)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {/* Close */}
+      <button
+        onClick={onClose}
+        style={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          width: 40,
+          height: 40,
+          borderRadius: "50%",
+          border: "none",
+          background: "rgba(255,255,255,0.15)",
+          color: "#fff",
+          fontSize: 18,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        ✕
+      </button>
+
+      {/* Counter */}
+      <div
+        style={{
+          position: "absolute",
+          top: 16,
+          left: "50%",
+          transform: "translateX(-50%)",
+          color: "rgba(255,255,255,0.7)",
+          fontSize: 13,
+          background: "rgba(0,0,0,0.4)",
+          padding: "3px 12px",
+          borderRadius: 20,
+        }}
+      >
+        {current + 1} / {images.length}
+      </div>
+
+      {/* Prev */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => { e.stopPropagation(); prev(); }}
+          style={{
+            position: "absolute",
+            left: 16,
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 48,
+            height: 48,
+            borderRadius: "50%",
+            border: "none",
+            background: "rgba(255,255,255,0.12)",
+            color: "#fff",
+            fontSize: 28,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          ‹
+        </button>
+      )}
+
+      {/* Image */}
+      <img
+        key={current}
+        src={images[current]}
+        alt={`Photo ${current + 1}`}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: "90vw",
+          maxHeight: "90vh",
+          objectFit: "contain",
+          borderRadius: 12,
+          boxShadow: "0 0 60px rgba(0,0,0,0.8)",
+        }}
+      />
+
+      {/* Next */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => { e.stopPropagation(); next(); }}
+          style={{
+            position: "absolute",
+            right: 16,
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 48,
+            height: 48,
+            borderRadius: "50%",
+            border: "none",
+            background: "rgba(255,255,255,0.12)",
+            color: "#fff",
+            fontSize: 28,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          ›
+        </button>
+      )}
+
+      {/* Dots */}
+      {images.length > 1 && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            gap: 8,
+          }}
+        >
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+              style={{
+                width: i === current ? 16 : 8,
+                height: 8,
+                borderRadius: 4,
+                border: "none",
+                background: i === current ? "#fff" : "rgba(255,255,255,0.35)",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                padding: 0,
+              }}
+            />
           ))}
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
-export default Work;
+// ─── Polaroid Stack ──────────────────────────────────────────
+const WorkImage = ({ images, alt, link }: Props) => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
+  // Show max 3 in stack
+  const stackImages = images.slice(0, Math.min(3, images.length));
+  const rotations = [3, -2.5, 5];
+  const offsets = [
+    { x: 6, y: 0 },
+    { x: -5, y: 4 },
+    { x: 9, y: 8 },
+  ];
 
+  return (
+    <div className="work-image">
+      {/* Stack container */}
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: 220,
+          width: "100%",
+          cursor: "pointer",
+        }}
+        onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
+        data-cursor="disable"
+      >
+        {/* Render back-to-front */}
+        {[...stackImages].reverse().map((img, ri) => {
+          const i = stackImages.length - 1 - ri;
+          const isTop = i === 0;
+
+          return (
+            <div
+              key={i}
+              style={{
+                position: "absolute",
+                transform: `rotate(${rotations[i]}deg) translate(${offsets[i].x}px, ${offsets[i].y}px)`,
+                zIndex: i + 1,
+                background: "#fff",
+                padding: "6px 6px 20px 6px",
+                borderRadius: 4,
+                boxShadow: isTop
+                  ? "0 8px 32px rgba(0,0,0,0.55)"
+                  : "0 4px 16px rgba(0,0,0,0.35)",
+                transition: "transform 0.25s ease",
+              }}
+              className={isTop ? "work-stack-top" : ""}
+            >
+              <img
+                src={img}
+                alt={`${alt} ${i + 1}`}
+                loading="lazy"
+                style={{
+                  width: 170,
+                  height: 150,
+                  objectFit: "contain",
+                  background: "#f8f8f8",
+                  display: "block",
+                  borderRadius: 2,
+                }}
+              />
+              {/* Count badge on top card */}
+              {isTop && images.length > 1 && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    background: "rgba(0,0,0,0.65)",
+                    color: "#fff",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    padding: "2px 6px",
+                    borderRadius: 10,
+                    letterSpacing: "0.3px",
+                  }}
+                >
+                  1/{images.length}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Tap hint */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            fontSize: 11,
+            color: "rgba(173,172,172,0.7)",
+            background: "rgba(30,30,30,0.8)",
+            padding: "3px 10px",
+            borderRadius: 12,
+            whiteSpace: "nowrap",
+            pointerEvents: "none",
+            zIndex: 20,
+          }}
+        >
+          Tap to view {images.length} photo{images.length !== 1 ? "s" : ""}
+        </div>
+      </div>
+
+      {/* Live link button */}
+      {link && (
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="work-live-btn"
+          data-cursor="disable"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <MdArrowOutward />
+          <span>Visit Live</span>
+        </a>
+      )}
+
+      {/* Lightbox */}
+      {lightboxOpen && (
+        <Lightbox
+          images={images}
+          startIndex={lightboxIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+    </div>
+  );
+};
+
+export default WorkImage;
+            
