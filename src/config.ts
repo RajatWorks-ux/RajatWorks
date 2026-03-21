@@ -14,36 +14,83 @@ export const config = {
         title: "About Me",
         description: "Full-stack builder creating digital experiences that respect humans and scale with clarity. Accessibility is my north star. I specialize in building modern web applications with React, Node.js, and cutting-edge technologies."
     },
+
+    // ─────────────────────────────────────────────────────────────────
+    //  CAREER TIMELINE
+    //  type: "learning" → 📖 grey badge
+    //  type: "freelance" → ⚡ purple badge
+    //  era: used to render the section divider between the two phases
+    // ─────────────────────────────────────────────────────────────────
     experiences: [
+        // ── LEARNING ERA ─────────────────────────────────────────────
         {
-            position: "Frontend Developer",
-            company: "SelectSkillSet",
-            period: "2024 - Present",
-            location: "Remote",
-            description: "Developing modern, responsive frontend applications with focus on user experience and performance. Working with cutting-edge technologies to build scalable web solutions.",
-            responsibilities: [
-                "Building responsive and interactive user interfaces using React and Next.js",
-                "Implementing modern UI/UX designs with TailwindCSS and Framer Motion",
-                "Optimizing application performance and ensuring cross-browser compatibility",
-                "Collaborating with design and backend teams to deliver high-quality features"
-            ],
-            technologies: ["React", "Next.js", "TailwindCSS", "JavaScript", "Framer Motion", "TypeScript"]
+            type: "learning",
+            era: "learning",
+            position: "First Line of Code",
+            company: "Self-Taught",
+            period: "2020",
+            description: "Opened a text editor, typed <h1>Hello World</h1>, and watched it render in a browser. That moment changed everything. Spent months obsessing over HTML structure and CSS layouts — building ugly pages and loving every pixel of it.",
         },
         {
-            position: "Full Stack Developer",
-            company: "Tekisky",
-            period: "2023 - 2024",
-            location: "Remote",
-            description: "Developed and maintained full-stack web applications, working on both frontend and backend systems. Collaborated with cross-functional teams to deliver robust software solutions.",
-            responsibilities: [
-                "Developed and maintained full-stack web applications using React, Node.js, and MongoDB",
-                "Implemented RESTful APIs and integrated third-party services",
-                "Built responsive user interfaces and optimized application performance",
-                "Worked on database design and backend architecture"
-            ],
-            technologies: ["React", "Node.js", "MongoDB", "Express", "JavaScript", "MERN Stack"]
-        }
+            type: "learning",
+            era: "learning",
+            position: "JavaScript & the DOM",
+            company: "Self-Taught",
+            period: "2021",
+            description: "JavaScript clicked — and the web became alive. Learned to manipulate the DOM, handle events, and write logic that actually did things. Built my first interactive projects: calculators, to-do lists, small games. Messy code, big lessons.",
+        },
+        {
+            type: "learning",
+            era: "learning",
+            position: "React & Component Thinking",
+            company: "Self-Taught",
+            period: "2022",
+            description: "Discovered React and everything changed again. Components, state, props, hooks — a completely different way of thinking about UI. Rebuilt everything I had made before. Cleaner, faster, more intentional. This was where craft started to matter.",
+        },
+        {
+            type: "learning",
+            era: "learning",
+            position: "Full Stack Unlocked",
+            company: "Self-Taught",
+            period: "2023",
+            description: "Backend finally made sense. Node.js, Express, MongoDB, REST APIs — I could now build both sides of a product from scratch. The gap between idea and shipped product collapsed. Everything became possible.",
+        },
+
+        // ── BUILDER ERA ───────────────────────────────────────────────
+        {
+            type: "freelance",
+            era: "freelance",
+            position: "First Real Products",
+            company: "Independent Builder",
+            period: "2023",
+            description: "Shipped Phone Shop and ANON — two fully deployed e-commerce platforms with real UX, security headers, CDN delivery, and Google integrations. First time strangers used something I built without me explaining anything to them.",
+        },
+        {
+            type: "freelance",
+            era: "freelance",
+            position: "Entering AI",
+            company: "Independent Builder",
+            period: "2024",
+            description: "Built Voltri — an AI-powered image-to-3D model converter. Integrated Microsoft Trellis API, Supabase auth, a credit system, and geo-based pricing (INR & USD). Designed it to feel like a product someone would actually pay for. Because they can.",
+        },
+        {
+            type: "freelance",
+            era: "freelance",
+            position: "Production-Grade Architecture",
+            company: "Independent Builder",
+            period: "2025",
+            description: "Launched MIRA — a multi-model AI chat agent with user authentication, persistent chat history, and a clean interface built for scale. Not a side project. A real product, built and deployed solo from zero.",
+        },
+        {
+            type: "freelance",
+            era: "freelance",
+            position: "Still Building",
+            company: "Open to Opportunities",
+            period: "2026",
+            description: "Four years in. Eight projects shipped. Zero shortcuts taken. I build things that work, look good, and respect the people using them. If you're looking for someone who cares about the craft — let's talk.",
+        },
     ],
+
     projects: [
         {
             id: 1,
@@ -112,6 +159,7 @@ export const config = {
             warning: "3D model generation is temporarily paused due to API integration adjustments. All other features including authentication, credit system, and subscription management are fully functional.",
         },
     ],
+
     contact: {
         email: "rajatworks1@gmail.com",
         github: "https://github.com/RajatWorks-ux",
@@ -119,6 +167,7 @@ export const config = {
         twitter: "https://x.com",
         instagram: "https://www.instagram.com/rajatworks0?igsh=MTNsYWx4NnBrdTFuZg==",
     },
+
     skills: {
         develop: {
             title: "DEVELOP",
