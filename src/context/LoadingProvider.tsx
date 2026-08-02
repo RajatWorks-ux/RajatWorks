@@ -15,34 +15,38 @@ interface LoadingType {
 
 export const LoadingContext = createContext<LoadingType | null>(null);
 
-const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
-
+// ✅ FIX: Reactive isMobile (was frozen constant)
 export const LoadingProvider = ({ children }: PropsWithChildren) => {
+  const [isMobile, setIsMobile] = useState<boolean>(
+    typeof window !== "undefined" && window.innerWidth <= 1024
+  );
   const [isLoading, setIsLoading] = useState(!isMobile);
-  const [loading, setLoading]     = useState(0);
+  const [loading, setLoading] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (!isMobile) return;
 
-    // Body dark + scroll enable — seedha, koi lenis dependency nahi
     document.body.style.backgroundColor = "#0b080c";
     document.body.style.overflow        = "auto";
     document.body.style.overflowX       = "hidden";
 
-    // Thoda wait karo taaki Navbar mount ho aur lenis ready ho
     const timer = setTimeout(() => {
-      // Header visible karo
       const header = document.querySelector(".header") as HTMLElement;
       if (header) header.style.opacity = "1";
 
-      // Lenis import karke start karo
       import("../components/Navbar").then(({ lenis }) => {
         if (lenis) lenis.start();
       });
     }, 300);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isMobile]);
 
   const value = { isLoading, setIsLoading, setLoading };
 
