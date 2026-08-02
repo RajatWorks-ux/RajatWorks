@@ -95,19 +95,18 @@
 }
 
 /* ════════════════════════════════════════════════
-   MOBILE ONLY  (max-width: 1024px)
-════════════════════════════════════════════════ */
-
-/* ════════════════════════════════════════════════
    DESKTOP WORD-SPLIT RESET
    Mobile pe .word spans animation ke liye split hote hain
-   Desktop pe inhe normal inline text banana hai — spaces wapas aayein
+   Desktop pe inhe normal inline text banana hai
 ════════════════════════════════════════════════ */
 @media only screen and (min-width: 1025px) {
   .about-me p .word       { display: inline; overflow: visible; vertical-align: baseline; }
   .about-me p .word-inner { display: inline; opacity: 1 !important; transform: none !important; transition: none !important; }
 }
 
+/* ════════════════════════════════════════════════
+   MOBILE ONLY  (max-width: 1024px)
+════════════════════════════════════════════════ */
 @media only screen and (max-width: 1024px) {
 
   .about-section {
@@ -130,7 +129,6 @@
     font-size: 11px;
     letter-spacing: 6px;
     margin-bottom: 20px;
-    /* Slide-up on in-view */
     opacity: 0;
     transform: translateY(24px);
     transition: opacity 0.6s ease, transform 0.6s ease;
@@ -161,6 +159,7 @@
     transform: translateY(100%);
     transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
   }
+  
   /* Stagger via nth-child — covers up to 40 words */
   .about-section.in-view .about-me p .word-inner {
     opacity: 1;
@@ -180,13 +179,21 @@
   .about-section.in-view .about-me p .word:nth-child(12) .word-inner { transition-delay: 0.59s; }
   .about-section.in-view .about-me p .word:nth-child(n+13) .word-inner { transition-delay: 0.62s; }
 
+  /* ✅ FIX #3: Fallback for old Android without :has() support
+     Added .split-active class that JS adds when splitText runs */
+  .about-me p.split-active .word-inner {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+
   /* Fallback: if .word spans not present, animate whole paragraph */
-  .about-me p:not(:has(.word)) {
+  .about-me p:not(.split-active) {
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
   }
-  .about-section.in-view .about-me p:not(:has(.word)) {
+  .about-section.in-view .about-me p:not(.split-active) {
     opacity: 1;
     transform: translateY(0);
   }
@@ -249,5 +256,4 @@
   60%  { color: var(--accentColor); text-shadow: 0 0 20px rgba(194,164,255,0.6); }
   100% { color: var(--accentColor); text-shadow: none; }
 }
-
 
