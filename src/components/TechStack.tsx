@@ -4,7 +4,6 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { EffectComposer, N8AO } from "@react-three/postprocessing";
 import {
-  BallCollider,
   Physics,
   RigidBody,
   CylinderCollider,
@@ -75,7 +74,6 @@ const MobileTechStack = () => {
 const BallComponent = ({ position }: { position: [number, number, number] }) => {
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const meshRef      = useRef<THREE.Mesh>(null);
-  const vec          = useMemo(() => new THREE.Vector3(), []);
 
   const ballTexture = useMemo(() => {
     const canvas = document.createElement("canvas");
@@ -132,7 +130,6 @@ const PhysicsCanvas = () => (
 //  MAIN — Switches between mobile / desktop
 // ─────────────────────────────────────────────
 const TechStack = () => {
-  // ✅ FIX: useState is INSIDE the component — no module-level hook call bug
   const [isMobile, setIsMobile] = useState<boolean>(
     typeof window !== "undefined" ? window.innerWidth < 1025 : false
   );
@@ -156,5 +153,4 @@ const TechStack = () => {
 };
 
 export default TechStack;
-
 
