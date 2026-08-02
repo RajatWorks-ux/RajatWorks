@@ -1,8 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
 
+/* ✅ FIX #11: Global box-sizing reset — ensures padding/border don't add to width */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 :root {
   font-family: "Geist", sans-serif;
-
   font-optical-sizing: auto;
   font-style: normal;
   line-height: 1.5;
@@ -10,7 +14,6 @@
   color-scheme: light dark;
   color: #eae5ec;
   background-color: var(--backgroundColor);
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -20,9 +23,20 @@
   -moz-user-select: none;
   --accentColor: #c2a4ff;
   --backgroundColor: #0b080c;
+  
+  /* ✅ FIX #9: --vh custom property for viewport height
+     Fallback to 100vh for old Android, but JS will override with computed value
+     See bottom of this file for JS-based setter */
   --vh: 100vh;
-  --vh: 100svh;
 }
+
+/* ✅ FIX #9: Try to use 100svh if supported, but have fallback */
+@supports (height: 100svh) {
+  :root {
+    --vh: 100svh;
+  }
+}
+
 h1,
 h2,
 h3,
@@ -194,21 +208,16 @@ body {
     gap: 12px;
   }
 }
-  
 
-/* ════════════════════════════════════
+/* ════════════════════════════════
    MOBILE SCROLL FIX
-   body overflow:hidden desktop ke liye
-   mobile pe auto hona chahiye
-════════════════════════════════════ */
+════════════════════════════════ */
 @media only screen and (max-width: 1024px) {
   body {
     overflow: auto !important;
     overflow-x: hidden !important;
   }
 }
-
-
 
 /* ════════════════════════════════════════════════════
    GLOBAL MOBILE ANIMATION KEYFRAMES
@@ -246,7 +255,6 @@ body {
     animation-play-state: running;
   }
 
-  /* Shimmer border effect on icons */
   .tech-mobile-item img::after {
     content: "";
     position: absolute;
@@ -260,3 +268,18 @@ body {
   }
 }
 
+/* ✅ FIX #9: JavaScript-based --vh setter for old Android phones
+   ⚠️  ADD THIS CODE TO: src/main.tsx (in useEffect or top-level)
+   
+   function setVH() {
+     const vh = window.innerHeight * 0.01;
+     document.documentElement.style.setProperty('--vh', `${vh}px`);
+   }
+   
+   setVH();
+   window.addEventListener('resize', setVH, { passive: true });
+   window.addEventListener('orientationchange', () => {
+     setTimeout(setVH, 100);
+   }, { passive: true });
+*/
+    
