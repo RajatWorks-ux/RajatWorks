@@ -139,6 +139,9 @@
     width: 100%;
     align-items: flex-start;
     place-items: unset;
+    position: relative;     /* ✅ Needed for z-index to work */
+    z-index: 2;             /* ✅ Ensures WhatIDo stays above Career on tab overlap */
+    overflow: hidden;       /* ✅ Prevents inner content from bleeding into Career */
   }
 
   /* ── Section heading ── */
@@ -254,4 +257,5 @@
   .what-content h5,
   .what-content-flex { opacity: 1 !important; }
                 }
-    
+
+     
