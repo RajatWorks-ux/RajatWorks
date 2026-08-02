@@ -1,17 +1,6 @@
-import { useEffect, useState } from "react";
 import "./styles/Contact.css";
 
 const Contact = () => {
-  const [isMobile, setIsMobile] = useState<boolean>(
-    typeof window !== "undefined" && window.innerWidth < 1025
-  );
-
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 1025);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
   return (
     <section className="contact-section" id="contact">
 
