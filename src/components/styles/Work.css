@@ -74,6 +74,9 @@
   .work-section {
     height: auto;
     min-height: unset;
+    margin-top: 0;       /* ✅ Clear separation — TechStack overflow:hidden handles the gap */
+    position: relative;
+    z-index: 1;
   }
 
   .work-container {
@@ -282,4 +285,5 @@
   .work-warning { width: 100%; }
   .work-live-btn { margin-top: 8px; }
 }
+
 
