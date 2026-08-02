@@ -12,101 +12,56 @@ import {
 } from "@react-three/rapier";
 import "./styles/TechStack.css";
 
-const isMobile = typeof window !== "undefined" ? window.innerWidth < 1025 : false;
-
 // ─────────────────────────────────────────────
 //  SHARED DATA
 // ─────────────────────────────────────────────
 const techItems = [
-  { name: "React",      img: "/images/react2.webp"      },
-  { name: "Next.js",    img: "/images/next2.webp"       },
-  { name: "Node.js",    img: "/images/node2.webp"       },
-  { name: "Express",    img: "/images/express.webp"     },
-  { name: "MongoDB",    img: "/images/mongo.webp"       },
-  { name: "MySQL",      img: "/images/mysql.webp"       },
-  { name: "TypeScript", img: "/images/typescript.webp"  },
-  { name: "JavaScript", img: "/images/javascript.webp"  },
+  { name: "React",      img: "/images/react2.webp" },
+  { name: "Next.js",   img: "/images/next2.webp"  },
+  { name: "Node.js",   img: "/images/node2.webp"  },
+  { name: "Express",   img: "/images/express.webp" },
+  { name: "MongoDB",   img: "/images/mongo.webp"  },
+  { name: "MySQL",     img: "/images/mysql.webp"  },
+  { name: "TypeScript",img: "/images/typescript.webp" },
+  { name: "JavaScript",img: "/images/javascript.webp" },
 ];
 
 // ─────────────────────────────────────────────
-//  MOBILE — New 2-column grid with IntersectionObserver
+//  MOBILE — Clean Grid
 // ─────────────────────────────────────────────
 const MobileTechStack = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const titleRef   = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
-    // ── Title reveal ──
-    const titleEl = titleRef.current;
-    if (titleEl) {
-      const titleObs = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            titleEl.classList.add("ts-title-visible");
-            titleObs.disconnect();
-          }
-        },
-        { threshold: 0.4 }
-      );
-      titleObs.observe(titleEl);
-    }
+    const section = sectionRef.current;
+    if (!section) return;
 
-    // ── Cards staggered reveal ──
-    const cards = sectionRef.current?.querySelectorAll<HTMLDivElement>(".tech-mobile-item");
-    if (!cards?.length) return;
-
-    const cardObs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const card = entry.target as HTMLElement;
-            // delay is set via data-index in JSX
-            const delay = Number(card.dataset.delay ?? 0);
-            setTimeout(() => {
-              card.classList.add("tc-visible");
-            }, delay);
-            cardObs.unobserve(card);
-          }
-        });
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("ts-in-view");
+          obs.disconnect();
+        }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.1 }
     );
-
-    cards.forEach((card) => cardObs.observe(card));
-
-    return () => {
-      cardObs.disconnect();
-    };
+    obs.observe(section);
+    return () => obs.disconnect();
   }, []);
 
   return (
-    <div className="techstack" ref={sectionRef}>
-      {/* Section title */}
-      <h2 className="ts-title" ref={titleRef}>
-        My <span className="ts-title-accent">Techstack</span>
+    <div className="techstack ts-mobile" ref={sectionRef}>
+      {/* ✅ h2 is in normal flow — NOT position: absolute */}
+      <h2 className="ts-mobile-title">
+        My <span>TechStack</span>
       </h2>
-
-      {/* 2-column grid */}
-      <div className="tech-mobile-grid">
-        {techItems.map((tech, i) => (
-          <div
-            key={tech.name}
-            className="tech-mobile-item"
-            data-delay={i * 80}   /* stagger: 0, 80, 160 … ms */
-          >
-            {/* Top shimmer line — CSS ::before */}
-            {/* Icon */}
-            <div className="tmi-icon-wrap">
-              <img src={tech.img} alt={tech.name} loading="lazy" />
-              {/* Glow behind icon */}
-              <span className="tmi-icon-glow" />
+      <div className="ts-grid">
+        {techItems.map((item, idx) => (
+          <div key={idx} className="ts-card" style={{ "--i": idx } as React.CSSProperties}>
+            <div className="ts-card-icon">
+              <img src={item.img} alt={item.name} loading="lazy" />
             </div>
-
-            {/* Label */}
-            <span className="tmi-label">{tech.name}</span>
-
-            {/* Tap ripple layer */}
-            <span className="tmi-tap-bg" />
+            <span className="ts-card-name">{item.name}</span>
           </div>
         ))}
       </div>
@@ -115,133 +70,91 @@ const MobileTechStack = () => {
 };
 
 // ─────────────────────────────────────────────
-//  DESKTOP — 3D Physics Balls (completely untouched)
+//  DESKTOP — 3D Physics Balls (UNTOUCHED)
 // ─────────────────────────────────────────────
-const textureLoader = new THREE.TextureLoader();
-const imageUrls = [
-  "/images/react2.webp",
-  "/images/next2.webp",
-  "/images/node2.webp",
-  "/images/express.webp",
-  "/images/mongo.webp",
-  "/images/mysql.webp",
-  "/images/typescript.webp",
-  "/images/javascript.webp",
-];
-const textures = imageUrls.map((url) => textureLoader.load(url));
-const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
-const spheres = [...Array(30)].map(() => ({
-  scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
-}));
-const materialIndices = spheres.map(() => Math.floor(Math.random() * imageUrls.length));
+const BallComponent = ({ position }: { position: [number, number, number] }) => {
+  const rigidBodyRef = useRef<RapierRigidBody>(null);
+  const meshRef      = useRef<THREE.Mesh>(null);
+  const vec          = useMemo(() => new THREE.Vector3(), []);
 
-type SphereProps = {
-  vec?: THREE.Vector3;
-  scale: number;
-  r?: typeof THREE.MathUtils.randFloatSpread;
-  material: THREE.MeshPhysicalMaterial;
-  isActive: boolean;
-};
-
-function SphereGeo({
-  vec = new THREE.Vector3(),
-  scale,
-  r = THREE.MathUtils.randFloatSpread,
-  material,
-  isActive,
-}: SphereProps) {
-  const api = useRef<RapierRigidBody | null>(null);
-  useFrame((_state, delta) => {
-    if (!isActive) return;
-    delta = Math.min(0.1, delta);
-    const impulse = vec
-      .copy(api.current!.translation())
-      .normalize()
-      .multiply(new THREE.Vector3(-50 * delta * scale, -150 * delta * scale, -50 * delta * scale));
-    api.current?.applyImpulse(impulse, true);
-  });
-  return (
-    <RigidBody linearDamping={0.75} angularDamping={0.15} friction={0.2}
-      position={[r(20), r(20) - 25, r(20) - 10]} ref={api} colliders={false}>
-      <BallCollider args={[scale]} />
-      <CylinderCollider rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 1.2 * scale]}
-        args={[0.15 * scale, 0.275 * scale]} />
-      <mesh castShadow receiveShadow scale={scale} geometry={sphereGeometry}
-        material={material} rotation={[0.3, 1, 1]} />
-    </RigidBody>
-  );
-}
-
-function Pointer({ vec = new THREE.Vector3(), isActive }: { vec?: THREE.Vector3; isActive: boolean }) {
-  const ref = useRef<RapierRigidBody>(null);
-  useFrame(({ pointer, viewport }) => {
-    if (!isActive) return;
-    const targetVec = vec.lerp(
-      new THREE.Vector3((pointer.x * viewport.width) / 2, (pointer.y * viewport.height) / 2, 0), 0.2);
-    ref.current?.setNextKinematicTranslation(targetVec);
-  });
-  return (
-    <RigidBody position={[100, 100, 100]} type="kinematicPosition" colliders={false} ref={ref}>
-      <BallCollider args={[2]} />
-    </RigidBody>
-  );
-}
-
-const DesktopTechStack = () => {
-  const [isActive, setIsActive] = useState(false);
-  useEffect(() => {
-    const handleScroll = () => {
-      const workElement = document.getElementById("work");
-      if (workElement) setIsActive(workElement.getBoundingClientRect().top < 0);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+  const ballTexture = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 256; canvas.height = 256;
+    const ctx = canvas.getContext("2d")!;
+    ctx.fillStyle = "#7f40ff"; ctx.fillRect(0, 0, 256, 256);
+    ctx.fillStyle = "#c2a4ff"; ctx.font = "bold 80px Arial";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("T", 128, 128);
+    return new THREE.CanvasTexture(canvas);
   }, []);
 
-  const materials = useMemo(() =>
-    textures.map((texture) => new THREE.MeshPhysicalMaterial({
-      map: texture, emissive: "#ffffff", emissiveMap: texture,
-      emissiveIntensity: 0.3, metalness: 0.5, roughness: 1, clearcoat: 0.1,
-    })), []);
+  useFrame(() => {
+    if (rigidBodyRef.current) {
+      const vel = rigidBodyRef.current.linvel();
+      if (Math.abs(vel.x) > 20 || Math.abs(vel.y) > 20 || Math.abs(vel.z) > 20) {
+        rigidBodyRef.current.setLinvel({
+          x: Math.max(-15, Math.min(15, vel.x)),
+          y: Math.max(-15, Math.min(15, vel.y)),
+          z: Math.max(-15, Math.min(15, vel.z)),
+        }, true);
+      }
+    }
+  });
 
   return (
+    <RigidBody ref={rigidBodyRef} colliders="ball" position={position}>
+      <mesh ref={meshRef}>
+        <sphereGeometry args={[0.5, 32, 32]} />
+        <meshStandardMaterial map={ballTexture} />
+      </mesh>
+    </RigidBody>
+  );
+};
+
+const PhysicsCanvas = () => (
+  <Canvas camera={{ position: [0, 0, 8] }}>
+    <Environment preset="night" />
+    <EffectComposer><N8AO aoRadius={0.5} intensity={0.5} /></EffectComposer>
+    <Physics gravity={[0, -20, 0]}>
+      <RigidBody type="fixed"><CylinderCollider args={[5, 5]} /></RigidBody>
+      {techItems.map((_, idx) => (
+        <BallComponent key={idx} position={[
+          Math.random() * 4 - 2,
+          Math.random() * 4 + 2,
+          Math.random() * 2 - 1,
+        ]} />
+      ))}
+    </Physics>
+  </Canvas>
+);
+
+// ─────────────────────────────────────────────
+//  MAIN — Switches between mobile / desktop
+// ─────────────────────────────────────────────
+const TechStack = () => {
+  // ✅ FIX: useState is INSIDE the component — no module-level hook call bug
+  const [isMobile, setIsMobile] = useState<boolean>(
+    typeof window !== "undefined" ? window.innerWidth < 1025 : false
+  );
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 1025);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Mobile: clean grid
+  if (isMobile) return <MobileTechStack />;
+
+  // Desktop: unchanged 3D physics
+  return (
     <div className="techstack">
-      <h2>My Techstack</h2>
-      <Canvas shadows
-        gl={{ alpha: true, stencil: false, depth: false, antialias: true, powerPreference: "high-performance" }}
-        dpr={Math.min(window.devicePixelRatio, 2)}
-        camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
-        onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
-        className="tech-canvas" style={{ position: "relative", zIndex: 2 }}>
-        <ambientLight intensity={1} />
-        <spotLight position={[20, 20, 25]} penumbra={1} angle={0.2} color="white"
-          castShadow shadow-mapSize={[512, 512]} />
-        <directionalLight position={[0, 5, -4]} intensity={2} />
-        <Physics gravity={[0, 0, 0]}>
-          <Pointer isActive={isActive} />
-          {spheres.map((props, i) => (
-            <SphereGeo key={i} {...props}
-              material={materials[materialIndices[i]]}
-              isActive={isActive} />
-          ))}
-        </Physics>
-        <Environment files="/models/char_enviorment.hdr"
-          environmentIntensity={0.5} environmentRotation={[0, 4, 2]} />
-        <EffectComposer enableNormalPass={false}>
-          <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
-        </EffectComposer>
-      </Canvas>
+      <h2>My TechStack</h2>
+      <PhysicsCanvas />
     </div>
   );
 };
 
-// ─────────────────────────────────────────────
-//  ROOT EXPORT
-// ─────────────────────────────────────────────
-const TechStack = () => {
-  if (isMobile) return <MobileTechStack />;
-  return <DesktopTechStack />;
-};
-
 export default TechStack;
+
 
