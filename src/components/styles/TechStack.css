@@ -11,7 +11,7 @@
   margin: auto;
 }
 
-/* ══ FIX 3: Desktop h2 wrapped in min-width so it doesn't bleed into mobile ══ */
+/* ══ Desktop: h2 and canvas ══ */
 @media only screen and (min-width: 1025px) {
   .techstack h2 {
     font-size: 70px;
@@ -31,12 +31,13 @@
 
   /* ── Section wrapper ── */
   .techstack {
-    padding: 72px 0 64px;
+    padding: 72px 0 80px;   /* ✅ Extra bottom padding so balls don't bleed into Work */
     width: 100%;
     max-width: 100%;
     margin: 0;
     position: relative;
     z-index: 1;
+    overflow: hidden;       /* ✅ Clip any overflowing ball/canvas content */
   }
 
   /* ── Section title ── */
@@ -132,7 +133,7 @@
   }
   .tech-mobile-item:active .tmi-tap-bg { opacity: 1; }
 
-  /* ── Icon wrapper — 88px for crisp display ── */
+  /* ── Icon wrapper ── */
   .tmi-icon-wrap {
     position: relative;
     width: 88px;
@@ -143,7 +144,7 @@
     flex-shrink: 0;
   }
 
-  /* Icon image — 84px, sharp rendering */
+  /* Icon image */
   .tmi-icon-wrap img {
     width: 84px;
     height: 84px;
@@ -197,6 +198,5 @@
   0%   { transform: scale(0.7) translateY(8px); opacity: 0; }
   70%  { transform: scale(1.12) translateY(-2px); opacity: 1; }
   100% { transform: scale(1) translateY(0); opacity: 1; }
-                       }
-
+}
 
