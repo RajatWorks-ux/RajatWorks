@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HoverLinks from "./HoverLinks";
 import { gsap } from "gsap";
@@ -8,21 +8,11 @@ import "./styles/Navbar.css";
 gsap.registerPlugin(ScrollTrigger);
 export let lenis: Lenis | null = null;
 
-// ✅ FIX #1: Reactive isMobile detection (was frozen constant)
+// ✅ STATIC constant — same as version 6. Computed ONCE at page load.
+// No useState, no resize listener. Prevents laptop-resize-to-phone bug.
+const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+
 const Navbar = () => {
-  const [isMobile, setIsMobile] = useState<boolean>(
-    typeof window !== "undefined" && window.innerWidth <= 1024
-  );
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1024);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   useEffect(() => {
     lenis = new Lenis({
       duration: 1.7,
@@ -48,7 +38,7 @@ const Navbar = () => {
     requestAnimationFrame(raf);
 
     // ── Scroll progress bar (mobile only) ──
-    if (isMobile && window.innerWidth <= 1024) {
+    if (isMobile) {
       const bar = document.getElementById("scroll-progress-bar");
       const updateBar = () => {
         if (!bar) return;
@@ -57,23 +47,27 @@ const Navbar = () => {
         bar.style.width = total > 0 ? `${(scrolled / total) * 100}%` : "0%";
       };
       window.addEventListener("scroll", updateBar, { passive: true });
-      
       return () => {
         window.removeEventListener("scroll", updateBar);
+        lenis?.destroy();
       };
     }
-  }, [isMobile]);
+
+    return () => {
+      lenis?.destroy();
+    };
+  }, []);
 
   useEffect(() => {
     // ── Desktop smooth scroll links ──
-    let links = document.querySelectorAll(".header ul a");
+    const links = document.querySelectorAll(".header ul a");
     links.forEach((elem) => {
-      let element = elem as HTMLAnchorElement;
+      const element = elem as HTMLAnchorElement;
       element.addEventListener("click", (e) => {
         if (!isMobile) {
           e.preventDefault();
-          let elem = e.currentTarget as HTMLAnchorElement;
-          let section = elem.getAttribute("data-href");
+          const el = e.currentTarget as HTMLAnchorElement;
+          const section = el.getAttribute("data-href");
           if (section && lenis) {
             const target = document.querySelector(section) as HTMLElement;
             if (target) {
@@ -83,14 +77,12 @@ const Navbar = () => {
         }
       });
     });
-  }, [isMobile]);
+  }, []);
 
   useEffect(() => {
-    window.addEventListener("resize", () => { lenis?.resize(); });
-    return () => {
-      window.removeEventListener("resize", () => {});
-      lenis?.destroy();
-    };
+    const onResize = () => { lenis?.resize(); };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   return (
@@ -112,21 +104,9 @@ const Navbar = () => {
         </a>
 
         <ul>
-          <li>
-            <a data-href="#about" href="#about">
-              <HoverLinks text="ABOUT" />
-            </a>
-          </li>
-          <li>
-            <a data-href="#work" href="#work">
-              <HoverLinks text="WORK" />
-            </a>
-          </li>
-          <li>
-            <a data-href="#contact" href="#contact">
-              <HoverLinks text="CONTACT" />
-            </a>
-          </li>
+          <li><a data-href="#about"   href="#about"  ><HoverLinks text="ABOUT"   /></a></li>
+          <li><a data-href="#work"    href="#work"   ><HoverLinks text="WORK"    /></a></li>
+          <li><a data-href="#contact" href="#contact"><HoverLinks text="CONTACT" /></a></li>
         </ul>
       </div>
 
