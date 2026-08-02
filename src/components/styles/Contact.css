@@ -36,9 +36,10 @@ a.contact-social { font-size: 25px; border-bottom: 1px solid #ccc; }
 .contact-desktop { display: block; }
 
 /* ════════════════════════════════════════════════
-   MOBILE ONLY  (max-width: 900px)
+   MOBILE ONLY  (max-width: 1024px) — UNIFIED BREAKPOINT
+   ✅ FIX #6: Changed from max-width: 900px to max-width: 1024px
 ════════════════════════════════════════════════ */
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1024px) {
 
   .contact-section {
     margin-top: 0 !important;
@@ -80,153 +81,134 @@ a.contact-social { font-size: 25px; border-bottom: 1px solid #ccc; }
     50%      { opacity: 1;   transform: scale(1.2); }
   }
 
-  /* ── Headline block ── */
-  .cm-headline {
-    width: 100%;
-    margin-bottom: 36px;
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .contact-section.in-view .cm-headline {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .cm-label {
-    font-size: 10px; letter-spacing: 5px;
-    text-transform: uppercase; color: var(--accentColor);
-    margin: 0 0 14px; display: block; opacity: 0.8;
-  }
+  /* ── Main title ── */
   .cm-title {
-    font-size: 46px; font-weight: 800; line-height: 1.0;
-    letter-spacing: -1.5px; margin: 0; color: #fff;
+    font-size: clamp(32px, 10vw, 48px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin: 0 0 24px;
+    opacity: 0;
+    animation: mFadeUp 0.7s ease 0.2s forwards;
   }
-  .cm-title span { color: var(--accentColor); font-weight: 300; font-style: italic; }
 
-  /* ── Email button — full width, min 54px tall ── */
-  .cm-email-btn {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  /* ── Subtitle ── */
+  .cm-subtitle {
+    font-size: clamp(13px, 3.5vw, 16px);
+    line-height: 1.6;
+    color: rgba(234, 229, 236, 0.7);
+    margin: 0 0 36px;
+    opacity: 0;
+    animation: mFadeUp 0.7s ease 0.4s forwards;
+  }
+
+  /* ── Contact item ── */
+  .cm-contact-item {
     width: 100%;
-    min-height: 54px;
-    padding: 16px 20px;
-    border-radius: 16px;
-    border: 1px solid rgba(194,164,255,0.22);
-    background: rgba(194,164,255,0.05);
-    color: #eae5ec;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.3px;
-    box-sizing: border-box;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.25s, border-color 0.25s;
-    -webkit-tap-highlight-color: transparent;
-    /* Reveal animation */
+    margin-bottom: 28px;
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.65s ease 0.15s, transform 0.65s ease 0.15s,
-                background 0.25s, border-color 0.25s;
+    animation: mFadeUp 0.7s ease 0.6s forwards;
   }
-  .contact-section.in-view .cm-email-btn {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .cm-email-btn::before {
-    content: "";
-    position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(to right, transparent, rgba(194,164,255,0.45), transparent);
-  }
-  .cm-email-btn:active {
-    background: rgba(194,164,255,0.12);
-    border-color: rgba(194,164,255,0.5);
-  }
-  .cm-email-icon { font-size: 22px; color: var(--accentColor); flex-shrink: 0; }
-  .cm-email-btn span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .cm-email-arrow { font-size: 18px; opacity: 0.45; flex-shrink: 0; }
 
-  /* ── Location row ── */
-  .cm-location {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: rgba(234,229,236,0.38);
-    margin: 14px 0 32px;
-    opacity: 0;
-    transition: opacity 0.6s ease 0.28s;
+  .cm-contact-item h4 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accentColor);
+    margin: 0 0 8px;
   }
-  .contact-section.in-view .cm-location { opacity: 1; }
+
+  .cm-link {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 2px solid var(--accentColor);
+    padding-bottom: 4px;
+    transition: opacity 0.3s ease;
+    display: inline-block;
+  }
+
+  .cm-link:active {
+    opacity: 0.7;
+  }
 
   /* ── Divider ── */
   .cm-divider {
-    width: 100%; height: 1px;
-    background: linear-gradient(to right, rgba(194,164,255,0.18), transparent);
-    margin-bottom: 28px;
-    opacity: 0;
-    transition: opacity 0.5s ease 0.35s;
-  }
-  .contact-section.in-view .cm-divider { opacity: 1; }
-
-  /* ── Social label ── */
-  .cm-social-label {
-    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
-    color: rgba(234,229,236,0.32); margin: 0 0 16px;
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 0.5s ease 0.4s, transform 0.5s ease 0.4s;
-  }
-  .contact-section.in-view .cm-social-label { opacity: 1; transform: translateY(0); }
-
-  /* ── Social buttons — min 44px touch target ── */
-  .cm-socials {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 44px;
-    opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 0.6s ease 0.45s, transform 0.6s ease 0.45s;
-  }
-  .contact-section.in-view .cm-socials { opacity: 1; transform: translateY(0); }
-
-  .cm-social-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 18px;
-    min-height: 44px;
-    border-radius: 50px;
-    border: 1px solid rgba(234,229,236,0.10);
-    background: rgba(255,255,255,0.03);
-    color: rgba(234,229,236,0.60);
-    font-size: 13px; font-weight: 400;
-    text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
-    transition: border-color 0.2s, color 0.2s, background 0.2s;
-  }
-  .cm-social-btn:active {
-    border-color: var(--accentColor);
-    color: var(--accentColor);
-    background: rgba(194,164,255,0.08);
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(194, 164, 255, 0.25),
+      transparent
+    );
+    margin: 32px 0;
   }
 
-  /* ── Footer ── */
-  .cm-footer {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 12px;
-    color: rgba(234,229,236,0.22);
+  /* ── Social section ── */
+  .cm-social-section {
     width: 100%;
     opacity: 0;
-    transition: opacity 0.6s ease 0.6s;
+    animation: mFadeUp 0.7s ease 0.8s forwards;
   }
-  .contact-section.in-view .cm-footer { opacity: 1; }
-  .cm-footer strong { font-weight: 500; color: rgba(234,229,236,0.38); }
-  .cm-copy { display: flex; align-items: center; gap: 4px; font-size: 11px; }
-       }
-   
+
+  .cm-social-section h4 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accentColor);
+    margin: 0 0 16px;
+  }
+
+  .cm-social-links {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .cm-social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(194, 164, 255, 0.25);
+    background: rgba(194, 164, 255, 0.05);
+    color: rgba(194, 164, 255, 0.8);
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .cm-social-link:active {
+    background: rgba(194, 164, 255, 0.15);
+    border-color: rgba(194, 164, 255, 0.5);
+    transform: scale(0.95);
+  }
+
+  .cm-social-link svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Accessibility — min tap size */
+  .cm-link,
+  .cm-social-link {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   SHARED ANIMATIONS
+════════════════════════════════════════════════ */
+@keyframes mFadeUp {
+  from { opacity: 0; transform: translateY(35px); }
+  to   { opacity: 1; transform: translateY(0); }
+     }
+
