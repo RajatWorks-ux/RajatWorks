@@ -6,7 +6,14 @@ const TOTAL_FRAMES  = 77;
 
 // ✅ STATIC constant — same as version 6. Computed ONCE at page load.
 // No useState, no resize listener here. Prevents laptop-resize-to-phone bug.
-const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+// TRUE DEVICE DETECTION — UA + pointer, NOT window.innerWidth
+const isMobile: boolean = (() => {
+  if (typeof window === "undefined") return false;
+  const ua = navigator.userAgent;
+  const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
+  const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+  return mobileUA && !hasFinePointer;
+})();
 
 // Pre-allocate frame image array outside component to avoid re-creation
 const frameImgs: HTMLImageElement[] = new Array(TOTAL_FRAMES).fill(null);
@@ -249,4 +256,5 @@ const Landing = ({ children }: PropsWithChildren) => {
 };
 
 export default Landing;
-        
+
+  
