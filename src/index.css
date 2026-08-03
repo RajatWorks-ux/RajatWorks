@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
 
-/* ✅ FIX #11: Global box-sizing reset — ensures padding/border don't add to width */
+/* Global box-sizing reset */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -23,26 +23,21 @@
   -moz-user-select: none;
   --accentColor: #c2a4ff;
   --backgroundColor: #0b080c;
-  
-  /* ✅ FIX #9: --vh custom property for viewport height
-     Fallback to 100vh for old Android, but JS will override with computed value
-     See bottom of this file for JS-based setter */
+
+  /* --vh is set by JS in main.tsx on every resize.
+     Fallback: 100vh. The @supports (100svh) block that used to be here
+     has been REMOVED — it was overriding the JS inline style and
+     causing the black screen on laptop resize. */
   --vh: 100vh;
 }
 
-/* ✅ FIX #9: Try to use 100svh if supported, but have fallback */
-@supports (height: 100svh) {
-  :root {
-    --vh: 100svh;
-  }
-}
+/* NOTE: NO @supports block for 100svh here.
+   It was competing with the JS --vh setter and winning because
+   @supports rules run after inline :root custom property defaults.
+   The JS setter in main.tsx uses element.style.setProperty which
+   has higher specificity and always wins — that is the only setter now. */
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: "Geist", sans-serif;
 }
 body {
@@ -65,9 +60,7 @@ main {
   animation-fill-mode: forwards;
 }
 @keyframes fadeIn {
-  100% {
-    opacity: 1;
-  }
+  100% { opacity: 1; }
 }
 body {
   margin: 0;
@@ -136,22 +129,5 @@ body {
   from { opacity: 0; transform: translateY(25px) scale(0.92); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-
-
-
-/* ✅ FIX #9: JavaScript-based --vh setter for old Android phones
-   ⚠️  ADD THIS CODE TO: src/main.tsx (in useEffect or top-level)
-   
-   function setVH() {
-     const vh = window.innerHeight * 0.01;
-     document.documentElement.style.setProperty('--vh', `${vh}px`);
-   }
-   
-   setVH();
-   window.addEventListener('resize', setVH, { passive: true });
-   window.addEventListener('orientationchange', () => {
-     setTimeout(setVH, 100);
-   }, { passive: true });
-*/
 
 
