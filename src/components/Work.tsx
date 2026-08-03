@@ -17,7 +17,6 @@ const WorkCard = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
 
-  // Split description into first paragraph and the rest
   const paragraphs = project.description.split("\n\n");
   const shortDesc = paragraphs[0];
   const extraDesc = paragraphs.slice(1).join("\n\n");
@@ -33,7 +32,6 @@ const WorkCard = ({
           </div>
         </div>
 
-        {/* Description with show more / show less */}
         <div className="work-desc">
           <p className="work-desc-text">{shortDesc}</p>
 
@@ -41,7 +39,6 @@ const WorkCard = ({
             <p className="work-desc-extra">{extraDesc}</p>
           )}
 
-          {/* Warning badge */}
           {expanded && project.warning && (
             <div className="work-warning">
               <span>⚠️</span>
@@ -75,41 +72,55 @@ const WorkCard = ({
 // ─── Main Work Section ───────────────────────────────────────
 const Work = () => {
   useEffect(() => {
-    // Mobile pe horizontal scroll band — seedha vertical layout
+    // Mobile: no horizontal scroll — vertical layout handles it
     if (window.innerWidth < 1025) return;
 
-    let translateX: number = 0;
+    // ── FIX: compute translateX inside a callback so GSAP calls it
+    //    AFTER every ScrollTrigger.refresh(), not just at mount time.
+    //    This prevents the "too short spacer" bug where layout wasn't
+    //    stable at mount and GSAP used a wrong translateX value.
+    const getTranslateX = (): number => {
+      const boxes = document.getElementsByClassName("work-box");
+      if (boxes.length === 0) return 0;
 
-    function setTranslateX() {
-      const box = document.getElementsByClassName("work-box");
-      if (box.length === 0) return;
-      const rectLeft = document
-        .querySelector(".work-container")!
-        .getBoundingClientRect().left;
-      const rect = box[0].getBoundingClientRect();
-      const parentWidth = box[0].parentElement!.getBoundingClientRect().width;
-      let padding: number =
-        parseInt(window.getComputedStyle(box[0]).padding) / 2;
-      translateX =
-        rect.width * box.length - (rectLeft + parentWidth) + padding;
-    }
+      const container = document.querySelector(".work-container");
+      if (!container) return 0;
 
-    setTranslateX();
+      const rectLeft   = container.getBoundingClientRect().left;
+      const box        = boxes[0] as HTMLElement;
+      const parentWidth = box.parentElement!.getBoundingClientRect().width;
+      const padding    = parseInt(window.getComputedStyle(box).padding) / 2;
 
-    let timeline = gsap.timeline({
+      return box.getBoundingClientRect().width * boxes.length
+        - (rectLeft + parentWidth)
+        + padding;
+    };
+
+    // ── Create timeline with invalidateOnRefresh so the end value and
+    //    the tween target are both recalculated on every ST refresh.
+    const timeline = gsap.timeline({
       scrollTrigger: {
         trigger: ".work-section",
         start: "top top",
-        end: `+=${translateX}`,
+        // FIX: end is a function — GSAP calls this after each refresh,
+        //      so the spacer length always matches the real content width.
+        end: () => `+=${getTranslateX()}`,
         scrub: true,
         pin: true,
+        // FIX: pinSpacing true (default) PLUS anticipatePin prevents
+        //      the section from jumping when pinning starts.
+        anticipatePin: 1,
+        // FIX: recalculate layout on refresh (font/image load changes widths)
+        invalidateOnRefresh: true,
         id: "work",
       },
     });
 
+    // FIX: tween target also uses a function so it re-evaluates on refresh
     timeline.to(".work-flex", {
-      x: -translateX,
+      x: () => -getTranslateX(),
       ease: "none",
+      invalidateOnRefresh: true,
     });
 
     return () => {
