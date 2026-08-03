@@ -13,17 +13,16 @@ import {
 import "./styles/TechStack.css";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TRUE DEVICE DETECTION — same logic as App.tsx
-// UA + pointer check, NOT window.innerWidth
-// Laptop resized to 400px → still shows 3D balls (correct!)
-// Real phone → shows 2-col grid (correct!)
+// DEVICE DETECTION — 3-layer, same as App.tsx
 // ─────────────────────────────────────────────────────────────────────────────
-const isTruePhone: boolean = (() => {
+const isMobileOrTablet: boolean = (() => {
   if (typeof window === "undefined") return false;
   const ua = navigator.userAgent;
-  const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
+  const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  const isVeryWideScreen = window.innerWidth > 1400;
   const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
-  return mobileUA && !hasFinePointer;
+  const isDesktop = !mobileUA && (isVeryWideScreen || hasFinePointer);
+  return !isDesktop;
 })();
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -245,9 +244,9 @@ const DesktopTechStack = () => {
 //  ROOT EXPORT
 // ─────────────────────────────────────────────────────────────────────────────
 const TechStack = () => {
-  if (isTruePhone) return <MobileTechStack />;
+  if (isMobileOrTablet) return <MobileTechStack />;
   return <DesktopTechStack />;
 };
 
 export default TechStack;
-      
+                       
