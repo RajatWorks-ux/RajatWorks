@@ -6,7 +6,17 @@
   z-index: 99;
   left: 50%;
   transform: translateX(-50%);
+  /* FIX: smooth fade for hide/show on Contact enter/leave */
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
+
+/* FIX: class added by JS when Contact section enters viewport */
+.icons-section.icons-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .social-icons {
   position: absolute;
   left: -20px;
@@ -23,7 +33,6 @@
 }
 .social-icons a:hover {
   color: var(--backgroundColor);
-  /* transform: scale(1.2); */
 }
 .social-icons span {
   width: 50px;
