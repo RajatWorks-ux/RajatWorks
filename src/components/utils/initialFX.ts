@@ -2,6 +2,17 @@ import { TextSplitter } from "../../utils/textSplitter";
 import gsap from "gsap";
 import { lenis } from "../Navbar";
 
+// ─── Same 3-layer detection as App.tsx / main.tsx ────────────────────────────
+// DO NOT use window.innerWidth here — laptop minimised to 900px would return
+// false for "> 1024" and kill all landing animations, leaving a black screen.
+// UA + pointer check is the only way to distinguish a real laptop from a phone.
+const _ua = navigator.userAgent;
+const _mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(_ua);
+const _hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+const _isVeryWide = window.innerWidth > 1400;
+const isRealDesktop = !_mobileUA && (_isVeryWide || _hasFinePointer);
+// ─────────────────────────────────────────────────────────────────────────────
+
 export function initialFX() {
   // Force scroll on — yahi main fix hai
   document.body.style.overflow  = "auto";
@@ -12,10 +23,12 @@ export function initialFX() {
 
   document.getElementsByTagName("main")[0]?.classList.add("main-active");
 
-  // Mobile pe desktop text animations skip
-  if (window.innerWidth <= 1024) return;
+  // ── FIX: was `window.innerWidth <= 1024` — that killed animations when
+  //    the laptop window was resized below 1024px, causing a permanent black
+  //    screen.  Now we check the same UA + pointer flags used everywhere else.
+  if (!isRealDesktop) return;
 
-  // ── Desktop animations (same as original) ──
+  // ── Desktop animations (same as original — untouched) ──
   const selectors = [".landing-info h3", ".landing-intro h2", ".landing-intro h1"];
   const elements  = selectors.flatMap(s => Array.from(document.querySelectorAll(s)));
 
@@ -62,5 +75,4 @@ function LoopText(Text1: TextSplitter, Text2: TextSplitter) {
     .to(Text2.chars,
     { y: -80, duration: 1.2, ease: "power3.inOut", stagger: 0.1, delay: delay2 }, 1);
 }
-
 
