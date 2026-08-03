@@ -332,8 +332,15 @@ h2.landing-info-h2 {
 
   /* Keep original selectors for anything that doesn't need the guard */
 
-  /* ── Hero wrapper — fixed fullscreen ── */
-  .story-fixed-wrap {
+  /* ── Hero wrapper — fixed fullscreen ──
+     BUG FIX: This rule had NO data-device guard, so when a real laptop
+     was resized below 1024px the story-fixed-wrap became a fullscreen
+     fixed black overlay (z-index 50) covering the whole page.  The canvas
+     inside it stayed black because isMobile=false on a laptop so the
+     frame-drawing JS never ran.  Result: pure black screen.
+     The fix mirrors exactly what was already done for .landing-section
+     above: only let story-fixed-wrap show on REAL mobile devices. */
+  :not([data-device="desktop"]) .story-fixed-wrap {
     display: block;
     position: fixed;
     inset: 0;
@@ -590,5 +597,6 @@ h2.landing-info-h2 {
   85%  { opacity: 1;                }
   100% { left: calc(100% + 10px); opacity: 0; }
    }
+
 
    
