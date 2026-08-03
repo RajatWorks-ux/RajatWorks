@@ -75,10 +75,11 @@ const Work = () => {
     // Mobile: no horizontal scroll — vertical layout handles it
     if (window.innerWidth < 1025) return;
 
-    // ── FIX: compute translateX inside a callback so GSAP calls it
-    //    AFTER every ScrollTrigger.refresh(), not just at mount time.
-    //    This prevents the "too short spacer" bug where layout wasn't
-    //    stable at mount and GSAP used a wrong translateX value.
+    // ── FIX: Use .work-container width (not .work-flex width) for the
+    //    scroll distance calculation.  Previously box.parentElement was
+    //    .work-flex which has a negative margin-left applied — that made
+    //    the measured width slightly wider than the visible container and
+    //    caused the spacer to be too short, letting TechStack creep up.
     const getTranslateX = (): number => {
       const boxes = document.getElementsByClassName("work-box");
       if (boxes.length === 0) return 0;
@@ -86,42 +87,61 @@ const Work = () => {
       const container = document.querySelector(".work-container");
       if (!container) return 0;
 
-      const rectLeft   = container.getBoundingClientRect().left;
-      const box        = boxes[0] as HTMLElement;
-      const parentWidth = box.parentElement!.getBoundingClientRect().width;
-      const padding    = parseInt(window.getComputedStyle(box).padding) / 2;
+      const containerRect = container.getBoundingClientRect();
+      const box = boxes[0] as HTMLElement;
+      const boxWidth = box.getBoundingClientRect().width;
 
-      return box.getBoundingClientRect().width * boxes.length
-        - (rectLeft + parentWidth)
-        + padding;
+      // Total width all cards need − the visible container width
+      // Using containerRect.width (not work-flex width) is the correct
+      // reference — it's what the user actually sees.
+      return boxWidth * boxes.length - containerRect.width;
     };
 
-    // ── Create timeline with invalidateOnRefresh so the end value and
-    //    the tween target are both recalculated on every ST refresh.
     const timeline = gsap.timeline({
       scrollTrigger: {
         trigger: ".work-section",
         start: "top top",
-        // FIX: end is a function — GSAP calls this after each refresh,
-        //      so the spacer length always matches the real content width.
+        // end is a function — GSAP calls this after each refresh,
+        // so the spacer length always matches the real content width.
         end: () => `+=${getTranslateX()}`,
         scrub: true,
         pin: true,
-        // FIX: pinSpacing true (default) PLUS anticipatePin prevents
-        //      the section from jumping when pinning starts.
         anticipatePin: 1,
-        // FIX: recalculate layout on refresh (font/image load changes widths)
         invalidateOnRefresh: true,
         id: "work",
       },
     });
 
-    // FIX: tween target also uses a function so it re-evaluates on refresh
     timeline.to(".work-flex", {
       x: () => -getTranslateX(),
       ease: "none",
       invalidateOnRefresh: true,
     });
+
+    // ── FIX: Project images load asynchronously — when they finish,
+    //    the work-box heights can change, making getTranslateX() return
+    //    a different value.  Refresh GSAP after all images in the section
+    //    have loaded so the spacer is always accurate.
+    const images = document.querySelectorAll<HTMLImageElement>(".work-section img");
+    let loaded = 0;
+    const onImgLoad = () => {
+      loaded++;
+      if (loaded >= images.length) {
+        ScrollTrigger.refresh();
+      }
+    };
+    images.forEach((img) => {
+      if (img.complete) {
+        loaded++;
+      } else {
+        img.addEventListener("load", onImgLoad, { once: true });
+        img.addEventListener("error", onImgLoad, { once: true });
+      }
+    });
+    // If all images were already cached
+    if (loaded >= images.length && images.length > 0) {
+      ScrollTrigger.refresh();
+    }
 
     return () => {
       timeline.kill();
