@@ -75,26 +75,37 @@ const Work = () => {
     // Mobile: no horizontal scroll — vertical layout handles it
     if (window.innerWidth < 1025) return;
 
-    // ── FIX: Use .work-container width (not .work-flex width) for the
+    // ── FIX A: Use .work-container width (not .work-flex width) for the
     //    scroll distance calculation.  Previously box.parentElement was
     //    .work-flex which has a negative margin-left applied — that made
     //    the measured width slightly wider than the visible container and
     //    caused the spacer to be too short, letting TechStack creep up.
+    //
+    // ── FIX B: Also add work-flex padding-right to the scroll distance.
+    //    .work-flex has padding-right: 120px (desktop) / 75px / 45px
+    //    depending on breakpoint.  That trailing space is real content the
+    //    user must scroll through — ignoring it made the spacer short by
+    //    exactly that amount, causing TechStack to visually overlap the
+    //    still-pinned Work section before all cards were fully scrolled.
     const getTranslateX = (): number => {
       const boxes = document.getElementsByClassName("work-box");
       if (boxes.length === 0) return 0;
 
       const container = document.querySelector(".work-container");
-      if (!container) return 0;
+      const flex     = document.querySelector<HTMLElement>(".work-flex");
+      if (!container || !flex) return 0;
 
       const containerRect = container.getBoundingClientRect();
-      const box = boxes[0] as HTMLElement;
-      const boxWidth = box.getBoundingClientRect().width;
+      const box           = boxes[0] as HTMLElement;
+      const boxWidth      = box.getBoundingClientRect().width;
 
-      // Total width all cards need − the visible container width
-      // Using containerRect.width (not work-flex width) is the correct
-      // reference — it's what the user actually sees.
-      return boxWidth * boxes.length - containerRect.width;
+      // Read the live computed padding-right so breakpoint changes are
+      // automatically picked up on every GSAP refresh.
+      const paddingRight = parseFloat(window.getComputedStyle(flex).paddingRight) || 0;
+
+      // Total scrollable width  =  all cards  +  right padding
+      // Minus what is already visible  =  container width
+      return boxWidth * boxes.length + paddingRight - containerRect.width;
     };
 
     const timeline = gsap.timeline({
@@ -166,4 +177,5 @@ const Work = () => {
 };
 
 export default Work;
+
 
