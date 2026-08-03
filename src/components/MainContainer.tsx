@@ -1,4 +1,4 @@
-import { lazy, PropsWithChildren, Suspense, useEffect, useState } from "react";
+import { lazy, PropsWithChildren, Suspense, useEffect } from "react";
 import About from "./About";
 import Career from "./Career";
 import Contact from "./Contact";
@@ -13,23 +13,23 @@ import { initInView } from "../utils/useInView";
 
 const TechStack = lazy(() => import("./TechStack"));
 
-const MainContainer = ({ children }: PropsWithChildren) => {
-  // ── DEVICE DETECTION: same 3-layer logic as App.tsx ──
-  const detectDesktop = (): boolean => {
-    const ua = navigator.userAgent;
-    const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-    const isVeryWideScreen = window.innerWidth > 1400;
-    const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
-    return !mobileUA && (isVeryWideScreen || hasFinePointer);
-  };
+// ── DEVICE DETECTION: same 3-layer logic as App.tsx ──
+// Computed ONCE at module load — never changes on resize
+const isDesktopView: boolean = (() => {
+  if (typeof window === "undefined") return true;
+  const ua = navigator.userAgent;
+  const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  const isVeryWideScreen = window.innerWidth > 1400;
+  const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+  return !mobileUA && (isVeryWideScreen || hasFinePointer);
+})();
 
-  const [isDesktopView, setIsDesktopView] = useState<boolean>(detectDesktop());
+const MainContainer = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     const resizeHandler = () => {
       setSplitText();
-      // Only update split text on resize, NOT device type
-      // Device type is fixed at load — don't switch layouts on resize
+      // Only update split text on resize — device type never changes
     };
     resizeHandler();
     window.addEventListener("resize", resizeHandler);
@@ -37,8 +37,6 @@ const MainContainer = ({ children }: PropsWithChildren) => {
   }, []);
 
   useEffect(() => {
-    // Reduced timeout: 300ms is enough after DOM paints
-    // initInView itself uses double-RAF for extra safety
     const timer = setTimeout(() => {
       initInView();
     }, 300);
@@ -47,14 +45,13 @@ const MainContainer = ({ children }: PropsWithChildren) => {
 
   // ── Tap ripple effect — mobile micro-interaction ──
   useEffect(() => {
-    if (window.innerWidth > 1024) return;
+    if (isDesktopView) return;
 
     const handleTouch = (e: TouchEvent) => {
       const target = e.target as HTMLElement;
       const tappable = target.closest("a, button") as HTMLElement | null;
       if (!tappable) return;
 
-      // Only add ripple if element can have absolute children
       const style = window.getComputedStyle(tappable);
       if (style.position === "static") {
         tappable.style.position = "relative";
