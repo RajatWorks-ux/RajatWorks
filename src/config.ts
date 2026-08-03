@@ -158,6 +158,34 @@ export const config = {
             description: "Voltri is a cutting-edge web application that transforms ordinary 2D images into fully interactive 3D models using artificial intelligence. Designed with a clean, intuitive interface, Voltri makes professional-grade 3D generation accessible to everyone — no technical knowledge required.\n\nThe platform features a complete user ecosystem including Google authentication, email sign-up, forgot password flow, a credit-based usage system, and both Indian (₹) and international ($) subscription plans with auto location detection.",
             warning: "3D model generation is temporarily paused due to API integration adjustments. All other features including authentication, credit system, and subscription management are fully functional.",
         },
+        // ─────────────────────────────────────────────────────────────────
+        //  PROJECT 5 — VAKILR
+        //  Images: upload 6 screenshots to Cloudinary (see README below)
+        //  then replace the placeholder URLs below with real ones.
+        //  Image names to use on Cloudinary: vakilr-1 through vakilr-6
+        // ─────────────────────────────────────────────────────────────────
+        {
+            id: 5,
+            title: "Vakilr",
+            subtitle: "AI-Powered Legal Marketplace",
+            category: "Frontend",
+            technologies: "HTML, CSS, JavaScript, Responsive Design, Animation",
+            link: "https://vakilr.vercel.app/",
+            images: [
+                // ─── REPLACE THESE 6 URLS WITH YOUR CLOUDINARY URLS ───
+                // After uploading to Cloudinary, paste the URLs here exactly
+                // as shown for other projects above. Format:
+                // "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/YOUR_IMAGE_ID.jpg"
+                "VAKILR_IMAGE_1_URL",
+                "VAKILR_IMAGE_2_URL",
+                "VAKILR_IMAGE_3_URL",
+                "VAKILR_IMAGE_4_URL",
+                "VAKILR_IMAGE_5_URL",
+                "VAKILR_IMAGE_6_URL",
+            ],
+            description: "Vakilr is a premium legal marketplace concept designed to showcase a modern, elegant, and technology-driven approach to connecting clients with lawyers. Built with a luxurious dark theme, cinematic background videos, smooth animations, and carefully crafted UI components, the project focuses on creating a professional and trustworthy digital experience.\n\nThe website demonstrates how users could discover verified lawyers, browse professional profiles, explore legal services, and connect with law firms through a clean and intuitive interface. Every element was designed with attention to detail — from premium typography and glassmorphism-inspired cards to responsive layouts and elegant color combinations.",
+            warning: "Vakilr is a concept prototype created for portfolio purposes. It is not a real legal marketplace — the lawyers, testimonials, ratings, and statistics displayed are for demonstration only.",
+        },
     ],
 
     contact: {
