@@ -9,20 +9,21 @@ import { useEffect } from "react";
 gsap.registerPlugin(ScrollTrigger);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TRUE DEVICE DETECTION — UA + pointer, NOT window.innerWidth
-// Matches App.tsx and TechStack.tsx exactly
+// DEVICE DETECTION — 3-layer, same as App.tsx
 // ─────────────────────────────────────────────────────────────────────────────
-const isTruePhone: boolean = (() => {
+const isMobileOrTablet: boolean = (() => {
   if (typeof window === "undefined") return false;
   const ua = navigator.userAgent;
-  const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
+  const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  const isVeryWideScreen = window.innerWidth > 1400;
   const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
-  return mobileUA && !hasFinePointer;
+  const isDesktop = !mobileUA && (isVeryWideScreen || hasFinePointer);
+  return !isDesktop;
 })();
 
 const Contact = () => {
   useEffect(() => {
-    if (isTruePhone) return; // Mobile pe GSAP animation nahi
+    if (isMobileOrTablet) return; // Mobile pe GSAP animation nahi
 
     const contactTimeline = gsap.timeline({
       scrollTrigger: {
@@ -146,4 +147,4 @@ const Contact = () => {
 };
 
 export default Contact;
-
+                           
