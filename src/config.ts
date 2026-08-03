@@ -176,7 +176,7 @@ export const config = {
                 // After uploading to Cloudinary, paste the URLs here exactly
                 // as shown for other projects above. Format:
                 // "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/YOUR_IMAGE_ID.jpg"
-                "",
+                "https://github.com/RajatWorks-ux/RajatWorks/blob/main/public/images/vakilr-1.jpg",
                 "https://github.com/RajatWorks-ux/RajatWorks/blob/main/public/images/vakilr-2.jpg",
                 "https://github.com/RajatWorks-ux/RajatWorks/blob/main/public/images/vakilr-3.jpg",
                 "https://github.com/RajatWorks-ux/RajatWorks/blob/main/public/images/vakilr-4.jpg",
