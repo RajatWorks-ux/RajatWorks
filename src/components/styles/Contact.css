@@ -145,10 +145,11 @@ a.contact-social:first-of-type {
 .contact-desktop { display: block; }
 
 /* ════════════════════════════════════════════════
-   MOBILE ONLY  (max-width: 900px)
-   — NOT TOUCHED, phone version was already perfect
+   MOBILE ONLY  (max-width: 1024px)
+   — Switch to mobile layout at tablet/mobile breakpoint
+   — Keeps desktop for true laptop/desktop (>1024px)
 ════════════════════════════════════════════════ */
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1024px) {
 
   .contact-section {
     margin-top: 0 !important;
@@ -337,3 +338,4 @@ a.contact-social:first-of-type {
   .cm-copy { display: flex; align-items: center; gap: 4px; font-size: 11px; }
 }
 
+     
