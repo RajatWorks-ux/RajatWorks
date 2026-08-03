@@ -12,11 +12,23 @@ import {
 } from "@react-three/rapier";
 import "./styles/TechStack.css";
 
-const isMobile = typeof window !== "undefined" ? window.innerWidth < 1025 : false;
+// ─────────────────────────────────────────────────────────────────────────────
+// TRUE DEVICE DETECTION — same logic as App.tsx
+// UA + pointer check, NOT window.innerWidth
+// Laptop resized to 400px → still shows 3D balls (correct!)
+// Real phone → shows 2-col grid (correct!)
+// ─────────────────────────────────────────────────────────────────────────────
+const isTruePhone: boolean = (() => {
+  if (typeof window === "undefined") return false;
+  const ua = navigator.userAgent;
+  const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
+  const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+  return mobileUA && !hasFinePointer;
+})();
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 //  SHARED DATA
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 const techItems = [
   { name: "React",      img: "/images/react2.webp"      },
   { name: "Next.js",    img: "/images/next2.webp"       },
@@ -28,9 +40,9 @@ const techItems = [
   { name: "JavaScript", img: "/images/javascript.webp"  },
 ];
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 //  MOBILE — 2-column grid with IntersectionObserver
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 const MobileTechStack = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const titleRef   = useRef<HTMLHeadingElement>(null);
@@ -79,7 +91,8 @@ const MobileTechStack = () => {
   }, []);
 
   return (
-    <div className="techstack" ref={sectionRef}>
+    <div className="techstack techstack-mobile" ref={sectionRef}>
+      {/* Title is OUTSIDE the grid — no overlap possible */}
       <h2 className="ts-title" ref={titleRef}>
         My <span className="ts-title-accent">Techstack</span>
       </h2>
@@ -104,9 +117,10 @@ const MobileTechStack = () => {
   );
 };
 
-// ─────────────────────────────────────────────
-//  DESKTOP — 3D Physics Balls (exact old version)
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  DESKTOP — 3D Physics Balls
+//  Ball sizes increased: scale array was [0.7,1,0.8,1,1] → now [1.0,1.3,1.1,1.3,1.3]
+// ─────────────────────────────────────────────────────────────────────────────
 const textureLoader = new THREE.TextureLoader();
 const imageUrls = [
   "/images/react2.webp",
@@ -120,8 +134,10 @@ const imageUrls = [
 ];
 const textures = imageUrls.map((url) => textureLoader.load(url));
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
+
+// ✅ BIGGER BALLS — scale values increased by ~30%
 const spheres = [...Array(30)].map(() => ({
-  scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
+  scale: [1.0, 1.3, 1.1, 1.3, 1.3][Math.floor(Math.random() * 5)],
 }));
 const materialIndices = spheres.map(() => Math.floor(Math.random() * imageUrls.length));
 
@@ -195,8 +211,8 @@ const DesktopTechStack = () => {
     })), []);
 
   return (
-    <div className="techstack">
-      <h2>My Techstack</h2>
+    <div className="techstack techstack-desktop">
+      <h2 className="ts-desktop-title">My Techstack</h2>
       <Canvas shadows
         gl={{ alpha: true, stencil: false, depth: false, antialias: true, powerPreference: "high-performance" }}
         dpr={Math.min(window.devicePixelRatio, 2)}
@@ -225,14 +241,13 @@ const DesktopTechStack = () => {
   );
 };
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 //  ROOT EXPORT
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 const TechStack = () => {
-  if (isMobile) return <MobileTechStack />;
+  if (isTruePhone) return <MobileTechStack />;
   return <DesktopTechStack />;
 };
 
 export default TechStack;
-
-
+      
