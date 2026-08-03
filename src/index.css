@@ -105,107 +105,9 @@ body {
   flex-wrap: nowrap;
 }
 
-.techstack {
-  width: 100%;
-  position: relative;
-  height: var(--vh);
-  min-height: 100vh;
-  margin: 0 auto;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-top: 150px;
-  padding-bottom: 150px;
-  background: linear-gradient(180deg, rgba(11, 8, 12, 0.95) 0%, rgba(11, 8, 12, 0.98) 100%);
-  background-color: var(--backgroundColor);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.techstack::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 50%, rgba(194, 164, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 50%, rgba(194, 164, 255, 0.08) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.techstack > * {
-  position: relative;
-  z-index: 1;
-}
-
-.techstack h2 {
-  font-size: 80px;
-  text-align: center;
-  position: absolute;
-  width: 100%;
-  top: 150px;
-  left: 0;
-  font-weight: 400;
-  text-transform: uppercase;
-  z-index: 3;
-  margin: 0;
-}
-
 @media screen and (min-width: 768px) {
   body {
     --cWidth: 94%;
-  }
-}
-@media screen and (max-width: 900px) {
-  .techstack h2 {
-    font-size: 40px;
-  }
-}
-
-/* Mobile TechStack Grid */
-.tech-mobile-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  padding: 0 20px;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  margin: 0 auto;
-}
-.tech-mobile-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-.tech-mobile-item img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: contain;
-  border-radius: 18px;
-  background: rgba(194, 164, 255, 0.07);
-  border: 1px solid rgba(194, 164, 255, 0.12);
-  padding: 14px;
-  box-sizing: border-box;
-  transition: background 0.3s, border-color 0.3s;
-}
-.tech-mobile-item span {
-  font-size: 12px;
-  font-weight: 400;
-  color: rgba(234, 229, 236, 0.55);
-  text-align: center;
-  letter-spacing: 0.3px;
-}
-@media only screen and (max-width: 400px) {
-  .tech-mobile-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
   }
 }
 
@@ -235,38 +137,7 @@ body {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* TechStack shimmer on icons */
-@media only screen and (max-width: 1024px) {
-  .tech-mobile-item img {
-    opacity: 0;
-    animation: mScaleUp 0.5s ease forwards;
-    animation-play-state: paused;
-  }
-  .tech-mobile-item:nth-child(1) img { animation-delay: 0.05s; }
-  .tech-mobile-item:nth-child(2) img { animation-delay: 0.10s; }
-  .tech-mobile-item:nth-child(3) img { animation-delay: 0.15s; }
-  .tech-mobile-item:nth-child(4) img { animation-delay: 0.20s; }
-  .tech-mobile-item:nth-child(5) img { animation-delay: 0.25s; }
-  .tech-mobile-item:nth-child(6) img { animation-delay: 0.30s; }
-  .tech-mobile-item:nth-child(7) img { animation-delay: 0.35s; }
-  .tech-mobile-item:nth-child(8) img { animation-delay: 0.40s; }
 
-  .techstack.in-view .tech-mobile-item img {
-    animation-play-state: running;
-  }
-
-  .tech-mobile-item img::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(194,164,255,0.2), transparent);
-    animation: shimmerMove 2s infinite;
-  }
-  @keyframes shimmerMove {
-    0%   { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
-}
 
 /* ✅ FIX #9: JavaScript-based --vh setter for old Android phones
    ⚠️  ADD THIS CODE TO: src/main.tsx (in useEffect or top-level)
@@ -282,4 +153,5 @@ body {
      setTimeout(setVH, 100);
    }, { passive: true });
 */
-    
+
+
