@@ -47,7 +47,7 @@ const MobileTechStack = () => {
   const titleRef   = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
-    // ── Title reveal ──
+    // ── Title reveal — low threshold so it triggers as soon as section scrolls into view ──
     const titleEl = titleRef.current;
     if (titleEl) {
       const titleObs = new IntersectionObserver(
@@ -57,12 +57,12 @@ const MobileTechStack = () => {
             titleObs.disconnect();
           }
         },
-        { threshold: 0.4 }
+        { threshold: 0.1 }  // ✅ FIX: was 0.4 — title now triggers early so it's visible BEFORE cards
       );
       titleObs.observe(titleEl);
     }
 
-    // ── Cards staggered reveal ──
+    // ── Cards staggered reveal — add base delay so title always appears first ──
     const cards = sectionRef.current?.querySelectorAll<HTMLDivElement>(".tech-mobile-item");
     if (!cards?.length) return;
 
@@ -71,7 +71,8 @@ const MobileTechStack = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const card = entry.target as HTMLElement;
-            const delay = Number(card.dataset.delay ?? 0);
+            // ✅ FIX: base delay of 200ms + stagger so cards always appear AFTER title
+            const delay = 200 + Number(card.dataset.delay ?? 0);
             setTimeout(() => {
               card.classList.add("tc-visible");
             }, delay);
@@ -79,7 +80,7 @@ const MobileTechStack = () => {
           }
         });
       },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -20px 0px" }
     );
 
     cards.forEach((card) => cardObs.observe(card));
@@ -249,4 +250,5 @@ const TechStack = () => {
 };
 
 export default TechStack;
-                       
+
+
