@@ -1,6 +1,22 @@
 import * as THREE from "three";
 import gsap from "gsap";
 
+// ─── Same 3-layer device detection as App.tsx / initialFX.ts ─────────────────
+// BUG FIX: the old `window.innerWidth > 1024` check caused the character model
+// to stay pinned in the center of the screen (position:fixed) without any GSAP
+// animations running when a real laptop was resized below 1024px.  In that
+// scenario initialFX.ts (correctly using isRealDesktop) ran full landing
+// animations, but setCharTimeline fell into the else branch — no tl1/tl2/tl3
+// animations fired, so the character never moved or slid off-screen, and it
+// permanently overlapped the About / WhatIDo / Work sections as the user scrolled.
+// Solution: use the identical 3-layer UA + pointer check used everywhere else.
+const _ua          = navigator.userAgent;
+const _mobileUA    = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(_ua);
+const _hasFine     = window.matchMedia("(pointer: fine)").matches;
+const _isVeryWide  = window.innerWidth > 1400;
+const isRealDesktop = !_mobileUA && (_isVeryWide || _hasFine);
+// ─────────────────────────────────────────────────────────────────────────────
+
 export function setCharTimeline(
   character: THREE.Object3D<THREE.Object3DEventMap> | null,
   camera: THREE.PerspectiveCamera
@@ -69,7 +85,7 @@ export function setCharTimeline(
   
   let neckBone = character?.getObjectByName("spine005");
   
-  if (window.innerWidth > 1024) {
+  if (isRealDesktop) {
     if (character) {
       tl1
         .fromTo(character.rotation, { y: 0 }, { y: 0.7, duration: 1 }, 0)
@@ -184,7 +200,7 @@ export function setAllTimeline() {
       0
     );
 
-  if (window.innerWidth > 1024) {
+  if (isRealDesktop) {
     careerTimeline.fromTo(
       ".career-section",
       { y: 0 },
@@ -200,4 +216,5 @@ export function setAllTimeline() {
     );
   }
 }
+
 
