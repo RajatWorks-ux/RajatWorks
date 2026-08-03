@@ -10,8 +10,27 @@ import WhatIDo from "./WhatIDo";
 import Work from "./Work";
 import setSplitText from "./utils/splitText";
 import { initInView } from "../utils/useInView";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const TechStack = lazy(() => import("./TechStack"));
+// ── FIX: TechStack wrapped in a named component so we can fire
+//    ScrollTrigger.refresh() the moment it finishes mounting.
+//    Without this, GSAP's Work pin-spacer was calculated when TechStack
+//    hadn't rendered yet → spacer was correct but total page height was
+//    wrong → TechStack overlapped the Work section on laptop.
+const TechStackLazy = lazy(() => import("./TechStack"));
+
+const TechStackWithRefresh = () => {
+  useEffect(() => {
+    // Give browser one frame to paint TechStack, then tell GSAP to
+    // re-measure all scroll positions.  This fixes the Work pin-spacer
+    // height mismatch caused by lazy-loading TechStack after GSAP ran.
+    const raf = requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return <TechStackLazy />;
+};
 
 // ── DEVICE DETECTION: same 3-layer logic as App.tsx ──
 // Computed ONCE at module load — never changes on resize
@@ -88,8 +107,14 @@ const MainContainer = ({ children }: PropsWithChildren) => {
         <WhatIDo />
         <Career />
         <Work />
-        <Suspense fallback={<div>Loading....</div>}>
-          <TechStack />
+        {/* ── FIX: TechStackWithRefresh fires ScrollTrigger.refresh() after
+               TechStack mounts so GSAP recalculates Work's pin-spacer height.
+               The Suspense fallback has a fixed min-height so the page height
+               doesn't collapse to 0 while loading — that would cause a second
+               GSAP miscalculation if Work's trigger fires before fallback
+               clears. ── */}
+        <Suspense fallback={<div style={{ minHeight: "700px" }} />}>
+          <TechStackWithRefresh />
         </Suspense>
         <Contact />
       </div>
