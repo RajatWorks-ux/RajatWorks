@@ -218,8 +218,10 @@
 }
 
 /* ── Hide desktop canvas on mobile ── */
-.tech-canvas { display: none !important; }
-.ts-desktop-title { display: none !important; }
+@media only screen and (max-width: 1024px) {
+  .tech-canvas { display: none !important; }
+  .ts-desktop-title { display: none !important; }
+}
 
 /* Very small phones */
 @media (max-width: 380px) {
@@ -236,4 +238,5 @@
   70%  { transform: scale(1.12) translateY(-2px); opacity: 1; }
   100% { transform: scale(1) translateY(0); opacity: 1; }
 }
+
 
