@@ -1,34 +1,143 @@
 /* ════════════════════════════════════════════════
-   Contact.css — DESKTOP (untouched)
+   Contact.css
+   DESKTOP — polished layout, better spacing
+   MOBILE  — untouched, was already perfect
 ════════════════════════════════════════════════ */
+
+/* ── Section wrapper ── */
 .contact-section {
-  margin: auto; padding-bottom: 150px; margin-top: 0;
-  position: relative; z-index: 1;
-  background-color: var(--backgroundColor); min-height: 60vh;
-  display: flex; flex-direction: column; justify-content: flex-start;
+  margin: auto;
+  padding-bottom: 120px;
+  margin-top: 0;
+  position: relative;
+  z-index: 1;
+  background-color: var(--backgroundColor);
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
+
+/* ── Desktop: Big name heading ── */
 .contact-section h3 {
-  font-size: 60px; font-weight: 400; text-transform: uppercase;
-  margin: 0; margin-bottom: 40px; opacity: 1;
+  font-size: 56px;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin: 0 0 60px;
+  opacity: 1;
+  /* subtle gradient on the name */
+  background: linear-gradient(135deg, #ffffff 0%, #c2a4ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
-.contact-flex { display: flex; justify-content: space-between; }
-.contact-flex h4 { font-weight: 500; margin: 0; opacity: 0.6; }
-.contact-box { display: flex; flex-direction: column; opacity: 1; }
-.contact-flex p { margin-top: 10px; margin-bottom: 20px; }
-a.contact-social { font-size: 25px; border-bottom: 1px solid #ccc; }
-.contact-box h2 { font-weight: 400; font-size: 23px; margin: 0; }
-.contact-box h2 > span { color: var(--accentColor); }
-.contact-box h5 { font-size: 20px; font-weight: 500; line-height: 20px; display: flex; gap: 10px; opacity: 0.5; }
+
+/* ── Three-column flex ── */
+.contact-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+/* ── Each column box ── */
+.contact-box {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  min-width: 0;
+  flex: 1;
+}
+
+/* Labels like "Email", "Location", "Social" */
+.contact-flex h4 {
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+  opacity: 0.45;
+  color: #fff;
+}
+
+/* Text under labels */
+.contact-flex p {
+  margin-top: 0;
+  margin-bottom: 28px;
+  font-size: 15px;
+  color: rgba(234,229,236,0.75);
+  font-weight: 300;
+}
+
+/* Social links */
+a.contact-social {
+  font-size: 22px;
+  font-weight: 300;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(234,229,236,0.8);
+  transition: color 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+}
+a.contact-social:hover {
+  color: var(--accentColor);
+  border-color: var(--accentColor);
+}
+a.contact-social:first-of-type {
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+/* Credit box — right column */
+.contact-box-credit {
+  align-items: flex-end;
+  text-align: right;
+  justify-content: flex-end;
+  padding-bottom: 8px;
+}
+.contact-box-credit h2 {
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 0 0 16px;
+  color: rgba(234,229,236,0.55);
+}
+.contact-box-credit h2 > span {
+  color: var(--accentColor);
+  font-weight: 400;
+}
+.contact-box-credit h5 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+  opacity: 0.35;
+  margin: 0;
+}
+
+/* ── Responsive desktop scaling ── */
 @media only screen and (max-width: 1600px) {
-  .contact-section h3 { font-size: 50px; }
-  .contact-box h2     { font-size: 20px; }
-  a.contact-social    { font-size: 22px; }
+  .contact-section h3 { font-size: 46px; letter-spacing: 3px; }
+  .contact-box-credit h2 { font-size: 16px; }
+  a.contact-social    { font-size: 20px; }
 }
 @media only screen and (max-width: 1300px) {
-  .contact-section h3 { font-size: 40px; }
-  .contact-box h2     { font-size: 18px; }
-  a.contact-social    { font-size: 20px; }
-  .contact-flex p     { margin-top: 0; }
+  .contact-section h3 { font-size: 36px; letter-spacing: 2px; margin-bottom: 48px; }
+  .contact-box-credit h2 { font-size: 15px; }
+  a.contact-social    { font-size: 18px; }
+  .contact-flex p     { font-size: 14px; }
+}
+@media only screen and (max-width: 1100px) {
+  .contact-section h3 { font-size: 30px; }
+  .contact-flex { gap: 24px; }
+  a.contact-social { font-size: 16px; padding: 10px 0; }
 }
 
 /* Show/hide helpers */
@@ -37,6 +146,7 @@ a.contact-social { font-size: 25px; border-bottom: 1px solid #ccc; }
 
 /* ════════════════════════════════════════════════
    MOBILE ONLY  (max-width: 900px)
+   — NOT TOUCHED, phone version was already perfect
 ════════════════════════════════════════════════ */
 @media only screen and (max-width: 900px) {
 
@@ -56,7 +166,6 @@ a.contact-social { font-size: 25px; border-bottom: 1px solid #ccc; }
     flex-direction: column;
     align-items: flex-start;
     padding: 60px 24px;
-    /* Safe area for notch phones */
     padding-bottom: max(60px, calc(48px + env(safe-area-inset-bottom)));
     position: relative;
     width: 100%;
@@ -104,7 +213,7 @@ a.contact-social { font-size: 25px; border-bottom: 1px solid #ccc; }
   }
   .cm-title span { color: var(--accentColor); font-weight: 300; font-style: italic; }
 
-  /* ── Email button — full width, min 54px tall ── */
+  /* ── Email button ── */
   .cm-email-btn {
     display: flex;
     align-items: center;
@@ -123,9 +232,7 @@ a.contact-social { font-size: 25px; border-bottom: 1px solid #ccc; }
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
-    transition: background 0.25s, border-color 0.25s;
     -webkit-tap-highlight-color: transparent;
-    /* Reveal animation */
     opacity: 0;
     transform: translateY(24px);
     transition: opacity 0.65s ease 0.15s, transform 0.65s ease 0.15s,
@@ -181,7 +288,7 @@ a.contact-social { font-size: 25px; border-bottom: 1px solid #ccc; }
   }
   .contact-section.in-view .cm-social-label { opacity: 1; transform: translateY(0); }
 
-  /* ── Social buttons — min 44px touch target ── */
+  /* ── Social buttons ── */
   .cm-socials {
     display: flex;
     gap: 10px;
@@ -228,6 +335,5 @@ a.contact-social { font-size: 25px; border-bottom: 1px solid #ccc; }
   .contact-section.in-view .cm-footer { opacity: 1; }
   .cm-footer strong { font-weight: 500; color: rgba(234,229,236,0.38); }
   .cm-copy { display: flex; align-items: center; gap: 4px; font-size: 11px; }
-       }
+}
 
-     
