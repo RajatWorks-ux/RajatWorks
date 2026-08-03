@@ -14,14 +14,22 @@ import { initInView } from "../utils/useInView";
 const TechStack = lazy(() => import("./TechStack"));
 
 const MainContainer = ({ children }: PropsWithChildren) => {
-  const [isDesktopView, setIsDesktopView] = useState<boolean>(
-    window.innerWidth > 1024
-  );
+  // ── DEVICE DETECTION: same 3-layer logic as App.tsx ──
+  const detectDesktop = (): boolean => {
+    const ua = navigator.userAgent;
+    const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+    const isVeryWideScreen = window.innerWidth > 1400;
+    const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+    return !mobileUA && (isVeryWideScreen || hasFinePointer);
+  };
+
+  const [isDesktopView, setIsDesktopView] = useState<boolean>(detectDesktop());
 
   useEffect(() => {
     const resizeHandler = () => {
       setSplitText();
-      setIsDesktopView(window.innerWidth > 1024);
+      // Only update split text on resize, NOT device type
+      // Device type is fixed at load — don't switch layouts on resize
     };
     resizeHandler();
     window.addEventListener("resize", resizeHandler);
@@ -93,3 +101,4 @@ const MainContainer = ({ children }: PropsWithChildren) => {
 };
 
 export default MainContainer;
+
