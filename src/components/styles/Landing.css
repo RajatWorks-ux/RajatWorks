@@ -315,15 +315,22 @@ h2.landing-info-h2 {
 ───────────────────────────────────────────────────────────────── */
 @media only screen and (max-width: 1024px) {
 
-  /* Landing section — zero height on mobile, desktop content hidden */
-  .landing-section {
+  /* Landing section — zero height on REAL mobile only.
+     [data-device="desktop"] is set by JS in main.tsx on real laptops/desktops.
+     Without this guard, resizing a laptop window below 1024px triggered this
+     rule and collapsed the landing-section to height:0 while the 3D character
+     was still rendering → pure black screen.
+     Real phones never have data-device="desktop" so they still collapse. */
+  :not([data-device="desktop"]) .landing-section {
     height: 0 !important;
     min-height: 0 !important;
     padding: 0 !important;
     margin: 0 !important;
     overflow: hidden !important;
   }
-  .landing-container { display: none !important; }
+  :not([data-device="desktop"]) .landing-container { display: none !important; }
+
+  /* Keep original selectors for anything that doesn't need the guard */
 
   /* ── Hero wrapper — fixed fullscreen ── */
   .story-fixed-wrap {
@@ -583,4 +590,5 @@ h2.landing-info-h2 {
   85%  { opacity: 1;                }
   100% { left: calc(100% + 10px); opacity: 0; }
    }
-     
+
+   
