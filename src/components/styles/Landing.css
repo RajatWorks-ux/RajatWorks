@@ -112,6 +112,10 @@
   transform: translateX(-50%);
   z-index: 9;
   position: absolute;
+  /* CharacterModel only renders on desktop (JS check) so this blend helper
+     is never needed. Hiding it prevents the gradient from leaking into Work
+     when the laptop window is resized below 1025px. */
+  display: none;
 }
 .character-model::before {
   content: "";
@@ -123,6 +127,14 @@
   transform: translateX(-50%);
   z-index: 9;
   position: absolute;
+  /* ROOT CAUSE OF BLACK OVERLAY BUG:
+     This 700px black block sits below the character model. On desktop >= 1025px
+     it was already hidden by the media query below, but when the laptop window
+     is resized to < 1025px the media query stops applying while JS still renders
+     the character (fine pointer detected). The block becomes visible and covers
+     the Work section. Hiding it here permanently is safe because CharacterModel
+     never renders on real mobile (JS prevents it). */
+  display: none;
 }
 .character-loaded .character-rim {
   animation: backlight 3s forwards;
@@ -570,4 +582,5 @@ h2.landing-info-h2 {
   15%  { opacity: 1;                }
   85%  { opacity: 1;                }
   100% { left: calc(100% + 10px); opacity: 0; }
-}
+   }
+     
