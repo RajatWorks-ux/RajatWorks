@@ -176,12 +176,12 @@ export const config = {
                 // After uploading to Cloudinary, paste the URLs here exactly
                 // as shown for other projects above. Format:
                 // "https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/YOUR_IMAGE_ID.jpg"
-                "VAKILR_IMAGE_1_URL",
-                "VAKILR_IMAGE_2_URL",
-                "VAKILR_IMAGE_3_URL",
-                "VAKILR_IMAGE_4_URL",
-                "VAKILR_IMAGE_5_URL",
-                "VAKILR_IMAGE_6_URL",
+                "",
+                "https://github.com/RajatWorks-ux/RajatWorks/blob/main/public/images/vakilr-2.jpg",
+                "https://github.com/RajatWorks-ux/RajatWorks/blob/main/public/images/vakilr-3.jpg",
+                "https://github.com/RajatWorks-ux/RajatWorks/blob/main/public/images/vakilr-4.jpg",
+                "https://github.com/RajatWorks-ux/RajatWorks/blob/main/public/images/vakilr-5.jpg",
+                "https://github.com/RajatWorks-ux/RajatWorks/blob/main/public/images/vakilr-6.jpg",
             ],
             description: "Vakilr is a premium legal marketplace concept designed to showcase a modern, elegant, and technology-driven approach to connecting clients with lawyers. Built with a luxurious dark theme, cinematic background videos, smooth animations, and carefully crafted UI components, the project focuses on creating a professional and trustworthy digital experience.\n\nThe website demonstrates how users could discover verified lawyers, browse professional profiles, explore legal services, and connect with law firms through a clean and intuitive interface. Every element was designed with attention to detail — from premium typography and glassmorphism-inspired cards to responsive layouts and elegant color combinations.",
             warning: "Vakilr is a concept prototype created for portfolio purposes. It is not a real legal marketplace — the lawyers, testimonials, ratings, and statistics displayed are for demonstration only.",
