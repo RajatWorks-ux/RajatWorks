@@ -6,13 +6,15 @@ const TOTAL_FRAMES  = 77;
 
 // ✅ STATIC constant — same as version 6. Computed ONCE at page load.
 // No useState, no resize listener here. Prevents laptop-resize-to-phone bug.
-// TRUE DEVICE DETECTION — UA + pointer, NOT window.innerWidth
+// DEVICE DETECTION — 3-layer, same as App.tsx
 const isMobile: boolean = (() => {
   if (typeof window === "undefined") return false;
   const ua = navigator.userAgent;
-  const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
+  const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  const isVeryWideScreen = window.innerWidth > 1400;
   const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
-  return mobileUA && !hasFinePointer;
+  const isDesktop = !mobileUA && (isVeryWideScreen || hasFinePointer);
+  return !isDesktop;
 })();
 
 // Pre-allocate frame image array outside component to avoid re-creation
@@ -257,4 +259,4 @@ const Landing = ({ children }: PropsWithChildren) => {
 
 export default Landing;
 
-  
+              
