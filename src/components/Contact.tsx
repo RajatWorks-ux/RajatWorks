@@ -18,7 +18,9 @@ const isMobileOrTablet: boolean = (() => {
   const isVeryWideScreen = window.innerWidth > 1400;
   const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
   const isDesktop = !mobileUA && (isVeryWideScreen || hasFinePointer);
-  return !isDesktop;
+  // Also treat screens ≤1024px as mobile/tablet for layout purposes
+  const isNarrowScreen = window.innerWidth <= 1024;
+  return !isDesktop || isNarrowScreen;
 })();
 
 const Contact = () => {
@@ -147,4 +149,5 @@ const Contact = () => {
 };
 
 export default Contact;
-                           
+
+          
