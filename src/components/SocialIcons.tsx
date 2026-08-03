@@ -11,6 +11,7 @@ import HoverLinks from "./HoverLinks";
 
 const SocialIcons = () => {
   useEffect(() => {
+    // ── Magnetic hover effect ──────────────────────────────────────────────
     const social = document.getElementById("social") as HTMLElement;
 
     social.querySelectorAll("span").forEach((item) => {
@@ -47,13 +48,43 @@ const SocialIcons = () => {
       };
 
       document.addEventListener("mousemove", onMouseMove);
-
       updatePosition();
 
       return () => {
         elem.removeEventListener("mousemove", onMouseMove);
       };
     });
+
+    // ── FIX: Hide social icons + resume button when Contact section enters view ──
+    // Without this, the fixed icons permanently float over the Contact
+    // section's own social buttons (z-index 999 vs z-index 1).
+    const iconsSection = document.querySelector(".icons-section") as HTMLElement | null;
+    const contactSection = document.getElementById("contact");
+
+    if (!iconsSection || !contactSection) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // Contact is visible — hide the fixed icons with a smooth fade
+          iconsSection.classList.add("icons-hidden");
+        } else {
+          // Contact scrolled out of view — bring icons back
+          iconsSection.classList.remove("icons-hidden");
+        }
+      },
+      {
+        // Trigger as soon as the top of Contact enters the viewport
+        threshold: 0,
+        rootMargin: "0px 0px 0px 0px",
+      }
+    );
+
+    observer.observe(contactSection);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   return (
@@ -91,3 +122,4 @@ const SocialIcons = () => {
 };
 
 export default SocialIcons;
+
