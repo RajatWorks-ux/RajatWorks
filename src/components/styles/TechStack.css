@@ -1,7 +1,11 @@
 /* ════════════════════════════════════════════════════════════════════
    TechStack.css
-   DESKTOP  →  inside @media (min-width: 1025px)  — untouched logic
-   MOBILE   →  inside @media (max-width: 1024px)
+   DESKTOP  →  .techstack-desktop rules
+   MOBILE   →  .techstack-mobile rules + @media (max-width: 1024px)
+   
+   KEY FIX: Title overlap was caused by .techstack having no explicit
+   stacking context on desktop and grid/title sharing the same flow
+   on mobile with incorrect z-index. Fixed both.
 ════════════════════════════════════════════════════════════════════ */
 
 /* ── Shared base ── */
@@ -11,17 +15,35 @@
   margin: auto;
 }
 
-/* ══ Desktop: h2 and canvas ══ */
-@media only screen and (min-width: 1025px) {
-  .techstack h2 {
-    font-size: 70px;
-    font-weight: 400;
-    text-align: center;
-  }
-  .tech-canvas {
-    width: 100% !important;
-    height: 600px !important;
-  }
+/* ══════════════════════════════════════════════════════
+   DESKTOP ONLY
+══════════════════════════════════════════════════════ */
+.techstack-desktop {
+  position: relative;
+  z-index: 1;
+  /* ✅ FIX: explicit min-height so section doesn't collapse and
+     overlap the Work section which uses GSAP pin */
+  min-height: 700px;
+  padding-bottom: 60px;
+}
+
+.ts-desktop-title {
+  font-size: 70px;
+  font-weight: 400;
+  text-align: center;
+  margin: 0 0 0 0;
+  padding-top: 60px;
+  /* ✅ Ensure title sits above canvas z-stack */
+  position: relative;
+  z-index: 3;
+}
+
+.tech-canvas {
+  width: 100% !important;
+  height: 600px !important;
+  /* ✅ Canvas sits below title */
+  position: relative;
+  z-index: 2;
 }
 
 /* ════════════════════════════════════════════════
@@ -30,14 +52,20 @@
 @media only screen and (max-width: 1024px) {
 
   /* ── Section wrapper ── */
-  .techstack {
-    padding: 72px 0 80px;   /* ✅ Extra bottom padding so balls don't bleed into Work */
+  .techstack-mobile {
+    padding: 72px 0 80px;
     width: 100%;
     max-width: 100%;
     margin: 0;
+    /* ✅ FIX: establish stacking context so title and grid
+       never overlap each other */
     position: relative;
     z-index: 1;
-    overflow: hidden;       /* ✅ Clip any overflowing ball/canvas content */
+    overflow: hidden;
+    /* ✅ FIX: flexbox column so title always comes ABOVE grid */
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
 
   /* ── Section title ── */
@@ -46,20 +74,26 @@
     font-weight: 700;
     letter-spacing: -1px;
     line-height: 1;
+    /* ✅ FIX: margin-bottom creates clear space between title and grid */
     margin: 0 0 32px;
     padding: 0 20px;
     color: #fff;
     display: block;
+    /* ✅ FIX: relative position + z-index so it always renders above */
     position: relative;
     z-index: 2;
+    /* Entrance animation */
     opacity: 0;
     transform: translateY(32px);
     transition: opacity 0.7s ease, transform 0.7s ease;
+    /* ✅ FIX: flex-shrink 0 so it never compresses */
+    flex-shrink: 0;
   }
   .ts-title.ts-title-visible {
     opacity: 1;
     transform: translateY(0);
   }
+
   /* Gradient accent word */
   .ts-title-accent {
     background: linear-gradient(135deg, #c2a4ff 0%, #fb8dff 100%);
@@ -75,6 +109,9 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
     padding: 0 20px;
+    /* ✅ FIX: relative + z-index 1 — lower than title's z-index 2 */
+    position: relative;
+    z-index: 1;
   }
 
   /* ── Each card ── */
@@ -182,6 +219,7 @@
 
   /* ── Canvas hidden on mobile ── */
   .tech-canvas { display: none !important; }
+  .ts-desktop-title { display: none !important; }
 
   /* Very small phones */
   @media (max-width: 380px) {
@@ -198,5 +236,5 @@
   0%   { transform: scale(0.7) translateY(8px); opacity: 0; }
   70%  { transform: scale(1.12) translateY(-2px); opacity: 1; }
   100% { transform: scale(1) translateY(0); opacity: 1; }
-}
+        }
 
