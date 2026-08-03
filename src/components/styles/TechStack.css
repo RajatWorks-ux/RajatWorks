@@ -1,35 +1,21 @@
 /* ════════════════════════════════════════════════════════════════════
-   TechStack.css
-   DESKTOP  →  .techstack-desktop rules
-   MOBILE   →  .techstack-mobile rules + @media (max-width: 1024px)
-   
-   KEY FIX: Title overlap was caused by .techstack having no explicit
-   stacking context on desktop and grid/title sharing the same flow
-   on mobile with incorrect z-index. Fixed both.
+   TechStack.css  —  single source of truth for ALL TechStack styles
+   index.css old .techstack rules have been REMOVED (they were the
+   root cause of the title overlap and desktop Work overlap bugs).
 ════════════════════════════════════════════════════════════════════ */
 
-/* ── Shared base ── */
-.techstack {
-  width: var(--cWidth);
-  max-width: var(--cMaxWidth);
-  margin: auto;
-}
-
 /* ══════════════════════════════════════════════════════
-   DESKTOP ONLY
+   DESKTOP  (.techstack-desktop)
+   Shown only on true laptop/desktop (JS device check)
 ══════════════════════════════════════════════════════ */
 .techstack-desktop {
+  width: 100%;
   position: relative;
-  z-index: 1;
-  /* ✅ FIX: explicit min-height so section doesn't collapse */
-  min-height: 700px;
-  padding-bottom: 60px;
-  /* ✅ FIX: margin-top ensures we clear the GSAP-pinned Work section.
-     Work section is height:100vh; this adds a safe gap so TechStack
-     never visually overlaps it on any screen size. */
-  margin-top: 120px;
-  /* ✅ FIX: isolation creates a new stacking context — prevents
-     canvas z-index from leaking into the Work section layer */
+  /* No height/min-height — let content define height */
+  padding-top: 80px;
+  padding-bottom: 80px;
+  background-color: var(--backgroundColor);
+  /* New stacking context so canvas z-index never leaks into Work */
   isolation: isolate;
 }
 
@@ -37,207 +23,211 @@
   font-size: 70px;
   font-weight: 400;
   text-align: center;
-  margin: 0 0 0 0;
-  padding-top: 60px;
-  /* ✅ Ensure title sits above canvas z-stack */
+  margin: 0;
+  padding-bottom: 20px;
+  color: #fff;
+  /* Sits in normal flow ABOVE the canvas — no absolute positioning */
   position: relative;
-  z-index: 3;
+  z-index: 2;
 }
 
 .tech-canvas {
   width: 100% !important;
   height: 600px !important;
-  /* ✅ Canvas sits below title */
+  display: block;
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 
-/* ════════════════════════════════════════════════
-   MOBILE ONLY  (max-width: 1024px)
-════════════════════════════════════════════════ */
-@media only screen and (max-width: 1024px) {
+/* ══════════════════════════════════════════════════════
+   MOBILE / TABLET  (.techstack-mobile)
+   Shown on phones and tablets (JS device check)
+   Media query here is a safety net only.
+══════════════════════════════════════════════════════ */
+.techstack-mobile {
+  /* Reset everything the old index.css .techstack block set */
+  width: 100%;
+  height: auto !important;
+  min-height: unset !important;
+  padding-top: 72px;
+  padding-bottom: 80px;
+  margin: 0;
+  background-color: var(--backgroundColor);
+  /* Flex column so title is always physically ABOVE grid in DOM flow */
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
 
-  /* ── Section wrapper ── */
-  .techstack-mobile {
-    padding: 72px 0 80px;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    /* ✅ FIX: establish stacking context so title and grid
-       never overlap each other */
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
-    /* ✅ FIX: flexbox column so title always comes ABOVE grid */
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    /* ✅ FIX: clear any transforms from previous section (Work GSAP pin) */
-    transform: translateZ(0);
-    will-change: auto;
-  }
+/* ── Title ── */
+.ts-title {
+  /* Normal flow — NOT absolute */
+  position: relative !important;
+  top: unset !important;
+  left: unset !important;
+  width: auto;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin: 0 0 32px !important;
+  padding: 0 20px;
+  color: #fff;
+  display: block;
+  z-index: 2;
+  flex-shrink: 0;
+  /* Entrance animation */
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.ts-title.ts-title-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-  /* ── Section title ── */
-  .ts-title {
-    font-size: 38px;
-    font-weight: 700;
-    letter-spacing: -1px;
-    line-height: 1;
-    /* ✅ FIX: margin-bottom creates clear space between title and grid */
-    margin: 0 0 32px;
-    padding: 0 20px;
-    color: #fff;
-    display: block;
-    /* ✅ FIX: relative position + z-index so it always renders above */
-    position: relative;
-    z-index: 2;
-    /* Entrance animation */
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-    /* ✅ FIX: flex-shrink 0 so it never compresses */
-    flex-shrink: 0;
-  }
-  .ts-title.ts-title-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Gradient accent word */
+.ts-title-accent {
+  background: linear-gradient(135deg, #c2a4ff 0%, #fb8dff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
 
-  /* Gradient accent word */
-  .ts-title-accent {
-    background: linear-gradient(135deg, #c2a4ff 0%, #fb8dff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-  }
+/* ── 2-column card grid ── */
+.tech-mobile-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 14px;
+  padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
 
-  /* ── 2-column grid ── */
-  .tech-mobile-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    padding: 0 20px;
-    /* ✅ FIX: relative + z-index 1 — lower than title's z-index 2 */
-    position: relative;
-    z-index: 1;
-  }
+/* ── Each card ── */
+.tech-mobile-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 28px 16px 24px;
+  min-height: 170px;
+  border-radius: 20px;
+  border: 1px solid rgba(194, 164, 255, 0.10);
+  background: rgba(194, 164, 255, 0.04);
+  overflow: hidden;
+  cursor: default;
+  /* Reset any animation from old index.css */
+  animation: none !important;
+  opacity: 0;
+  transform: translateY(30px) scale(0.94);
+  transition:
+    opacity  0.55s cubic-bezier(0.34, 1.3, 0.64, 1),
+    transform 0.55s cubic-bezier(0.34, 1.3, 0.64, 1),
+    border-color 0.25s ease,
+    background   0.25s ease;
+}
+.tech-mobile-item.tc-visible {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1);
+  animation: none !important;
+}
 
-  /* ── Each card ── */
-  .tech-mobile-item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 28px 16px 24px;
-    min-height: 170px;
-    border-radius: 20px;
-    border: 1px solid rgba(194, 164, 255, 0.10);
-    background: rgba(194, 164, 255, 0.04);
-    overflow: hidden;
-    cursor: default;
-    opacity: 0;
-    transform: translateY(30px) scale(0.94);
-    transition:
-      opacity  0.55s cubic-bezier(0.34, 1.3, 0.64, 1),
-      transform 0.55s cubic-bezier(0.34, 1.3, 0.64, 1),
-      border-color 0.25s ease,
-      background  0.25s ease;
-  }
-  .tech-mobile-item.tc-visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+/* Top shimmer line */
+.tech-mobile-item::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(194,164,255,0.45), transparent);
+  border-radius: 1px;
+}
 
-  /* Top shimmer line */
-  .tech-mobile-item::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 10%; right: 10%;
-    height: 1px;
-    background: linear-gradient(
-      to right, transparent, rgba(194,164,255,0.45), transparent
-    );
-    border-radius: 1px;
-  }
+/* Tap glow */
+.tech-mobile-item:active {
+  border-color: rgba(194,164,255,0.45);
+  background: rgba(194,164,255,0.10);
+  transform: scale(0.96);
+  transition: transform 0.12s ease;
+}
 
-  /* Tap glow */
-  .tech-mobile-item:active {
-    border-color: rgba(194,164,255,0.45);
-    background: rgba(194,164,255,0.10);
-    transform: scale(0.96);
-    transition: transform 0.12s ease;
-  }
+/* Tap ripple bg */
+.tmi-tap-bg {
+  position: absolute; inset: 0; border-radius: inherit;
+  background: radial-gradient(circle at 50% 50%, rgba(194,164,255,0.14) 0%, transparent 70%);
+  opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+}
+.tech-mobile-item:active .tmi-tap-bg { opacity: 1; }
 
-  /* Tap ripple bg */
-  .tmi-tap-bg {
-    position: absolute; inset: 0; border-radius: inherit;
-    background: radial-gradient(circle at 50% 50%, rgba(194,164,255,0.14) 0%, transparent 70%);
-    opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
-  }
-  .tech-mobile-item:active .tmi-tap-bg { opacity: 1; }
+/* ── Icon wrapper ── */
+.tmi-icon-wrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
-  /* ── Icon wrapper ── */
-  .tmi-icon-wrap {
-    position: relative;
-    width: 88px;
-    height: 88px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
+/* Icon image — reset old index.css animation */
+.tmi-icon-wrap img {
+  width: 84px;
+  height: 84px;
+  object-fit: contain;
+  display: block;
+  position: relative;
+  z-index: 1;
+  /* Hard reset any animation from old rules */
+  opacity: 1 !important;
+  animation: none !important;
+  animation-play-state: running !important;
+}
+.tech-mobile-item.tc-visible .tmi-icon-wrap img {
+  animation: tIconPop 0.5s cubic-bezier(0.34, 1.6, 0.64, 1) both !important;
+}
 
-  /* Icon image */
-  .tmi-icon-wrap img {
-    width: 84px;
-    height: 84px;
-    object-fit: contain;
-    display: block;
-    position: relative;
-    z-index: 1;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-  }
-  .tech-mobile-item.tc-visible .tmi-icon-wrap img {
-    animation: tIconPop 0.5s cubic-bezier(0.34, 1.6, 0.64, 1) both;
-  }
+/* Glow behind icon */
+.tmi-icon-glow {
+  position: absolute; inset: -8px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(194,164,255,0.22) 0%, transparent 70%);
+  filter: blur(10px); z-index: 0;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.tech-mobile-item:active .tmi-icon-glow,
+.tech-mobile-item.tc-visible .tmi-icon-glow { opacity: 1; }
 
-  /* Glow behind icon */
-  .tmi-icon-glow {
-    position: absolute; inset: -8px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(194,164,255,0.22) 0%, transparent 70%);
-    filter: blur(10px); z-index: 0;
-    opacity: 0; transition: opacity 0.3s ease;
-  }
-  .tech-mobile-item:active .tmi-icon-glow,
-  .tech-mobile-item.tc-visible .tmi-icon-glow { opacity: 1; }
+/* ── Label ── */
+.tmi-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(234,229,236,0.65);
+  letter-spacing: 0.6px;
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 1;
+}
 
-  /* ── Label ── */
-  .tmi-label {
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(234,229,236,0.65);
-    letter-spacing: 0.6px;
-    text-align: center;
-    text-transform: uppercase;
-    line-height: 1;
-  }
+/* ── Hide desktop canvas on mobile ── */
+.tech-canvas { display: none !important; }
+.ts-desktop-title { display: none !important; }
 
-  /* ── Canvas hidden on mobile ── */
-  .tech-canvas { display: none !important; }
-  .ts-desktop-title { display: none !important; }
-
-  /* Very small phones */
-  @media (max-width: 380px) {
-    .tech-mobile-grid { gap: 10px; padding: 0 14px; }
-    .tech-mobile-item { min-height: 140px; padding: 26px 10px 20px; }
-    .tmi-icon-wrap    { width: 68px; height: 68px; }
-    .tmi-icon-wrap img { width: 64px; height: 64px; }
-    .tmi-label        { font-size: 11px; }
-  }
+/* Very small phones */
+@media (max-width: 380px) {
+  .tech-mobile-grid { gap: 10px; padding: 0 14px; }
+  .tech-mobile-item { min-height: 140px; padding: 26px 10px 20px; }
+  .tmi-icon-wrap    { width: 68px; height: 68px; }
+  .tmi-icon-wrap img { width: 64px; height: 64px; }
+  .tmi-label        { font-size: 11px; }
 }
 
 /* ── Keyframes ── */
@@ -245,6 +235,5 @@
   0%   { transform: scale(0.7) translateY(8px); opacity: 0; }
   70%  { transform: scale(1.12) translateY(-2px); opacity: 1; }
   100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
+}
 
