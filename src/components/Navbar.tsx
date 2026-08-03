@@ -8,9 +8,18 @@ import "./styles/Navbar.css";
 gsap.registerPlugin(ScrollTrigger);
 export let lenis: Lenis | null = null;
 
-// ✅ STATIC constant — same as version 6. Computed ONCE at page load.
-// No useState, no resize listener. Prevents laptop-resize-to-phone bug.
-const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+// ─── FIX: was `window.innerWidth <= 1024` — wrong on a laptop resized below
+//     1024px (e.g. Avita at ~900px).  That made Navbar think it was a phone,
+//     started Lenis in mobile mode, and broke desktop scroll + lenis.stop().
+//     Now uses the same 3-layer UA + pointer check as App.tsx / main.tsx.
+const _ua = typeof window !== "undefined" ? navigator.userAgent : "";
+const _mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(_ua);
+const _hasFinePointer = typeof window !== "undefined"
+  ? window.matchMedia("(pointer: fine)").matches
+  : false;
+const _isVeryWide = typeof window !== "undefined" ? window.innerWidth > 1400 : false;
+const isRealDesktop = !_mobileUA && (_isVeryWide || _hasFinePointer);
+const isMobile = !isRealDesktop;
 
 const Navbar = () => {
   useEffect(() => {
