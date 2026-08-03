@@ -8,12 +8,21 @@ import { useEffect } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ✅ STATIC constant — desktop check at load time
-const isMobile = typeof window !== "undefined" && window.innerWidth < 900;
+// ─────────────────────────────────────────────────────────────────────────────
+// TRUE DEVICE DETECTION — UA + pointer, NOT window.innerWidth
+// Matches App.tsx and TechStack.tsx exactly
+// ─────────────────────────────────────────────────────────────────────────────
+const isTruePhone: boolean = (() => {
+  if (typeof window === "undefined") return false;
+  const ua = navigator.userAgent;
+  const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
+  const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+  return mobileUA && !hasFinePointer;
+})();
 
 const Contact = () => {
   useEffect(() => {
-    if (isMobile) return; // Mobile pe GSAP animation nahi
+    if (isTruePhone) return; // Mobile pe GSAP animation nahi
 
     const contactTimeline = gsap.timeline({
       scrollTrigger: {
@@ -42,7 +51,7 @@ const Contact = () => {
     <div className="contact-section section-container" id="contact">
 
       {/* ══════════════════════
-          DESKTOP layout — RESTORED EXACTLY FROM VERSION 6
+          DESKTOP layout
       ══════════════════════ */}
       <div className="contact-container contact-desktop">
         <h3>{config.developer.fullName}</h3>
@@ -60,7 +69,7 @@ const Contact = () => {
             <a href={config.contact.twitter}   target="_blank" rel="noopener noreferrer" data-cursor="disable" className="contact-social">Twitter   <MdArrowOutward /></a>
             <a href={config.contact.instagram} target="_blank" rel="noopener noreferrer" data-cursor="disable" className="contact-social">Instagram <MdArrowOutward /></a>
           </div>
-          <div className="contact-box">
+          <div className="contact-box contact-box-credit">
             <h2>Designed and Developed <br /> by <span>{config.developer.fullName}</span></h2>
             <h5><MdCopyright /> {new Date().getFullYear()}</h5>
           </div>
@@ -68,8 +77,7 @@ const Contact = () => {
       </div>
 
       {/* ══════════════════════════════════════
-          MOBILE layout — KEPT FROM VERSION 10 (phone version was perfect)
-          NOT A SINGLE THING CHANGED HERE
+          MOBILE layout — phone version perfect hai, NOT TOUCHED
       ══════════════════════════════════════ */}
       <div className="contact-mobile">
 
@@ -86,7 +94,7 @@ const Contact = () => {
           </h2>
         </div>
 
-        {/* Email CTA — big tap button */}
+        {/* Email CTA */}
         <a
           href={`mailto:${config.contact.email}`}
           className="cm-email-btn"
@@ -105,7 +113,7 @@ const Contact = () => {
         {/* Divider */}
         <div className="cm-divider" />
 
-        {/* Social icons — circular buttons */}
+        {/* Social icons */}
         <p className="cm-social-label">Find me on</p>
         <div className="cm-socials">
           <a href={config.contact.github}    target="_blank" rel="noopener noreferrer" className="cm-social-btn" aria-label="GitHub">
