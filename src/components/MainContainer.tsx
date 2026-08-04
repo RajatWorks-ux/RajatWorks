@@ -12,12 +12,13 @@ import setSplitText from "./utils/splitText";
 import { initInView } from "../utils/useInView";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// ── TechStack is lazy-loaded so it doesn't block the initial paint.
-//    TechStackWithRefresh fires ScrollTrigger.refresh() after TechStack
-//    fully mounts AND after the browser has painted it, so GSAP's Work
-//    pin-spacer is always calculated against the real page height.
 const TechStackLazy = lazy(() => import("./TechStack"));
 
+// ── TechStackWithRefresh ──────────────────────────────────────
+// Work section ab GSAP pin use nahi karta (Bento Grid hai),
+// isliye ScrollTrigger.refresh() sirf TechStack ke liye kaam
+// aata hai — baaki koi GSAP scroll trigger nahi hai work mein.
+// Phir bhi refresh rakhte hain taaki career/about triggers sahi rahein.
 const TechStackWithRefresh = () => {
   const mountedRef = useRef(false);
 
@@ -25,19 +26,7 @@ const TechStackWithRefresh = () => {
     if (mountedRef.current) return;
     mountedRef.current = true;
 
-    // Strategy: fire ScrollTrigger.refresh() in 3 waves so we catch
-    // every possible paint timing (fast machine, slow machine, cached assets).
-    //
-    // Wave 1 — next frame: catches fast machines where TechStack paints immediately.
-    // Wave 2 — 300 ms: catches normal machines where 3D canvas takes a moment.
-    // Wave 3 — 800 ms: catches slow machines / cold cache where physics init is slow.
-    //
-    // Each wave is safe to call multiple times — GSAP deduplicates refreshes.
-
-    const raf = requestAnimationFrame(() => {
-      ScrollTrigger.refresh();
-    });
-
+    const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
     const t1 = setTimeout(() => ScrollTrigger.refresh(), 300);
     const t2 = setTimeout(() => ScrollTrigger.refresh(), 800);
 
@@ -51,8 +40,7 @@ const TechStackWithRefresh = () => {
   return <TechStackLazy />;
 };
 
-// ── DEVICE DETECTION: same 3-layer logic as App.tsx ──
-// Computed ONCE at module load — never changes on resize
+// ── Device detection — 3-layer, same as App.tsx ──────────────
 const isDesktopView: boolean = (() => {
   if (typeof window === "undefined") return true;
   const ua = navigator.userAgent;
@@ -63,24 +51,19 @@ const isDesktopView: boolean = (() => {
 })();
 
 const MainContainer = ({ children }: PropsWithChildren) => {
-
   useEffect(() => {
-    const resizeHandler = () => {
-      setSplitText();
-    };
+    const resizeHandler = () => setSplitText();
     resizeHandler();
     window.addEventListener("resize", resizeHandler);
     return () => window.removeEventListener("resize", resizeHandler);
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      initInView();
-    }, 300);
+    const timer = setTimeout(() => initInView(), 300);
     return () => clearTimeout(timer);
   }, []);
 
-  // ── Tap ripple effect — mobile micro-interaction ──
+  // ── Tap ripple — mobile micro-interaction ─────────────────
   useEffect(() => {
     if (isDesktopView) return;
 
@@ -90,9 +73,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
       if (!tappable) return;
 
       const style = window.getComputedStyle(tappable);
-      if (style.position === "static") {
-        tappable.style.position = "relative";
-      }
+      if (style.position === "static") tappable.style.position = "relative";
       tappable.style.overflow = "hidden";
 
       const rect = tappable.getBoundingClientRect();
@@ -105,7 +86,6 @@ const MainContainer = ({ children }: PropsWithChildren) => {
       ripple.className = "tap-ripple";
       ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
       tappable.appendChild(ripple);
-
       setTimeout(() => ripple.remove(), 600);
     };
 
@@ -126,17 +106,10 @@ const MainContainer = ({ children }: PropsWithChildren) => {
         <Career />
         <Work />
         {/*
-          ── FIX: Suspense fallback min-height is set to 1000px (was 700px).
-             This ensures the page has enough height WHILE TechStack is loading
-             so GSAP's Work pin-spacer is calculated correctly.
-             If the fallback collapses to 0 before TechStack mounts, GSAP
-             will compute a wrong (too-small) spacer, causing TechStack to
-             visually overlap the still-pinned Work section.
-
-             1000px is safely larger than the actual TechStack height (~750px
-             on desktop including title + canvas + padding), so the spacer
-             never gets miscalculated due to a collapsing fallback.
-        ── */}
+          Bento Grid Work section mein koi GSAP pin nahi hai,
+          isliye TechStack overlap ka bug permanently khatam ho gaya.
+          Suspense fallback 1000px — safe margin for all screen sizes.
+        */}
         <Suspense fallback={<div style={{ minHeight: "1000px" }} />}>
           <TechStackWithRefresh />
         </Suspense>
@@ -147,4 +120,5 @@ const MainContainer = ({ children }: PropsWithChildren) => {
 };
 
 export default MainContainer;
+
                                             
