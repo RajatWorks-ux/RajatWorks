@@ -69,57 +69,57 @@ const WorkCard = ({
   );
 };
 
+// ─── Accurate scroll distance ────────────────────────────────
+// Uses .work-container width (not .work-flex which has negative margin-left)
+// and adds .work-flex padding-right so trailing space is included.
+// GSAP calls this after every refresh() so breakpoint changes are picked up.
+const getTranslateX = (): number => {
+  const boxes = document.getElementsByClassName("work-box");
+  if (boxes.length === 0) return 0;
+
+  const container = document.querySelector(".work-container");
+  const flex = document.querySelector<HTMLElement>(".work-flex");
+  if (!container || !flex) return 0;
+
+  const containerRect = container.getBoundingClientRect();
+  const box = boxes[0] as HTMLElement;
+  const boxWidth = box.getBoundingClientRect().width;
+
+  // Read the live computed padding-right so breakpoint changes are
+  // automatically picked up on every GSAP refresh.
+  const paddingRight =
+    parseFloat(window.getComputedStyle(flex).paddingRight) || 0;
+
+  // Total scrollable width = all cards + right padding − visible container width
+  return boxWidth * boxes.length + paddingRight - containerRect.width;
+};
+
 // ─── Main Work Section ───────────────────────────────────────
 const Work = () => {
   useEffect(() => {
     // Mobile: no horizontal scroll — vertical layout handles it
     if (window.innerWidth < 1025) return;
 
-    // ── FIX A: Use .work-container width (not .work-flex width) for the
-    //    scroll distance calculation.  Previously box.parentElement was
-    //    .work-flex which has a negative margin-left applied — that made
-    //    the measured width slightly wider than the visible container and
-    //    caused the spacer to be too short, letting TechStack creep up.
-    //
-    // ── FIX B: Also add work-flex padding-right to the scroll distance.
-    //    .work-flex has padding-right: 120px (desktop) / 75px / 45px
-    //    depending on breakpoint.  That trailing space is real content the
-    //    user must scroll through — ignoring it made the spacer short by
-    //    exactly that amount, causing TechStack to visually overlap the
-    //    still-pinned Work section before all cards were fully scrolled.
-    const getTranslateX = (): number => {
-      const boxes = document.getElementsByClassName("work-box");
-      if (boxes.length === 0) return 0;
-
-      const container = document.querySelector(".work-container");
-      const flex     = document.querySelector<HTMLElement>(".work-flex");
-      if (!container || !flex) return 0;
-
-      const containerRect = container.getBoundingClientRect();
-      const box           = boxes[0] as HTMLElement;
-      const boxWidth      = box.getBoundingClientRect().width;
-
-      // Read the live computed padding-right so breakpoint changes are
-      // automatically picked up on every GSAP refresh.
-      const paddingRight = parseFloat(window.getComputedStyle(flex).paddingRight) || 0;
-
-      // Total scrollable width  =  all cards  +  right padding
-      // Minus what is already visible  =  container width
-      return boxWidth * boxes.length + paddingRight - containerRect.width;
-    };
-
     const timeline = gsap.timeline({
       scrollTrigger: {
         trigger: ".work-section",
         start: "top top",
-        // end is a function — GSAP calls this after each refresh,
-        // so the spacer length always matches the real content width.
+        // end is a function so GSAP recalculates after every refresh(),
+        // keeping the spacer length in sync with the real content width.
         end: () => `+=${getTranslateX()}`,
         scrub: true,
         pin: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         id: "work",
+        // ── FIX: onRefresh fires every time ScrollTrigger.refresh() is
+        //    called (including the 3 waves from TechStackWithRefresh).
+        //    We immediately re-run getTranslateX() so the spacer height
+        //    is always correct — even when TechStack mounts late and
+        //    pushes the total page height up after GSAP's first calc.
+        onRefresh: () => {
+          timeline.invalidate();
+        },
       },
     });
 
@@ -129,18 +129,21 @@ const Work = () => {
       invalidateOnRefresh: true,
     });
 
-    // ── FIX: Project images load asynchronously — when they finish,
-    //    the work-box heights can change, making getTranslateX() return
-    //    a different value.  Refresh GSAP after all images in the section
-    //    have loaded so the spacer is always accurate.
-    const images = document.querySelectorAll<HTMLImageElement>(".work-section img");
+    // ── Images load asynchronously — refresh GSAP once all are loaded
+    //    so the spacer is always accurate after height changes.
+    const images =
+      document.querySelectorAll<HTMLImageElement>(".work-section img");
     let loaded = 0;
+    const total = images.length;
+
     const onImgLoad = () => {
       loaded++;
-      if (loaded >= images.length) {
-        ScrollTrigger.refresh();
+      if (loaded >= total) {
+        // Small delay to let the browser finalize layout after the last image
+        setTimeout(() => ScrollTrigger.refresh(), 50);
       }
     };
+
     images.forEach((img) => {
       if (img.complete) {
         loaded++;
@@ -149,9 +152,10 @@ const Work = () => {
         img.addEventListener("error", onImgLoad, { once: true });
       }
     });
-    // If all images were already cached
-    if (loaded >= images.length && images.length > 0) {
-      ScrollTrigger.refresh();
+
+    // If all images were already cached when this effect ran
+    if (total > 0 && loaded >= total) {
+      setTimeout(() => ScrollTrigger.refresh(), 50);
     }
 
     return () => {
@@ -177,5 +181,4 @@ const Work = () => {
 };
 
 export default Work;
-
 
