@@ -1,4 +1,4 @@
-import { lazy, PropsWithChildren, Suspense, useEffect } from "react";
+import { lazy, PropsWithChildren, Suspense, useEffect, useRef } from "react";
 import About from "./About";
 import Career from "./Career";
 import Contact from "./Contact";
@@ -12,23 +12,42 @@ import setSplitText from "./utils/splitText";
 import { initInView } from "../utils/useInView";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// ── FIX: TechStack wrapped in a named component so we can fire
-//    ScrollTrigger.refresh() the moment it finishes mounting.
-//    Without this, GSAP's Work pin-spacer was calculated when TechStack
-//    hadn't rendered yet → spacer was correct but total page height was
-//    wrong → TechStack overlapped the Work section on laptop.
+// ── TechStack is lazy-loaded so it doesn't block the initial paint.
+//    TechStackWithRefresh fires ScrollTrigger.refresh() after TechStack
+//    fully mounts AND after the browser has painted it, so GSAP's Work
+//    pin-spacer is always calculated against the real page height.
 const TechStackLazy = lazy(() => import("./TechStack"));
 
 const TechStackWithRefresh = () => {
+  const mountedRef = useRef(false);
+
   useEffect(() => {
-    // Give browser one frame to paint TechStack, then tell GSAP to
-    // re-measure all scroll positions.  This fixes the Work pin-spacer
-    // height mismatch caused by lazy-loading TechStack after GSAP ran.
+    if (mountedRef.current) return;
+    mountedRef.current = true;
+
+    // Strategy: fire ScrollTrigger.refresh() in 3 waves so we catch
+    // every possible paint timing (fast machine, slow machine, cached assets).
+    //
+    // Wave 1 — next frame: catches fast machines where TechStack paints immediately.
+    // Wave 2 — 300 ms: catches normal machines where 3D canvas takes a moment.
+    // Wave 3 — 800 ms: catches slow machines / cold cache where physics init is slow.
+    //
+    // Each wave is safe to call multiple times — GSAP deduplicates refreshes.
+
     const raf = requestAnimationFrame(() => {
       ScrollTrigger.refresh();
     });
-    return () => cancelAnimationFrame(raf);
+
+    const t1 = setTimeout(() => ScrollTrigger.refresh(), 300);
+    const t2 = setTimeout(() => ScrollTrigger.refresh(), 800);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
+
   return <TechStackLazy />;
 };
 
@@ -48,7 +67,6 @@ const MainContainer = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const resizeHandler = () => {
       setSplitText();
-      // Only update split text on resize — device type never changes
     };
     resizeHandler();
     window.addEventListener("resize", resizeHandler);
@@ -107,13 +125,19 @@ const MainContainer = ({ children }: PropsWithChildren) => {
         <WhatIDo />
         <Career />
         <Work />
-        {/* ── FIX: TechStackWithRefresh fires ScrollTrigger.refresh() after
-               TechStack mounts so GSAP recalculates Work's pin-spacer height.
-               The Suspense fallback has a fixed min-height so the page height
-               doesn't collapse to 0 while loading — that would cause a second
-               GSAP miscalculation if Work's trigger fires before fallback
-               clears. ── */}
-        <Suspense fallback={<div style={{ minHeight: "700px" }} />}>
+        {/*
+          ── FIX: Suspense fallback min-height is set to 1000px (was 700px).
+             This ensures the page has enough height WHILE TechStack is loading
+             so GSAP's Work pin-spacer is calculated correctly.
+             If the fallback collapses to 0 before TechStack mounts, GSAP
+             will compute a wrong (too-small) spacer, causing TechStack to
+             visually overlap the still-pinned Work section.
+
+             1000px is safely larger than the actual TechStack height (~750px
+             on desktop including title + canvas + padding), so the spacer
+             never gets miscalculated due to a collapsing fallback.
+        ── */}
+        <Suspense fallback={<div style={{ minHeight: "1000px" }} />}>
           <TechStackWithRefresh />
         </Suspense>
         <Contact />
@@ -123,4 +147,5 @@ const MainContainer = ({ children }: PropsWithChildren) => {
 };
 
 export default MainContainer;
+
 
