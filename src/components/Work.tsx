@@ -1,179 +1,282 @@
 import "./styles/Work.css";
-import WorkImage from "./WorkImage";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { config } from "../config";
+import { MdArrowOutward } from "react-icons/md";
 
-gsap.registerPlugin(ScrollTrigger);
+// ─── Lightbox (same as WorkImage — reused here directly) ─────
+const Lightbox = ({
+  images,
+  startIndex,
+  onClose,
+}: {
+  images: string[];
+  startIndex: number;
+  onClose: () => void;
+}) => {
+  const [current, setCurrent] = useState(startIndex);
+  const prev = () => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1));
+  const next = () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
 
-// ─── Show More / Less per card ──────────────────────────────
-const WorkCard = ({
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    window.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 9999,
+        background: "rgba(0,0,0,0.95)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}
+    >
+      <button onClick={onClose} style={{
+        position: "absolute", top: 16, right: 16,
+        width: 40, height: 40, borderRadius: "50%", border: "none",
+        background: "rgba(255,255,255,0.15)", color: "#fff",
+        fontSize: 18, cursor: "pointer", display: "flex",
+        alignItems: "center", justifyContent: "center",
+      }}>✕</button>
+
+      <div style={{
+        position: "absolute", top: 16, left: "50%",
+        transform: "translateX(-50%)", color: "rgba(255,255,255,0.7)",
+        fontSize: 13, background: "rgba(0,0,0,0.4)",
+        padding: "3px 12px", borderRadius: 20,
+      }}>{current + 1} / {images.length}</div>
+
+      {images.length > 1 && (
+        <button onClick={(e) => { e.stopPropagation(); prev(); }} style={{
+          position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)",
+          width: 48, height: 48, borderRadius: "50%", border: "none",
+          background: "rgba(255,255,255,0.12)", color: "#fff",
+          fontSize: 28, cursor: "pointer", display: "flex",
+          alignItems: "center", justifyContent: "center",
+        }}>‹</button>
+      )}
+
+      <img key={current} src={images[current]} alt={`Photo ${current + 1}`}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: "90vw", maxHeight: "90vh", objectFit: "contain",
+          borderRadius: 12, boxShadow: "0 0 60px rgba(0,0,0,0.8)",
+        }}
+      />
+
+      {images.length > 1 && (
+        <button onClick={(e) => { e.stopPropagation(); next(); }} style={{
+          position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)",
+          width: 48, height: 48, borderRadius: "50%", border: "none",
+          background: "rgba(255,255,255,0.12)", color: "#fff",
+          fontSize: 28, cursor: "pointer", display: "flex",
+          alignItems: "center", justifyContent: "center",
+        }}>›</button>
+      )}
+
+      {images.length > 1 && (
+        <div style={{
+          position: "absolute", bottom: 20, left: "50%",
+          transform: "translateX(-50%)", display: "flex", gap: 8,
+        }}>
+          {images.map((_, i) => (
+            <button key={i}
+              onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+              style={{
+                width: i === current ? 16 : 8, height: 8, borderRadius: 4,
+                border: "none",
+                background: i === current ? "#fff" : "rgba(255,255,255,0.35)",
+                cursor: "pointer", transition: "all 0.2s", padding: 0,
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Single Bento Card ────────────────────────────────────────
+const BentoCard = ({
   project,
   index,
+  variant,
 }: {
   project: (typeof config.projects)[0];
   index: number;
+  variant: "wide" | "tall" | "square";
 }) => {
   const [expanded, setExpanded] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // IntersectionObserver fade-in
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("bento-card--visible");
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const paragraphs = project.description.split("\n\n");
   const shortDesc = paragraphs[0];
   const extraDesc = paragraphs.slice(1).join("\n\n");
+  const hasMore = !!(extraDesc || project.warning);
+
+  // Thumbnail image — first image in the array
+  const thumb = project.images[0];
 
   return (
-    <div className="work-box">
-      <div className="work-info">
-        <div className="work-title">
-          <h3>0{index + 1}</h3>
-          <div>
-            <h4>{project.title}</h4>
-            <p>{project.subtitle || project.category}</p>
-          </div>
+    <>
+      <div
+        ref={cardRef}
+        className={`bento-card bento-card--${variant}`}
+        style={{ animationDelay: `${index * 80}ms` }}
+      >
+        {/* ── Thumbnail ── */}
+        <div
+          className="bento-thumb"
+          onClick={() => setLightboxOpen(true)}
+          data-cursor="disable"
+          title="Click to view all photos"
+        >
+          <img src={thumb} alt={project.title} loading="lazy" />
+          {project.images.length > 1 && (
+            <span className="bento-photo-count">
+              1/{project.images.length} &nbsp;⤢
+            </span>
+          )}
+          <div className="bento-thumb-overlay">View Photos</div>
         </div>
 
-        <div className="work-desc">
-          <p className="work-desc-text">{shortDesc}</p>
+        {/* ── Info ── */}
+        <div className="bento-info">
+          <div className="bento-top-row">
+            <span className="bento-num">0{index + 1}</span>
+            {project.link && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bento-live-btn"
+                data-cursor="disable"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MdArrowOutward />
+              </a>
+            )}
+          </div>
+
+          <h3 className="bento-title">{project.title}</h3>
+          <p className="bento-subtitle">{project.subtitle}</p>
+
+          <p className="bento-desc">{shortDesc}</p>
 
           {expanded && extraDesc && (
-            <p className="work-desc-extra">{extraDesc}</p>
+            <p className="bento-desc bento-desc--extra">{extraDesc}</p>
           )}
 
           {expanded && project.warning && (
-            <div className="work-warning">
+            <div className="bento-warning">
               <span>⚠️</span>
               <span>{project.warning}</span>
             </div>
           )}
 
-          {(extraDesc || project.warning) && (
-            <button
-              className="work-show-btn"
-              onClick={() => setExpanded((v) => !v)}
-            >
-              {expanded ? "Show Less ↑" : "Show More ↓"}
-            </button>
-          )}
+          <div className="bento-bottom-row">
+            <span className="bento-tech">{project.technologies}</span>
+            {hasMore && (
+              <button
+                className="bento-toggle"
+                onClick={() => setExpanded((v) => !v)}
+              >
+                {expanded ? "Less ↑" : "More ↓"}
+              </button>
+            )}
+          </div>
         </div>
-
-        <h4>Tools and features</h4>
-        <p>{project.technologies}</p>
       </div>
 
-      <WorkImage
-        images={project.images}
-        alt={project.title}
-        link={project.link}
-      />
-    </div>
+      {lightboxOpen && (
+        <Lightbox
+          images={project.images}
+          startIndex={0}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+    </>
   );
 };
 
-// ─── Accurate scroll distance ────────────────────────────────
-// Uses .work-container width (not .work-flex which has negative margin-left)
-// and adds .work-flex padding-right so trailing space is included.
-// GSAP calls this after every refresh() so breakpoint changes are picked up.
-const getTranslateX = (): number => {
-  const boxes = document.getElementsByClassName("work-box");
-  if (boxes.length === 0) return 0;
+// ─── Work Section ─────────────────────────────────────────────
+// Layout for 5 projects:
+//   Row 1: [Project 1 — wide]  [Project 2 — tall, spans 2 rows]
+//   Row 2: [Project 3 — wide]
+//   Row 3: [Project 4 — square] [Project 5 — square]
+//
+// No GSAP pin. No horizontal scroll. Zero overlap with TechStack.
 
-  const container = document.querySelector(".work-container");
-  const flex = document.querySelector<HTMLElement>(".work-flex");
-  if (!container || !flex) return 0;
-
-  const containerRect = container.getBoundingClientRect();
-  const box = boxes[0] as HTMLElement;
-  const boxWidth = box.getBoundingClientRect().width;
-
-  // Read the live computed padding-right so breakpoint changes are
-  // automatically picked up on every GSAP refresh.
-  const paddingRight =
-    parseFloat(window.getComputedStyle(flex).paddingRight) || 0;
-
-  // Total scrollable width = all cards + right padding − visible container width
-  return boxWidth * boxes.length + paddingRight - containerRect.width;
-};
-
-// ─── Main Work Section ───────────────────────────────────────
 const Work = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // Slide-up the heading via IntersectionObserver
   useEffect(() => {
-    // Mobile: no horizontal scroll — vertical layout handles it
-    if (window.innerWidth < 1025) return;
-
-    const timeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".work-section",
-        start: "top top",
-        // end is a function so GSAP recalculates after every refresh(),
-        // keeping the spacer length in sync with the real content width.
-        end: () => `+=${getTranslateX()}`,
-        scrub: true,
-        pin: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        id: "work",
-        // ── FIX: onRefresh fires every time ScrollTrigger.refresh() is
-        //    called (including the 3 waves from TechStackWithRefresh).
-        //    We immediately re-run getTranslateX() so the spacer height
-        //    is always correct — even when TechStack mounts late and
-        //    pushes the total page height up after GSAP's first calc.
-        onRefresh: () => {
-          timeline.invalidate();
-        },
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("in-view");
+          obs.disconnect();
+        }
       },
-    });
-
-    timeline.to(".work-flex", {
-      x: () => -getTranslateX(),
-      ease: "none",
-      invalidateOnRefresh: true,
-    });
-
-    // ── Images load asynchronously — refresh GSAP once all are loaded
-    //    so the spacer is always accurate after height changes.
-    const images =
-      document.querySelectorAll<HTMLImageElement>(".work-section img");
-    let loaded = 0;
-    const total = images.length;
-
-    const onImgLoad = () => {
-      loaded++;
-      if (loaded >= total) {
-        // Small delay to let the browser finalize layout after the last image
-        setTimeout(() => ScrollTrigger.refresh(), 50);
-      }
-    };
-
-    images.forEach((img) => {
-      if (img.complete) {
-        loaded++;
-      } else {
-        img.addEventListener("load", onImgLoad, { once: true });
-        img.addEventListener("error", onImgLoad, { once: true });
-      }
-    });
-
-    // If all images were already cached when this effect ran
-    if (total > 0 && loaded >= total) {
-      setTimeout(() => ScrollTrigger.refresh(), 50);
-    }
-
-    return () => {
-      timeline.kill();
-      ScrollTrigger.getById("work")?.kill();
-    };
+      { threshold: 0.05 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
+  const p = config.projects; // [0]=MIRA [1]=ANON [2]=PhoneShop [3]=Voltri [4]=Vakilr
+
   return (
-    <div className="work-section" id="work">
-      <div className="work-container section-container">
-        <h2>
+    <div className="work-section" id="work" ref={sectionRef}>
+      <div className="work-bento-container section-container">
+        <h2 className="work-bento-heading">
           My <span>Work</span>
         </h2>
-        <div className="work-flex">
-          {config.projects.map((project, index) => (
-            <WorkCard key={project.id} project={project} index={index} />
-          ))}
+
+        {/* ── Bento Grid ── */}
+        <div className="bento-grid">
+          {/* Row 1 left — wide */}
+          <BentoCard project={p[0]} index={0} variant="wide" />
+
+          {/* Row 1+2 right — tall (spans 2 rows) */}
+          <BentoCard project={p[1]} index={1} variant="tall" />
+
+          {/* Row 2 left — wide */}
+          <BentoCard project={p[2]} index={2} variant="wide" />
+
+          {/* Row 3 — two squares */}
+          <BentoCard project={p[3]} index={3} variant="square" />
+          <BentoCard project={p[4]} index={4} variant="square" />
         </div>
       </div>
     </div>
@@ -181,4 +284,5 @@ const Work = () => {
 };
 
 export default Work;
+            
 
