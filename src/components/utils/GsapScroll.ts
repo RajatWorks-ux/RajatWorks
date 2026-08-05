@@ -1,32 +1,41 @@
 import * as THREE from "three";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// ─── Same 3-layer device detection as App.tsx / initialFX.ts ─────────────────
-// BUG FIX: the old `window.innerWidth > 1024` check caused the character model
-// to stay pinned in the center of the screen (position:fixed) without any GSAP
-// animations running when a real laptop was resized below 1024px.  In that
-// scenario initialFX.ts (correctly using isRealDesktop) ran full landing
-// animations, but setCharTimeline fell into the else branch — no tl1/tl2/tl3
-// animations fired, so the character never moved or slid off-screen, and it
-// permanently overlapped the About / WhatIDo / Work sections as the user scrolled.
-// Solution: use the identical 3-layer UA + pointer check used everywhere else.
-const _ua          = navigator.userAgent;
-const _mobileUA    = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(_ua);
-const _hasFine     = window.matchMedia("(pointer: fine)").matches;
-const _isVeryWide  = window.innerWidth > 1400;
+gsap.registerPlugin(ScrollTrigger);
+
+// ── Device detection (same 3-layer check everywhere) ─────────
+const _ua         = navigator.userAgent;
+const _mobileUA   = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(_ua);
+const _hasFine    = window.matchMedia("(pointer: fine)").matches;
+const _isVeryWide = window.innerWidth > 1400;
 const isRealDesktop = !_mobileUA && (_isVeryWide || _hasFine);
-// ─────────────────────────────────────────────────────────────────────────────
 
+// ── Track active timelines so we can kill them on resize ─────
+let _activeTl1: gsap.core.Timeline | null = null;
+let _activeTl2: gsap.core.Timeline | null = null;
+let _activeTl3: gsap.core.Timeline | null = null;
+let _activeCareer: gsap.core.Timeline | null = null;
+let _intensityInterval: ReturnType<typeof setInterval> | null = null;
+
+function killAllTimelines() {
+  _activeTl1?.scrollTrigger?.kill(); _activeTl1?.kill(); _activeTl1 = null;
+  _activeTl2?.scrollTrigger?.kill(); _activeTl2?.kill(); _activeTl2 = null;
+  _activeTl3?.scrollTrigger?.kill(); _activeTl3?.kill(); _activeTl3 = null;
+  _activeCareer?.scrollTrigger?.kill(); _activeCareer?.kill(); _activeCareer = null;
+  if (_intensityInterval) { clearInterval(_intensityInterval); _intensityInterval = null; }
+}
+
+// ─────────────────────────────────────────────────────────────
 export function setCharTimeline(
   character: THREE.Object3D<THREE.Object3DEventMap> | null,
   camera: THREE.PerspectiveCamera
 ) {
-  let intensity: number = 0;
-  
-  // ✅ Naya — reference rakho
-  const intensityInterval = setInterval(() => {
-    intensity = Math.random();
-  }, 200);
+  // Kill previous timelines before rebuilding (important on resize)
+  killAllTimelines();
+
+  let intensity = 0;
+  _intensityInterval = setInterval(() => { intensity = Math.random(); }, 200);
 
   const tl1 = gsap.timeline({
     scrollTrigger: {
@@ -37,7 +46,8 @@ export function setCharTimeline(
       invalidateOnRefresh: true,
     },
   });
-  
+  _activeTl1 = tl1;
+
   const tl2 = gsap.timeline({
     scrollTrigger: {
       trigger: ".about-section",
@@ -47,7 +57,8 @@ export function setCharTimeline(
       invalidateOnRefresh: true,
     },
   });
-  
+  _activeTl2 = tl2;
+
   const tl3 = gsap.timeline({
     scrollTrigger: {
       trigger: ".whatIDO",
@@ -57,7 +68,8 @@ export function setCharTimeline(
       invalidateOnRefresh: true,
     },
   });
-  
+  _activeTl3 = tl3;
+
   let screenLight: any, monitor: any;
   character?.children.forEach((object: any) => {
     if (object.name === "Plane004") {
@@ -82,11 +94,19 @@ export function setCharTimeline(
       screenLight = object;
     }
   });
-  
+
   let neckBone = character?.getObjectByName("spine005");
-  
+
   if (isRealDesktop) {
     if (character) {
+      // ── Ensure the character-model element has GPU layer promotion
+      // so position:fixed + GSAP transform never causes a re-layout jank
+      const modelEl = document.querySelector<HTMLElement>(".character-model");
+      if (modelEl) {
+        modelEl.style.willChange = "transform";
+        modelEl.style.backfaceVisibility = "hidden";
+      }
+
       tl1
         .fromTo(character.rotation, { y: 0 }, { y: 0.7, duration: 1 }, 0)
         .to(camera.position, { z: 22 }, 0)
@@ -96,11 +116,7 @@ export function setCharTimeline(
         .fromTo(".about-me", { y: "-50%" }, { y: "0%" }, 0);
 
       tl2
-        .to(
-          camera.position,
-          { z: 75, y: 8.4, duration: 6, delay: 2, ease: "power3.inOut" },
-          0
-        )
+        .to(camera.position, { z: 75, y: 8.4, duration: 6, delay: 2, ease: "power3.inOut" }, 0)
         .to(".about-section", { y: "30%", duration: 6 }, 0)
         .to(".about-section", { opacity: 0, delay: 3, duration: 2 }, 0)
         .fromTo(
@@ -113,18 +129,8 @@ export function setCharTimeline(
         .to(neckBone!.rotation, { x: 0.6, delay: 2, duration: 3 }, 0)
         .to(monitor.material, { opacity: 1, duration: 0.8, delay: 3.2 }, 0)
         .to(screenLight.material, { opacity: 1, duration: 0.8, delay: 4.5 }, 0)
-        .fromTo(
-          ".what-box-in",
-          { display: "none" },
-          { display: "flex", duration: 0.1, delay: 6 },
-          0
-        )
-        .fromTo(
-          monitor.position,
-          { y: -10, z: 2 },
-          { y: 0, z: 0, delay: 1.5, duration: 3 },
-          0
-        )
+        .fromTo(".what-box-in", { display: "none" }, { display: "flex", duration: 0.1, delay: 6 }, 0)
+        .fromTo(monitor.position, { y: -10, z: 2 }, { y: 0, z: 0, delay: 1.5, duration: 3 }, 0)
         .fromTo(
           ".character-rim",
           { opacity: 1, scaleX: 1.4 },
@@ -135,8 +141,12 @@ export function setCharTimeline(
       tl3
         .fromTo(
           ".character-model",
-          { y: "0%" },
-          { y: "-100%", duration: 4, ease: "none", delay: 1 },
+          // ── FIX: use transform3d so the browser keeps the element on
+          //    its own GPU compositing layer. This prevents the fixed-position
+          //    model from "jumping" when other sections (Bento Work, TechStack)
+          //    cause layout reflows.
+          { y: "0%", z: 0 },
+          { y: "-100%", z: 0, duration: 4, ease: "none", delay: 1, force3D: true },
           0
         )
         .fromTo(".whatIDO", { y: 0 }, { y: "15%", duration: 2 }, 0)
@@ -155,11 +165,14 @@ export function setCharTimeline(
     }
   }
 
-  // ✅ Function ke end mein return karo taaki bahar clear ho sake
-  return { intensityInterval };
+  return { intensityInterval: _intensityInterval };
 }
 
 export function setAllTimeline() {
+  // Kill previous career timeline
+  _activeCareer?.scrollTrigger?.kill();
+  _activeCareer?.kill();
+
   const careerTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: ".career-section",
@@ -169,52 +182,23 @@ export function setAllTimeline() {
       invalidateOnRefresh: true,
     },
   });
-  
+  _activeCareer = careerTimeline;
+
   careerTimeline
-    .fromTo(
-      ".career-timeline",
-      { maxHeight: "10%" },
-      { maxHeight: "100%", duration: 0.5 },
-      0
-    )
-    .fromTo(
-      ".career-timeline",
-      { opacity: 0 },
-      { opacity: 1, duration: 0.1 },
-      0
-    )
-    .fromTo(
-      ".career-info-box",
-      { opacity: 0 },
-      { opacity: 1, stagger: 0.1, duration: 0.5 },
-      0
-    )
+    .fromTo(".career-timeline", { maxHeight: "10%" }, { maxHeight: "100%", duration: 0.5 }, 0)
+    .fromTo(".career-timeline", { opacity: 0 }, { opacity: 1, duration: 0.1 }, 0)
+    .fromTo(".career-info-box", { opacity: 0 }, { opacity: 1, stagger: 0.1, duration: 0.5 }, 0)
     .fromTo(
       ".career-dot",
       { animationIterationCount: "infinite" },
-      {
-        animationIterationCount: "1",
-        delay: 0.3,
-        duration: 0.1,
-      },
+      { animationIterationCount: "1", delay: 0.3, duration: 0.1 },
       0
     );
 
   if (isRealDesktop) {
-    careerTimeline.fromTo(
-      ".career-section",
-      { y: 0 },
-      { y: "20%", duration: 0.5, delay: 0.2 },
-      0
-    );
+    careerTimeline.fromTo(".career-section", { y: 0 }, { y: "20%", duration: 0.5, delay: 0.2 }, 0);
   } else {
-    careerTimeline.fromTo(
-      ".career-section",
-      { y: 0 },
-      { y: 0, duration: 0.5, delay: 0.2 },
-      0
-    );
+    careerTimeline.fromTo(".career-section", { y: 0 }, { y: 0, duration: 0.5, delay: 0.2 }, 0);
   }
 }
-
 
