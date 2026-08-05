@@ -109,7 +109,6 @@ const spheres = [...Array(30)].map(() => ({
 }));
 const materialIndices = spheres.map(() => Math.floor(Math.random() * imageUrls.length));
 
-const vec = new THREE.Vector3();
 
 type SphereProps = {
   vec?: THREE.Vector3;
@@ -267,4 +266,4 @@ const TechStack = () => {
 };
 
 export default TechStack;
-            
+        
