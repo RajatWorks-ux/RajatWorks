@@ -34,17 +34,20 @@ const Lightbox = ({ images, startIndex, onClose }: { images: string[]; startInde
 };
 
 // ════════════════════════════════════════════════
-//  DESKTOP BENTO CARD
-//  - No Show More button — full text always visible
-//  - Thumbnail stays visible always, card height = auto
+//  DESKTOP MAGAZINE ROW CARD
+//  Alternating image-left / image-right layout
+//  No empty space — full content always visible
 // ════════════════════════════════════════════════
-const BentoCard = ({ project, index, variant }: { project: (typeof config.projects)[0]; index: number; variant: "wide" | "tall" | "square" }) => {
+const MagCard = ({ project, index }: { project: (typeof config.projects)[0]; index: number }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const isReversed = index % 2 !== 0;
 
   useEffect(() => {
     const el = cardRef.current; if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { el.classList.add("bento-card--visible"); obs.disconnect(); } }, { threshold: 0.06 });
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { el.classList.add("mag-card--visible"); obs.disconnect(); }
+    }, { threshold: 0.06 });
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
@@ -54,50 +57,71 @@ const BentoCard = ({ project, index, variant }: { project: (typeof config.projec
 
   return (
     <>
-      <div ref={cardRef} className={`bento-card bento-card--${variant}`} style={{ animationDelay:`${index*80}ms` }}>
-
-        {/* Thumbnail — always shown, fixed height per variant */}
-        <div className="bento-thumb" onClick={() => setLightboxOpen(true)} data-cursor="disable" title="Click to view all photos">
-          <img src={thumb} alt={project.title} loading="lazy" />
-          {project.images.length > 1 && <span className="bento-photo-count">1/{project.images.length}&nbsp;⤢</span>}
-          <div className="bento-thumb-overlay">View Photos</div>
+      <div
+        ref={cardRef}
+        className={`mag-card ${isReversed ? "mag-card--reverse" : ""}`}
+        style={{ animationDelay: `${index * 80}ms` }}
+      >
+        {/* Image side */}
+        <div
+          className="mag-img-wrap"
+          onClick={() => setLightboxOpen(true)}
+          data-cursor="disable"
+          title="Click to view all photos"
+        >
+          <img src={thumb} alt={project.title} loading="lazy" className="mag-img" />
+          {project.images.length > 1 && (
+            <span className="mag-photo-badge">1/{project.images.length}&nbsp;⤢</span>
+          )}
+          <div className="mag-img-overlay">View Photos</div>
         </div>
 
-        {/* Info — no show more, everything visible */}
-        <div className="bento-info">
-          <div className="bento-top-row">
-            <span className="bento-num">0{index+1}</span>
+        {/* Info side */}
+        <div className="mag-info">
+          <div className="mag-top-row">
+            <span className="mag-num">0{index + 1}</span>
             {project.link && (
-              <a href={project.link} target="_blank" rel="noopener noreferrer" className="bento-live-btn" data-cursor="disable" onClick={(e)=>e.stopPropagation()}>
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mag-live-btn"
+                data-cursor="disable"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <MdArrowOutward />
               </a>
             )}
           </div>
 
-          <h3 className="bento-title">{project.title}</h3>
-          <p className="bento-subtitle">{project.subtitle}</p>
+          <span className="mag-cat">{project.subtitle}</span>
+          <h3 className="mag-title">{project.title}</h3>
 
-          {/* All paragraphs shown — no toggle */}
-          <div className="bento-desc-block">
+          <div className="mag-desc-block">
             {paragraphs.map((para, i) => (
-              <p key={i} className="bento-desc">{para}</p>
+              <p key={i} className="mag-desc">{para}</p>
             ))}
             {project.warning && (
-              <div className="bento-warning"><span>⚠️</span><span>{project.warning}</span></div>
+              <div className="mag-warning">
+                <span>⚠️</span>
+                <span>{project.warning}</span>
+              </div>
             )}
           </div>
 
-          <p className="bento-tech">{project.technologies}</p>
+          <p className="mag-tech">{project.technologies}</p>
         </div>
       </div>
 
-      {lightboxOpen && <Lightbox images={project.images} startIndex={0} onClose={() => setLightboxOpen(false)} />}
+      {lightboxOpen && (
+        <Lightbox images={project.images} startIndex={0} onClose={() => setLightboxOpen(false)} />
+      )}
     </>
   );
 };
 
 // ════════════════════════════════════════════════
-//  MOBILE CARD — exact purana layout with WorkImage
+//  MOBILE CARD — exact purana layout unchanged
 // ════════════════════════════════════════════════
 const MobileWorkCard = ({ project, index }: { project: (typeof config.projects)[0]; index: number }) => {
   const [expanded, setExpanded] = useState(false);
@@ -109,7 +133,7 @@ const MobileWorkCard = ({ project, index }: { project: (typeof config.projects)[
     <div className="work-box">
       <div className="work-info">
         <div className="work-title">
-          <h3>0{index+1}</h3>
+          <h3>0{index + 1}</h3>
           <div>
             <h4>{project.title}</h4>
             <p>{project.subtitle || project.category}</p>
@@ -136,7 +160,7 @@ const MobileWorkCard = ({ project, index }: { project: (typeof config.projects)[
 };
 
 // ════════════════════════════════════════════════
-//  MAIN — Desktop = Bento, Mobile = original
+//  MAIN — Desktop = Magazine Rows, Mobile = original
 // ════════════════════════════════════════════════
 const Work = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -148,10 +172,11 @@ const Work = () => {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // in-view for heading + mobile card animations
   useEffect(() => {
     const el = sectionRef.current; if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { el.classList.add("in-view"); obs.disconnect(); } }, { threshold: 0.04 });
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { el.classList.add("in-view"); obs.disconnect(); }
+    }, { threshold: 0.04 });
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
@@ -164,7 +189,9 @@ const Work = () => {
         <div className="work-container section-container">
           <h2>My <span>Work</span></h2>
           <div className="work-flex">
-            {p.map((project, index) => <MobileWorkCard key={project.id} project={project} index={index} />)}
+            {p.map((project, index) => (
+              <MobileWorkCard key={project.id} project={project} index={index} />
+            ))}
           </div>
         </div>
       </div>
@@ -173,17 +200,12 @@ const Work = () => {
 
   return (
     <div className="work-section" id="work" ref={sectionRef}>
-      <div className="work-bento-container section-container">
-        <h2 className="work-bento-heading">My <span>Work</span></h2>
-        <div className="bento-grid">
-          {/* Row1: wide | tall(span 2 rows) */}
-          <BentoCard project={p[0]} index={0} variant="wide" />
-          <BentoCard project={p[1]} index={1} variant="tall" />
-          {/* Row2: wide */}
-          <BentoCard project={p[2]} index={2} variant="wide" />
-          {/* Row3: square | square */}
-          <BentoCard project={p[3]} index={3} variant="square" />
-          <BentoCard project={p[4]} index={4} variant="square" />
+      <div className="work-mag-container section-container">
+        <h2 className="work-mag-heading">My <span>Work</span></h2>
+        <div className="mag-grid">
+          {p.map((project, index) => (
+            <MagCard key={project.id} project={project} index={index} />
+          ))}
         </div>
       </div>
     </div>
