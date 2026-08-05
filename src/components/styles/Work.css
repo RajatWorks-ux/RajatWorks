@@ -89,6 +89,9 @@
 }
 .bento-card--wide   .bento-thumb { height: 280px; }
 .bento-card--tall   .bento-thumb { height: 340px; }
+/* tall card — spread info top-to-bottom so no ugly empty gap when content is short */
+.bento-card--tall   .bento-info { flex: 1; justify-content: space-between; }
+.bento-card--tall   .bento-desc-block { flex: 1; justify-content: flex-start; }
 .bento-card--square .bento-thumb { height: 240px; }
 
 .bento-thumb img {
@@ -194,7 +197,7 @@
   .work-box {
     width:100%; border-right:none;
     border-bottom:1px solid rgba(255,255,255,0.07);
-    padding:28px 20px 36px;
+    padding:28px 16px 36px;
     flex-direction:column !important; gap:24px; box-sizing:border-box;
     opacity:0; transform:translateY(32px);
     transition:opacity 0.65s ease, transform 0.65s cubic-bezier(0.22,1,0.36,1);
@@ -207,13 +210,35 @@
   .work-section.in-view .work-box { opacity:1; transform:translateY(0); }
   .work-box:active { background:rgba(194,164,255,0.03); }
 
-  /* Bigger polaroid container + image */
-  .work-image { width:100%; justify-content:center; }
-  .work-image-in { width:100%; border-radius:12px; overflow:hidden; position:relative; }
-  .work-image img {
-    width:100%; max-width:100%; height:auto; max-height:unset;
-    aspect-ratio:16/9; object-fit:cover; border-radius:12px; display:block;
+  /* Polaroid stack — centered, bigger, full width */
+  .work-image {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
+  /* The polaroid stack wrapper (inline style div in WorkImage.tsx) */
+  .work-image > div:first-child {
+    width: 100% !important;
+    height: 280px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  /* Each polaroid card — bigger */
+  .work-image > div:first-child > div {
+    padding: 8px 8px 28px 8px !important;
+  }
+  /* Polaroid image — bigger */
+  .work-image > div:first-child > div img {
+    width: 210px !important;
+    height: 190px !important;
+    aspect-ratio: unset !important;
+    object-fit: contain !important;
+    border-radius: 2px !important;
+  }
+  .work-image-in { width:100%; border-radius:12px; overflow:hidden; position:relative; }
   .work-link { opacity:1; width:44px; height:44px; font-size:20px; bottom:8px; right:8px; }
 
   /* Title row — number stays beside project name */
@@ -221,10 +246,20 @@
   .work-title > div { text-align:left; }
   .work-title h3 { font-size:26px; font-weight:700; line-height:1.1; letter-spacing:-0.3px; flex-shrink:0; }
 
-  /* Info — slightly larger font for "bhara bhara" feel */
+  /* Info block — full width so text stretches edge to edge */
+  .work-info { width: 100%; box-sizing: border-box; }
+  .work-desc { width: 100%; }
+  .work-desc-text,
+  .work-desc-extra { width: 100% !important; }
+
+  /* Slightly larger font for "bhara bhara" feel */
+  .work-info { width:100%; box-sizing:border-box; }
   .work-info h4 { font-size:15px; font-weight:600; color:var(--accentColor); margin-bottom:6px; letter-spacing:0.3px; }
   .work-info > h4:last-of-type { margin-top:14px; }
-  .work-info p  { font-size:14.5px; line-height:1.75; color:rgba(173,172,172,0.85); width:100% !important; }
+  .work-info p  { font-size:14.5px; line-height:1.75; color:rgba(173,172,172,0.85); width:100% !important; box-sizing:border-box; }
+  .work-info > p { width:100% !important; }
+  .work-desc-text,
+  .work-desc-extra { width:100% !important; box-sizing:border-box; }
 }
 
 @media only screen and (max-width:380px) {
@@ -272,4 +307,6 @@
 /* Original desktop h2 (not used in bento path but kept for safety) */
 .work-section h2 { margin-top:100px; font-size:70px; font-weight:500; }
 .work-section h2 > span { color:var(--accentColor); }
+
+
    
