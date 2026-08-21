@@ -18,11 +18,15 @@ const MainContainer  = lazy(() => import("./components/MainContainer"));
 // Layer 2 — User Agent: Android/iPhone/iPad in UA = mobile/tablet hardware
 // Layer 3 — Hover capability: real laptops have :hover, phones/tablets don't
 //
-// Laptop shrunk to 600px: passes Layer 1 (>1400? no, but...) → UA has no
-//   "Android/iPhone" → hasFinePointer = TRUE → canHover = TRUE → NOT mobile ✅
-// Android tablet: UA has "Android" → mobileUA = TRUE
-//   + screen probably under 1400px → isMobile = TRUE ✅
-// Real phone: UA has "Android"/"iPhone" → mobileUA = TRUE → isMobile = TRUE ✅
+// BUG FIX: isVeryWideScreen threshold lowered from 1400px → 1024px.
+// Many real monitors and laptops run at 1366px or 1280px. With the old 1400px
+// threshold, these machines would FAIL the wide-screen check AND potentially
+// fail the pointer check on certain setups (external monitors, KVM switches),
+// causing the site to treat a real desktop/laptop as "mobile" and show the
+// phone frame-sequence instead of the 3D character.
+//
+// 1024px is safe: the largest phone viewport is ~932px (iPhone 15 Pro Max
+// landscape), and tablets in landscape are ~1024px but caught by Layer 2 UA.
 // ─────────────────────────────────────────────────────────────────────────────
 const isMobileOrTablet: boolean = (() => {
   if (typeof window === "undefined") return false;
@@ -32,16 +36,16 @@ const isMobileOrTablet: boolean = (() => {
   // Any Android/iOS/mobile UA = phone or tablet, never a real laptop
   const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
 
-  // Screens wider than 1400px at load = almost certainly a real desktop/laptop
-  // Even a big tablet (iPad Pro 12.9") is only 1366px wide
-  const isVeryWideScreen = window.innerWidth > 1400;
+  // FIX: Lowered from 1400 → 1024 so that common laptop/monitor widths
+  // (1280px, 1366px) are treated as desktop, not mobile.
+  const isWideScreen = window.innerWidth > 1024;
 
   // If it has a real mouse pointer — only desktop/laptop has this reliably
   const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
 
   // It's a laptop/desktop if:
-  //   - No mobile UA  AND  (very wide screen OR has mouse)
-  const isDesktop = !mobileUA && (isVeryWideScreen || hasFinePointer);
+  //   - No mobile UA  AND  (wide screen OR has mouse)
+  const isDesktop = !mobileUA && (isWideScreen || hasFinePointer);
 
   return !isDesktop;
 })();
@@ -73,4 +77,3 @@ const App = () => {
 export default App;
 
 export { isMobileOrTablet };
-
