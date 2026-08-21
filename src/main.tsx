@@ -9,11 +9,16 @@ import "./index.css";
 // By setting data-device="desktop" on <html> from JS (which correctly detects
 // real laptops via UA + pointer), CSS can use [data-device="desktop"] to
 // override the collapse rule and keep the landing section visible.
+//
+// BUG FIX: Lowered isVeryWideScreen from 1400 → 1024 (mirrors App.tsx change).
+// This ensures monitors at 1280px/1366px get data-device="desktop", which
+// prevents the CSS from showing the mobile hero (story-fixed-wrap) on them.
 const ua = navigator.userAgent;
 const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
 const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
-const isVeryWideScreen = window.innerWidth > 1400;
-const isRealDesktop = !mobileUA && (isVeryWideScreen || hasFinePointer);
+// FIX: was > 1400, now > 1024
+const isWideScreen = window.innerWidth > 1024;
+const isRealDesktop = !mobileUA && (isWideScreen || hasFinePointer);
 document.documentElement.setAttribute("data-device", isRealDesktop ? "desktop" : "mobile");
 
 // ─── Fix B: --vh custom property ─────────────────────────────────────────────
@@ -36,3 +41,4 @@ createRoot(document.getElementById("root")!).render(
     <App />
   </StrictMode>
 );
+
