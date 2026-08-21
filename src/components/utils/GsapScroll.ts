@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 const _ua         = navigator.userAgent;
 const _mobileUA   = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(_ua);
 const _hasFine    = window.matchMedia("(pointer: fine)").matches;
-const _isVeryWide = window.innerWidth > 1400;
+const _isVeryWide = window.innerWidth > 1024;
 const isRealDesktop = !_mobileUA && (_isVeryWide || _hasFine);
 
 // ── Track active timelines so we can kill them on resize ─────
@@ -201,4 +201,5 @@ export function setAllTimeline() {
     careerTimeline.fromTo(".career-section", { y: 0 }, { y: 0, duration: 0.5, delay: 0.2 }, 0);
   }
 }
+
 
