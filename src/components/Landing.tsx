@@ -4,16 +4,22 @@ import { config } from "../config";
 
 const TOTAL_FRAMES  = 77;
 
-// ✅ STATIC constant — same as version 6. Computed ONCE at page load.
+// ✅ STATIC constant — computed ONCE at page load.
 // No useState, no resize listener here. Prevents laptop-resize-to-phone bug.
-// DEVICE DETECTION — 3-layer, same as App.tsx
+// DEVICE DETECTION — 3-layer, same as App.tsx + main.tsx
+//
+// BUG FIX: isVeryWideScreen threshold lowered from 1400 → 1024.
+// See App.tsx for the full explanation. Short version: monitors/laptops at
+// 1280-1400px would be detected as "mobile" under the old threshold, causing
+// the frame-sequence canvas (mobile hero) to activate on desktop.
 const isMobile: boolean = (() => {
   if (typeof window === "undefined") return false;
   const ua = navigator.userAgent;
   const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-  const isVeryWideScreen = window.innerWidth > 1400;
+  // FIX: was > 1400, now > 1024
+  const isWideScreen = window.innerWidth > 1024;
   const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
-  const isDesktop = !mobileUA && (isVeryWideScreen || hasFinePointer);
+  const isDesktop = !mobileUA && (isWideScreen || hasFinePointer);
   return !isDesktop;
 })();
 
@@ -258,5 +264,4 @@ const Landing = ({ children }: PropsWithChildren) => {
 };
 
 export default Landing;
-
-              
+                
