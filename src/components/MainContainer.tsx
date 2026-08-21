@@ -40,14 +40,19 @@ const TechStackWithRefresh = () => {
   return <TechStackLazy />;
 };
 
-// ── Device detection — 3-layer, same as App.tsx ──────────────
+// ── Device detection — 3-layer, same as App.tsx / main.tsx ──────────────
+// BUG FIX: Lowered isVeryWideScreen threshold from 1400 → 1024 to match
+// the fix in App.tsx. Without this, monitors at 1280-1400px could be
+// detected as mobile here while App.tsx correctly detects them as desktop,
+// causing the tap-ripple and mobile-specific logic to run on desktop.
 const isDesktopView: boolean = (() => {
   if (typeof window === "undefined") return true;
   const ua = navigator.userAgent;
   const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-  const isVeryWideScreen = window.innerWidth > 1400;
+  // FIX: was > 1400, now > 1024
+  const isWideScreen = window.innerWidth > 1024;
   const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
-  return !mobileUA && (isVeryWideScreen || hasFinePointer);
+  return !mobileUA && (isWideScreen || hasFinePointer);
 })();
 
 const MainContainer = ({ children }: PropsWithChildren) => {
@@ -121,4 +126,3 @@ const MainContainer = ({ children }: PropsWithChildren) => {
 
 export default MainContainer;
 
-                                            
