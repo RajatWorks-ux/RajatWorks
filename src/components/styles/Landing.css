@@ -92,14 +92,21 @@
 .character-model {
   height: 80%;
   height: 80vh;
-  position: absolute;
+  /* BUG FIX: Changed from position:absolute to position:fixed.
+     Previously, the character-model was absolute at <1025px and only became
+     fixed at >=1025px. When a laptop window was resized below 1025px, the
+     model would drop out of its fixed position and the page background
+     (#000) would show through → black screen.
+     Safe to make always fixed because CharacterModel is NEVER rendered on
+     real mobile/tablet (App.tsx JS gate prevents it). */
+  position: fixed;
   max-width: 1920px;
   max-height: 1080px;
   transform: translateX(-50%);
   width: 100%;
   left: 50%;
-  z-index: 0;
-  bottom: 50px;
+  z-index: 11;
+  bottom: 0;
   pointer-events: inherit;
 }
 .character-model::after {
@@ -236,7 +243,7 @@ h2.landing-info-h2 {
 }
 @media screen and (min-width: 500px) {
   .landing-circle2 { display: block; }
-  .character-model { z-index: 0; }
+  /* character-model z-index:0 override removed — base style now uses z-index:11 (fixed) */
   .landing-info h3 { font-size: 18px; }
   .landing-intro h2 { font-size: 18px; }
   .landing-intro h1 { font-size: 30px; line-height: 30px; }
@@ -253,10 +260,9 @@ h2.landing-info-h2 {
 }
 @media screen and (min-width: 1025px) {
   .character-model {
+    /* Already position:fixed from base style — just update height/bottom */
     height: 100vh;
     bottom: 0;
-    z-index: 11;
-    position: fixed;
   }
   .character-model::after,
   .character-model::before { display: none; }
@@ -599,4 +605,5 @@ h2.landing-info-h2 {
    }
 
 
-   
+
+
