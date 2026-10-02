@@ -118,19 +118,16 @@ const Lightbox = ({
         </button>
       )}
 
-      {/* Image — full screen on mobile */}
+      {/* Image — fills screen, object-contain keeps aspect ratio */}
       <img
         key={current}
         src={images[current]}
         alt={`Photo ${current + 1}`}
         onClick={(e) => e.stopPropagation()}
         style={{
-          maxWidth: "100vw",
-          maxHeight: "85vh",
-          width: "100%",
+          width: "100vw",
+          height: "100vh",
           objectFit: "contain",
-          borderRadius: 0,
-          boxShadow: "0 0 60px rgba(0,0,0,0.8)",
           display: "block",
         }}
       />
@@ -205,7 +202,7 @@ const WorkImage = ({ images, alt, link }: Props) => {
   const thumb = images[0];
 
   return (
-    <div className="work-image">
+    <div className="work-image" style={{ width: "100%", display: "block", boxSizing: "border-box" }}>
       {/* Full-width thumbnail — tap to open lightbox */}
       <div
         style={{
@@ -313,5 +310,6 @@ const WorkImage = ({ images, alt, link }: Props) => {
 };
 
 export default WorkImage;
+
 
             
