@@ -43,7 +43,7 @@ const Lightbox = ({
         position: "fixed",
         inset: 0,
         zIndex: 9999,
-        background: "rgba(0,0,0,0.95)",
+        background: "rgba(0,0,0,0.97)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -56,17 +56,18 @@ const Lightbox = ({
           position: "absolute",
           top: 16,
           right: 16,
-          width: 40,
-          height: 40,
+          width: 44,
+          height: 44,
           borderRadius: "50%",
           border: "none",
           background: "rgba(255,255,255,0.15)",
           color: "#fff",
-          fontSize: 18,
+          fontSize: 20,
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          zIndex: 10,
         }}
       >
         ✕
@@ -76,14 +77,15 @@ const Lightbox = ({
       <div
         style={{
           position: "absolute",
-          top: 16,
+          top: 20,
           left: "50%",
           transform: "translateX(-50%)",
           color: "rgba(255,255,255,0.7)",
           fontSize: 13,
-          background: "rgba(0,0,0,0.4)",
-          padding: "3px 12px",
+          background: "rgba(0,0,0,0.5)",
+          padding: "4px 14px",
           borderRadius: 20,
+          zIndex: 10,
         }}
       >
         {current + 1} / {images.length}
@@ -95,7 +97,7 @@ const Lightbox = ({
           onClick={(e) => { e.stopPropagation(); prev(); }}
           style={{
             position: "absolute",
-            left: 16,
+            left: 12,
             top: "50%",
             transform: "translateY(-50%)",
             width: 48,
@@ -109,24 +111,27 @@ const Lightbox = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            zIndex: 10,
           }}
         >
           ‹
         </button>
       )}
 
-      {/* Image */}
+      {/* Image — full screen on mobile */}
       <img
         key={current}
         src={images[current]}
         alt={`Photo ${current + 1}`}
         onClick={(e) => e.stopPropagation()}
         style={{
-          maxWidth: "90vw",
-          maxHeight: "90vh",
+          maxWidth: "100vw",
+          maxHeight: "85vh",
+          width: "100%",
           objectFit: "contain",
-          borderRadius: 12,
+          borderRadius: 0,
           boxShadow: "0 0 60px rgba(0,0,0,0.8)",
+          display: "block",
         }}
       />
 
@@ -136,7 +141,7 @@ const Lightbox = ({
           onClick={(e) => { e.stopPropagation(); next(); }}
           style={{
             position: "absolute",
-            right: 16,
+            right: 12,
             top: "50%",
             transform: "translateY(-50%)",
             width: 48,
@@ -150,6 +155,7 @@ const Lightbox = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            zIndex: 10,
           }}
         >
           ›
@@ -161,11 +167,12 @@ const Lightbox = ({
         <div
           style={{
             position: "absolute",
-            bottom: 20,
+            bottom: 24,
             left: "50%",
             transform: "translateX(-50%)",
             display: "flex",
             gap: 8,
+            zIndex: 10,
           }}
         >
           {images.map((_, i) => (
@@ -173,7 +180,7 @@ const Lightbox = ({
               key={i}
               onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
               style={{
-                width: i === current ? 16 : 8,
+                width: i === current ? 20 : 8,
                 height: 8,
                 borderRadius: 4,
                 border: "none",
@@ -190,109 +197,88 @@ const Lightbox = ({
   );
 };
 
-// ─── Polaroid Stack ──────────────────────────────────────────
+// ─── Main Image Block (Mobile) ───────────────────────────────
 const WorkImage = ({ images, alt, link }: Props) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // Show max 3 in stack
-  const stackImages = images.slice(0, Math.min(3, images.length));
-  const rotations = [3, -2.5, 5];
-  const offsets = [
-    { x: 6, y: 0 },
-    { x: -5, y: 4 },
-    { x: 9, y: 8 },
-  ];
+  const thumb = images[0];
 
   return (
     <div className="work-image">
-      {/* Stack container */}
+      {/* Full-width thumbnail — tap to open lightbox */}
       <div
         style={{
           position: "relative",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: 220,
           width: "100%",
+          borderRadius: 12,
+          overflow: "hidden",
           cursor: "pointer",
+          aspectRatio: "16/9",
+          background: "#111",
         }}
         onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
         data-cursor="disable"
       >
-        {/* Render back-to-front */}
-        {[...stackImages].reverse().map((img, ri) => {
-          const i = stackImages.length - 1 - ri;
-          const isTop = i === 0;
+        <img
+          src={thumb}
+          alt={alt}
+          loading="lazy"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            display: "block",
+          }}
+        />
 
-          return (
-            <div
-              key={i}
-              style={{
-                position: "absolute",
-                transform: `rotate(${rotations[i]}deg) translate(${offsets[i].x}px, ${offsets[i].y}px)`,
-                zIndex: i + 1,
-                background: "#fff",
-                padding: "6px 6px 20px 6px",
-                borderRadius: 4,
-                boxShadow: isTop
-                  ? "0 8px 32px rgba(0,0,0,0.55)"
-                  : "0 4px 16px rgba(0,0,0,0.35)",
-                transition: "transform 0.25s ease",
-              }}
-              className={isTop ? "work-stack-top" : ""}
-            >
-              <img
-                src={img}
-                alt={`${alt} ${i + 1}`}
-                loading="lazy"
-                style={{
-                  width: 170,
-                  height: 150,
-                  objectFit: "contain",
-                  background: "#f8f8f8",
-                  display: "block",
-                  borderRadius: 2,
-                }}
-              />
-              {/* Count badge on top card */}
-              {isTop && images.length > 1 && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 8,
-                    right: 8,
-                    background: "rgba(0,0,0,0.65)",
-                    color: "#fff",
-                    fontSize: 10,
-                    fontWeight: 700,
-                    padding: "2px 6px",
-                    borderRadius: 10,
-                    letterSpacing: "0.3px",
-                  }}
-                >
-                  1/{images.length}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {/* Photo count badge */}
+        {images.length > 1 && (
+          <div
+            style={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              background: "rgba(0,0,0,0.65)",
+              color: "#fff",
+              fontSize: 11,
+              fontWeight: 700,
+              padding: "3px 9px",
+              borderRadius: 12,
+              letterSpacing: "0.3px",
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            1/{images.length} ⤢
+          </div>
+        )}
 
-        {/* Tap hint */}
+        {/* Tap overlay hint */}
         <div
           style={{
             position: "absolute",
-            bottom: 0,
+            inset: 0,
+            background: "rgba(0,0,0,0)",
+            transition: "background 0.2s",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: 10,
             left: "50%",
             transform: "translateX(-50%)",
             fontSize: 11,
-            color: "rgba(173,172,172,0.7)",
-            background: "rgba(30,30,30,0.8)",
-            padding: "3px 10px",
+            color: "rgba(255,255,255,0.8)",
+            background: "rgba(0,0,0,0.55)",
+            padding: "3px 12px",
             borderRadius: 12,
             whiteSpace: "nowrap",
             pointerEvents: "none",
-            zIndex: 20,
+            backdropFilter: "blur(4px)",
           }}
         >
           Tap to view {images.length} photo{images.length !== 1 ? "s" : ""}
@@ -327,4 +313,5 @@ const WorkImage = ({ images, alt, link }: Props) => {
 };
 
 export default WorkImage;
+
             
