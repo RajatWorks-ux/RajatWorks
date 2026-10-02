@@ -92,38 +92,56 @@ export const config = {
     ],
 
     projects: [
+        // ─────────────────────────────────────────────────────────────────
+        //  PROJECT 1 — KNOCKOUT GYM
+        //  Images: place 5 screenshots in your repo at:
+        //    public/images/knockout-1.jpg  (hero / homepage)
+        //    public/images/knockout-2.jpg  (owner panel dashboard)
+        //    public/images/knockout-3.jpg  (members management tab)
+        //    public/images/knockout-4.jpg  (results / transformations page)
+        //    public/images/knockout-5.jpg  (gallery or contact page)
+        // ─────────────────────────────────────────────────────────────────
         {
             id: 1,
-            title: "MIRA",
-            subtitle: "AI-Powered Chat Agent",
+            title: "Knockout Gym",
+            subtitle: "Full-Stack Gym Website & CMS",
             category: "Full Stack",
-            technologies: "React, Next.js, Node.js, Vercel",
-            link: "https://rajatworks-mira.vercel.app/",
+            technologies: "React, React Router, Supabase, GSAP, Lenis, Vite",
+            link: "https://knockoutgym.vercel.app/",
             images: [
-                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_223953_fk41hb.jpg",
-                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_223929_vdwboh.jpg",
-                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_223914_fjpbk3.jpg",
+                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/knockout-1.jpg",
+                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/knockout-2.jpg",
+                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/knockout-3.jpg",
+                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/knockout-4.jpg",
+                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/knockout-5.jpg",
             ],
-            description: "MIRA is a full-stack AI-powered chat agent designed to deliver a seamless and intelligent conversational experience. Built with a modern tech stack, it supports multiple AI models working together to handle a wide range of tasks — from answering questions to maintaining context-aware conversations.\n\nThe platform features user authentication, chat history, and a clean responsive interface — all architected for performance and scalability.",
-            warning: "Live API integrations are currently paused. Core features including authentication, chat history, and multi-model routing are fully implemented and functional in the complete version.",
-        },
-        {
-            id: 2,
-            title: "ANON",
-            subtitle: "E-Commerce Platform",
-            category: "Full Stack",
-            technologies: "Vue.js, Element UI, Vercel, Google API",
-            link: "https://rajatworks-anon.vercel.app/",
-            images: [
-                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_224520_k13pig.jpg",
-                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_224618_t6ysmm.jpg",
-                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_224601_caidle.jpg",
-                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_224529_x3rjju.jpg",
-                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_224544_ytby66.jpg",
-            ],
-            description: "ANON is a modern, fully responsive e-commerce web application designed to deliver a smooth and secure online shopping experience. Built with performance and user experience at its core, the platform combines a clean UI with robust backend services.\n\nANON reflects a strong understanding of modern web architecture — from frontend design systems to deployment pipelines and security best practices.",
+            description: "Knockout Gym is a production-ready full-stack website built for a real gym in Zirakpur, Punjab. The entire site content — hero text, about section, membership plans, gallery, transformation results, and brand color — is editable live through a hidden Owner Panel, making it a complete CMS built from scratch.\n\nThe Owner Panel at a secret URL gives the gym owner full control: manage members with join dates and plan tracking, read and delete contact enquiries, update every page section, swap the brand color, and configure SEO meta tags — all without touching a line of code. Powered by Supabase with RLS security ensuring member data is never exposed to visitors.",
             warning: "",
         },
+        // ─────────────────────────────────────────────────────────────────
+        //  PROJECT 2 — VAKILR
+        //  Images: place in public/images/ as vakilr-1.jpg through vakilr-5.jpg
+        // ─────────────────────────────────────────────────────────────────
+        {
+            id: 2,
+            title: "Vakilr",
+            subtitle: "AI-Powered Legal Marketplace",
+            category: "Frontend",
+            technologies: "HTML, CSS, JavaScript, Responsive Design, Animation",
+            link: "https://vakilr.vercel.app/",
+            images: [
+                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-1.jpg",
+                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-2.jpg",
+                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-3.jpg",
+                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-4.jpg",
+                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-5.jpg",
+            ],
+            description: "Vakilr is a premium legal marketplace concept designed to showcase a modern, elegant, and technology-driven approach to connecting clients with lawyers. Built with a luxurious dark theme, cinematic background videos, smooth animations, and carefully crafted UI components, the project focuses on creating a professional and trustworthy digital experience.\n\nThe website demonstrates how users could discover verified lawyers, browse professional profiles, explore legal services, and connect with law firms through a clean and intuitive interface. Every element was designed with attention to detail — from premium typography and glassmorphism-inspired cards to responsive layouts and elegant color combinations.",
+            warning: "Vakilr is a concept prototype created for portfolio purposes. It is not a real legal marketplace — the lawyers, testimonials, ratings, and statistics displayed are for demonstration only.",
+        },
+        // ─────────────────────────────────────────────────────────────────
+        //  PROJECT 3 — PHONE SHOP
+        // ─────────────────────────────────────────────────────────────────
         {
             id: 3,
             title: "Phone Shop",
@@ -142,8 +160,49 @@ export const config = {
             description: "Phone Shop is a modern e-commerce web application specialized in mobile devices, built with performance, animations, and user experience as top priorities. The platform is fully mobile-optimized and secured with industry-standard protocols.\n\nPhone Shop demonstrates strong attention to performance optimization, visual polish, and security best practices in a real-world e-commerce context.",
             warning: "",
         },
+        // ─────────────────────────────────────────────────────────────────
+        //  PROJECT 4 — ANON
+        // ─────────────────────────────────────────────────────────────────
         {
             id: 4,
+            title: "ANON",
+            subtitle: "E-Commerce Platform",
+            category: "Full Stack",
+            technologies: "Vue.js, Element UI, Vercel, Google API",
+            link: "https://rajatworks-anon.vercel.app/",
+            images: [
+                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_224520_k13pig.jpg",
+                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_224618_t6ysmm.jpg",
+                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_224601_caidle.jpg",
+                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_224529_x3rjju.jpg",
+                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_224544_ytby66.jpg",
+            ],
+            description: "ANON is a modern, fully responsive e-commerce web application designed to deliver a smooth and secure online shopping experience. Built with performance and user experience at its core, the platform combines a clean UI with robust backend services.\n\nANON reflects a strong understanding of modern web architecture — from frontend design systems to deployment pipelines and security best practices.",
+            warning: "",
+        },
+        // ─────────────────────────────────────────────────────────────────
+        //  PROJECT 5 — MIRA
+        // ─────────────────────────────────────────────────────────────────
+        {
+            id: 5,
+            title: "MIRA",
+            subtitle: "AI-Powered Chat Agent",
+            category: "Full Stack",
+            technologies: "React, Next.js, Node.js, Vercel",
+            link: "https://rajatworks-mira.vercel.app/",
+            images: [
+                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_223953_fk41hb.jpg",
+                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_223929_vdwboh.jpg",
+                "https://res.cloudinary.com/dbshw2jxv/image/upload/IMG_20260222_223914_fjpbk3.jpg",
+            ],
+            description: "MIRA is a full-stack AI-powered chat agent designed to deliver a seamless and intelligent conversational experience. Built with a modern tech stack, it supports multiple AI models working together to handle a wide range of tasks — from answering questions to maintaining context-aware conversations.\n\nThe platform features user authentication, chat history, and a clean responsive interface — all architected for performance and scalability.",
+            warning: "Live API integrations are currently paused. Core features including authentication, chat history, and multi-model routing are fully implemented and functional in the complete version.",
+        },
+        // ─────────────────────────────────────────────────────────────────
+        //  PROJECT 6 — VOLTRI
+        // ─────────────────────────────────────────────────────────────────
+        {
+            id: 6,
             title: "Voltri",
             subtitle: "AI Image to 3D Model Converter",
             category: "Full Stack",
@@ -157,30 +216,6 @@ export const config = {
             ],
             description: "Voltri is a cutting-edge web application that transforms ordinary 2D images into fully interactive 3D models using artificial intelligence. Designed with a clean, intuitive interface, Voltri makes professional-grade 3D generation accessible to everyone — no technical knowledge required.\n\nThe platform features a complete user ecosystem including Google authentication, email sign-up, forgot password flow, a credit-based usage system, and both Indian (₹) and international ($) subscription plans with auto location detection.",
             warning: "3D model generation is temporarily paused due to API integration adjustments. All other features including authentication, credit system, and subscription management are fully functional.",
-        },
-        // ─────────────────────────────────────────────────────────────────
-        //  PROJECT 5 — VAKILR
-        //  Images: upload 6 screenshots to Cloudinary (see README below)
-        //  then replace the placeholder URLs below with real ones.
-        //  Image names to use on Cloudinary: vakilr-1 through vakilr-6
-        // ─────────────────────────────────────────────────────────────────
-        {
-            id: 5,
-            title: "Vakilr",
-            subtitle: "AI-Powered Legal Marketplace",
-            category: "Frontend",
-            technologies: "HTML, CSS, JavaScript, Responsive Design, Animation",
-            link: "https://vakilr.vercel.app/",
-            images: [
-                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-1.jpg",
-                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-2.jpg",
-                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-3.jpg",
-                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-4.jpg",
-                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-5.jpg",
-                "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/vakilr-6.jpg",
-            ],
-            description: "Vakilr is a premium legal marketplace concept designed to showcase a modern, elegant, and technology-driven approach to connecting clients with lawyers. Built with a luxurious dark theme, cinematic background videos, smooth animations, and carefully crafted UI components, the project focuses on creating a professional and trustworthy digital experience.\n\nThe website demonstrates how users could discover verified lawyers, browse professional profiles, explore legal services, and connect with law firms through a clean and intuitive interface. Every element was designed with attention to detail — from premium typography and glassmorphism-inspired cards to responsive layouts and elegant color combinations.",
-            warning: "Vakilr is a concept prototype created for portfolio purposes. It is not a real legal marketplace — the lawyers, testimonials, ratings, and statistics displayed are for demonstration only.",
         },
     ],
 
@@ -207,5 +242,4 @@ export const config = {
         }
     }
 };
-
 
