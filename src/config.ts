@@ -107,7 +107,7 @@ export const config = {
             subtitle: "Full-Stack Gym Website & CMS",
             category: "Full Stack",
             technologies: "React, React Router, Supabase, GSAP, Lenis, Vite",
-            link: "https://knockoutgym.vercel.app/",
+            link: "https://musclebuilding.vercel.app/",
             images: [
                 "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/knockout-1.jpg",
                 "https://raw.githubusercontent.com/RajatWorks-ux/RajatWorks/main/public/images/knockout-2.jpg",
