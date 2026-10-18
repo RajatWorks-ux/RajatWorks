@@ -1,0 +1,139 @@
+/* ═══════════════════════════════════════════════════════════════
+   TechStackMobile.css — "Live System" Three.js force graph
+   Only applies on mobile/tablet. Desktop classes untouched.
+═══════════════════════════════════════════════════════════════ */
+
+/* Section */
+.ls-section {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  min-height: 100svh;
+  position: relative;
+  overflow: hidden;
+  background: var(--backgroundColor, #0b080c);
+}
+
+/* ── Header ── */
+.ls-header {
+  padding: 56px 20px 20px;
+  box-sizing: border-box;
+}
+
+.ls-title {
+  font-size: clamp(52px, 16vw, 76px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+  color: #eae5ec;
+  margin: 0 0 12px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.ls-visible .ls-title {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ls-sub {
+  font-size: 12px;
+  color: rgba(234, 229, 236, 0.3);
+  margin: 0;
+  letter-spacing: 0.3px;
+  opacity: 0;
+  transition: opacity 0.7s ease 0.2s;
+}
+
+.ls-visible .ls-sub {
+  opacity: 1;
+}
+
+/* ── Canvas ── */
+.ls-canvas-wrap {
+  flex: 1;
+  min-height: 52svh;
+  max-height: 58svh;
+  position: relative;
+  opacity: 0;
+  transition: opacity 0.9s ease 0.3s;
+}
+
+.ls-visible .ls-canvas-wrap {
+  opacity: 1;
+}
+
+.ls-canvas {
+  touch-action: none;
+}
+
+/* ── Layer tabs ── */
+.ls-tabs {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  margin: 4px 0 0;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(234, 229, 236, 0.08);
+  border-bottom: 1px solid rgba(234, 229, 236, 0.08);
+}
+
+.ls-tab {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 14px 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  color: rgba(234, 229, 236, 0.3);
+  cursor: pointer;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  transition: color 0.2s ease;
+  flex: 1;
+  justify-content: center;
+}
+
+.ls-tab--active {
+  color: #eae5ec;
+}
+
+.ls-tab-sep {
+  position: absolute;
+  right: 0;
+  top: 30%;
+  bottom: 30%;
+  width: 1px;
+  background: rgba(234, 229, 236, 0.12);
+}
+
+/* ── Tech chips ── */
+.ls-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 16px 20px 40px;
+  box-sizing: border-box;
+  min-height: 80px;
+}
+
+.ls-chip {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  color: rgba(234, 229, 236, 0.6);
+  border: 1px solid rgba(234, 229, 236, 0.15);
+  padding: 6px 10px;
+  text-transform: uppercase;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.ls-chip:hover,
+.ls-chip:active {
+  color: #eae5ec;
+  border-color: rgba(234, 229, 236, 0.4);
+}

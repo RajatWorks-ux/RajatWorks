@@ -1,0 +1,340 @@
+/* ═══════════════════════════════════════════════════════════════
+   WorkMobile.css — "The Case Files" mobile work section
+   Only applies at ≤1024px. Desktop (mag-card etc.) is untouched.
+═══════════════════════════════════════════════════════════════ */
+
+@media only screen and (max-width: 1025px) {
+
+  /* ── Section wrapper ── */
+  .cf-section {
+    padding-bottom: 60px;
+  }
+
+  /* ── Header ── */
+  .cf-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 56px 20px 32px;
+    box-sizing: border-box;
+  }
+
+  .cf-heading {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    line-height: 0.88;
+    gap: 0;
+  }
+
+  .cf-heading-line1 {
+    font-size: clamp(36px, 11vw, 52px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: rgba(234, 229, 236, 0.45);
+    display: block;
+  }
+
+  .cf-heading-line2 {
+    font-size: clamp(52px, 16vw, 80px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #eae5ec;
+    display: block;
+  }
+
+  .cf-project-count {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: rgba(234, 229, 236, 0.3);
+    padding-bottom: 8px;
+  }
+
+  /* ── List container ── */
+  .cf-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Separator between projects ── */
+  .cf-separator {
+    width: calc(100% - 40px);
+    margin: 0 20px;
+    height: 1px;
+    background: rgba(234, 229, 236, 0.08);
+  }
+
+  /* ── Single case file card ── */
+  .cf-card {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    padding-bottom: 8px;
+  }
+
+  .cf-card--visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Image wrapper ── */
+  .cf-img-wrap {
+    position: relative;
+    width: 100%;
+    height: 56svh;
+    min-height: 300px;
+    max-height: 420px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #0e0b11;
+  }
+
+  .cf-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    /* subtle scale-in on card reveal */
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .cf-card--visible .cf-img {
+    transform: scale(1);
+  }
+
+  .cf-card:not(.cf-card--visible) .cf-img {
+    transform: scale(1.04);
+  }
+
+  /* Bottom gradient — image bleeds into content */
+  .cf-img-gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, rgba(11, 8, 12, 0.82));
+    pointer-events: none;
+  }
+
+  /* Project number stamp — top left */
+  .cf-stamp-num {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: rgba(234, 229, 236, 0.55);
+    background: rgba(11, 8, 12, 0.52);
+    padding: 3px 8px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  /* Image counter — top right */
+  .cf-img-counter {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: rgba(234, 229, 236, 0.55);
+    background: rgba(11, 8, 12, 0.52);
+    padding: 3px 8px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  /* Swipe dots — bottom center of image */
+  .cf-swipe-dots {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 2;
+  }
+
+  .cf-swipe-dot {
+    width: 5px;
+    height: 5px;
+    background: rgba(234, 229, 236, 0.3);
+    border-radius: 0;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .cf-swipe-dot--active {
+    background: #eae5ec;
+    transform: scaleX(2.4);
+    transform-origin: center;
+  }
+
+  /* ── Content block ── */
+  .cf-content {
+    padding: 20px 20px 10px;
+    box-sizing: border-box;
+  }
+
+  /* Title row */
+  .cf-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .cf-titles {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .cf-title {
+    font-size: clamp(22px, 6vw, 28px);
+    font-weight: 700;
+    color: #eae5ec;
+    margin: 0 0 4px;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .cf-subtitle {
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(234, 229, 236, 0.4);
+    margin: 0;
+    letter-spacing: 0.5px;
+  }
+
+  /* Visit link */
+  .cf-visit-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: rgba(234, 229, 236, 0.5);
+    text-decoration: none;
+    border: 1px solid rgba(234, 229, 236, 0.15);
+    padding: 7px 10px;
+    flex-shrink: 0;
+    margin-top: 4px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .cf-visit-link:active {
+    color: #eae5ec;
+    border-color: rgba(234, 229, 236, 0.45);
+  }
+
+  .cf-visit-link svg {
+    font-size: 13px;
+  }
+
+  /* Thin rule */
+  .cf-rule {
+    width: 100%;
+    height: 1px;
+    background: rgba(234, 229, 236, 0.1);
+    margin-bottom: 14px;
+  }
+
+  /* Description — tap to expand */
+  .cf-desc-wrap {
+    position: relative;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+
+  .cf-desc-wrap:not(.cf-desc-wrap--open) {
+    max-height: 3.6em; /* ~2 lines at 1.8 line-height */
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  }
+
+  .cf-desc-wrap--open {
+    max-height: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .cf-desc {
+    font-size: 13px;
+    line-height: 1.8;
+    color: rgba(234, 229, 236, 0.5);
+    margin: 0 0 10px;
+    font-weight: 300;
+  }
+
+  .cf-desc--extra {
+    margin-top: 6px;
+  }
+
+  .cf-warning {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    padding: 8px 10px;
+    font-size: 11px;
+    color: #fbbf24;
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+
+  /* Tech chips */
+  .cf-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .cf-chip {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    color: rgba(234, 229, 236, 0.5);
+    border: 1px solid rgba(234, 229, 236, 0.14);
+    padding: 5px 8px;
+    text-transform: uppercase;
+  }
+
+  /* Bottom row with ghost number */
+  .cf-bottom-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    min-height: 40px;
+  }
+
+  .cf-ghost-num {
+    font-size: 72px;
+    font-weight: 900;
+    color: rgba(234, 229, 236, 0.04);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    user-select: none;
+    pointer-events: none;
+  }
+
+} /* end @media max-width: 1025px */
+
+/* ── Very small phones ── */
+@media only screen and (max-width: 380px) {
+  .cf-img-wrap {
+    height: 50svh;
+    min-height: 260px;
+  }
+  .cf-heading-line1 { font-size: 10vw; }
+  .cf-heading-line2 { font-size: 15vw; }
+}

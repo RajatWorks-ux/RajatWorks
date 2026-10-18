@@ -1,0 +1,208 @@
+/* ═══════════════════════════════════════════════════════════════
+   LandingMobile.css — "The Forge" Three.js hero
+   Only for mobile/tablet (≤1024px). Desktop landing untouched.
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Hide old mobile hero, show Forge; reverse on desktop ── */
+.mobile-hero-experience {
+  display: none !important;
+}
+
+.forge-section {
+  display: none;
+}
+
+@media only screen and (max-width: 1024px) {
+  :not([data-device="desktop"]) .forge-section {
+    display: block;
+  }
+  /* Hide old landing-section on mobile (it had height:0 via original CSS guard) */
+  :not([data-device="desktop"]) .landing-section {
+    display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FORGE SECTION
+═══════════════════════════════════════════════════════════════ */
+.forge-section {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  background: #08060a;
+  overflow: hidden;
+}
+
+/* ── Three.js canvas mount ── */
+.forge-canvas-mount {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.forge-canvas-mount canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* ── Bottom fade — blends into next section ── */
+.forge-section::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  background: linear-gradient(to bottom, transparent, #08060a 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ── Text layer — sits above Three.js ── */
+.forge-text-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* ── Brand mark — top left ── */
+.forge-brand {
+  position: absolute;
+  top: clamp(20px, 5vh, 32px);
+  left: clamp(16px, 5vw, 28px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.forge-brand-rw {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: rgba(234, 229, 236, 0.55);
+  font-family: 'Courier New', monospace;
+}
+
+.forge-brand-est {
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 2.5px;
+  color: rgba(234, 229, 236, 0.25);
+}
+
+/* ── Name block — positioned center-left ── */
+.forge-name-block {
+  position: absolute;
+  bottom: clamp(120px, 22vh, 180px);
+  left: clamp(16px, 5vw, 28px);
+  display: flex;
+  flex-direction: column;
+  line-height: 0.86;
+  gap: 6px;
+}
+
+/* First name — huge */
+.forge-firstname {
+  display: block;
+  font-size: clamp(64px, 20vw, 96px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: #eae5ec;
+}
+
+/* Last name — smaller, lighter */
+.forge-lastname {
+  display: block;
+  font-size: clamp(18px, 5.5vw, 28px);
+  font-weight: 200;
+  letter-spacing: clamp(6px, 2vw, 12px);
+  color: rgba(234, 229, 236, 0.45);
+}
+
+/* ── Letter drop animation ── */
+.forge-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(-24px);
+}
+
+.forge-ready .forge-letter {
+  animation: forgeDrop 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+
+@keyframes forgeDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-28px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Meta row — bottom left ── */
+.forge-meta {
+  position: absolute;
+  bottom: clamp(76px, 13vh, 100px);
+  left: clamp(16px, 5vw, 28px);
+}
+
+.forge-meta-role {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: rgba(234, 229, 236, 0.28);
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.8s ease 1.2s;
+}
+
+.forge-ready .forge-meta-role {
+  opacity: 1;
+}
+
+/* ── Scroll hint — bottom right, rotated ── */
+.forge-scroll-hint {
+  position: absolute;
+  bottom: clamp(90px, 15vh, 120px);
+  right: -28px;
+  transform: rotate(90deg);
+  transform-origin: right center;
+}
+
+.forge-scroll-text {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: rgba(234, 229, 236, 0.2);
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.8s ease 1.5s;
+}
+
+.forge-ready .forge-scroll-text {
+  opacity: 1;
+}
+
+/* ── Very small phones ── */
+@media only screen and (max-width: 380px) {
+  .forge-firstname {
+    font-size: 18vw;
+  }
+  .forge-lastname {
+    font-size: 5vw;
+    letter-spacing: 5px;
+  }
+  .forge-name-block {
+    bottom: 18vh;
+  }
+}
