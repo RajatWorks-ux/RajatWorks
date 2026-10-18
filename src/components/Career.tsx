@@ -26,8 +26,6 @@ const EraDivider = ({ label, sub }: { label: string; sub: string }) => (
 //  MOBILE — Signal Tape: horizontal scrub timeline
 // ════════════════════════════════════════════════
 
-type Exp = (typeof config.experiences)[0];
-
 const PHASE_BREAK_INDEX = config.experiences.findIndex((e) => e.era === "freelance");
 
 const SignalTape = () => {
@@ -255,3 +253,4 @@ const Career = () => {
 };
 
 export default Career;
+
