@@ -8,7 +8,7 @@ const CharacterModel = lazy(() => import("./components/Character"));
 const MainContainer  = lazy(() => import("./components/MainContainer"));
 
 // Phone + Tablet — redirect to the dedicated cinematic portfolio. Narrow laptop windows remain on this desktop experience.
-const MOBILE_PORTFOLIO_URL = "https://rajatworks1.vercel.app/";
+const MOBILE_PORTFOLIO_URL = "https://rajatworks01.vercel.app/";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DEVICE DETECTION — hardware/input based, NOT viewport-width based:
