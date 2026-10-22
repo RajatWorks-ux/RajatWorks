@@ -188,3 +188,13 @@
 @media (prefers-reduced-motion: reduce) {
   .mobile-device { animation: none !important; }
 }
+
+
+/* Narrow laptop windows remain the desktop experience. These components are
+   alternate phone/tablet art direction and must never compete with the desktop hero. */
+@media (max-width: 1024px) {
+  html[data-device="desktop"] .mobile-hero-experience,
+  html[data-device="desktop"] .career-mobile-evolution { display: none !important; }
+  html[data-device="desktop"] .landing-section { display: block !important; }
+  html[data-device="desktop"] .career-desktop-original { display: block !important; }
+}
