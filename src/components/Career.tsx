@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import "./styles/Career.css";
-import "./styles/CareerMobile.css";
-import "./styles/MobileExperience.css";
 import { config } from "../config";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";

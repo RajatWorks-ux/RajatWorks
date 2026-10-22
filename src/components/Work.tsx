@@ -1,5 +1,4 @@
 import "./styles/Work.css";
-import "./styles/WorkMobile.css";
 import { useEffect, useRef, useState } from "react";
 import { config } from "../config";
 import { MdArrowOutward } from "react-icons/md";

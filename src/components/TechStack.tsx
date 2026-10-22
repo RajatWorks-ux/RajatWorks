@@ -11,8 +11,6 @@ import {
   RapierRigidBody,
 } from "@react-three/rapier";
 import "./styles/TechStack.css";
-import "./styles/TechStackMobile.css";
-import "./styles/MobileExperience.css";
 
 // ── Device detection ──────────────────────────────────────────
 const isMobileOrTablet: boolean = (() => {

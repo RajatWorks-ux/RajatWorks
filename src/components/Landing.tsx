@@ -1,7 +1,5 @@
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import "./styles/Landing.css";
-import "./styles/LandingMobile.css";
-import "./styles/MobileExperience.css";
 import { config } from "../config";
 import * as THREE from "three";
 
