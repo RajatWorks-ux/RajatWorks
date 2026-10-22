@@ -1,25 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
+import App, { isMobileOrTablet } from "./App.tsx";
 import "./index.css";
 
-// ─── Fix A: Mark <html> as desktop so CSS never collapses landing-section ────
-// The CSS media query (max-width: 1024px) was collapsing .landing-section to
-// height:0 — correct for real phones, but wrong for a laptop resized to <1024px.
-// By setting data-device="desktop" on <html> from JS (which correctly detects
-// real laptops via UA + pointer), CSS can use [data-device="desktop"] to
-// override the collapse rule and keep the landing section visible.
-//
-// BUG FIX: Lowered isVeryWideScreen from 1400 → 1024 (mirrors App.tsx change).
-// This ensures monitors at 1280px/1366px get data-device="desktop", which
-// prevents the CSS from showing the mobile hero (story-fixed-wrap) on them.
-const ua = navigator.userAgent;
-const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
-// FIX: was > 1400, now > 1024
-const isWideScreen = window.innerWidth > 1024;
-const isRealDesktop = !mobileUA && (isWideScreen || hasFinePointer);
-document.documentElement.setAttribute("data-device", isRealDesktop ? "desktop" : "mobile");
+// Use the same hardware/input-based device decision as App.tsx. Do not use
+// viewport width here: resizing a laptop window must never activate phone art direction.
+document.documentElement.setAttribute("data-device", isMobileOrTablet ? "mobile" : "desktop");
 
 // ─── Fix B: --vh custom property ─────────────────────────────────────────────
 // The @supports (height: 100svh) block in index.css was overriding our --vh
