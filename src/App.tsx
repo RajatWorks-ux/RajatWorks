@@ -1,6 +1,7 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import "./App.css";
 import "./components/styles/DesktopOnly.css";
+import DesktopViewportGate from "./components/DesktopViewportGate";
 import { LoadingProvider } from "./context/LoadingProvider";
 
 // Desktop only — 3D character
@@ -9,6 +10,7 @@ const MainContainer  = lazy(() => import("./components/MainContainer"));
 
 // Phone + Tablet — redirect to the dedicated cinematic portfolio. Narrow laptop windows remain on this desktop experience.
 const MOBILE_PORTFOLIO_URL = "https://rajatworks01.vercel.app/";
+const MIN_DESKTOP_WIDTH = 1120;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DEVICE DETECTION — hardware/input based, NOT viewport-width based:
@@ -35,6 +37,9 @@ const isMobileOrTablet: boolean = (() => {
 })();
 
 const App = () => {
+  const [needsWideViewport, setNeedsWideViewport] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < MIN_DESKTOP_WIDTH
+  );
   // Direct visits to the desktop URL on a phone/tablet must reach the dedicated
   // mobile portfolio. Narrow laptop windows intentionally stay on desktop.
   useEffect(() => {
@@ -43,11 +48,30 @@ const App = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (isMobileOrTablet) return;
+
+    const updateViewport = () => {
+      setNeedsWideViewport(window.innerWidth < MIN_DESKTOP_WIDTH);
+    };
+
+    updateViewport();
+    window.addEventListener("resize", updateViewport, { passive: true });
+    return () => window.removeEventListener("resize", updateViewport);
+  }, []);
+
   if (isMobileOrTablet) {
     return <div aria-live="polite" role="status">Opening the RajatWorks phone and tablet portfolio…</div>;
   }
 
-  // ── Desktop / Laptop → existing purple 3D experience ─────────────
+  // Keep the original desktop experience intact. At narrow browser widths,
+  // replace it with a designed prompt instead of letting mobile art direction
+  // and desktop sections collide.
+  if (needsWideViewport) {
+    return <DesktopViewportGate />;
+  }
+
+  // ── Desktop / Laptop → existing 3D experience ─────────────
   return (
     <>
       <LoadingProvider>
