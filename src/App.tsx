@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import "./App.css";
 import "./components/styles/MobileExperience.css";
 import { LoadingProvider } from "./context/LoadingProvider";
@@ -7,18 +7,13 @@ import { LoadingProvider } from "./context/LoadingProvider";
 const CharacterModel = lazy(() => import("./components/Character"));
 const MainContainer  = lazy(() => import("./components/MainContainer"));
 
-// Phone + Tablet — cinematic orange experience (friend's design + Rajat's content)
-const MobilePage = lazy(() => import("./components/MobilePage"));
+// Phone + Tablet — redirect to the dedicated cinematic portfolio. Narrow laptop windows remain on this desktop experience.
+const MOBILE_PORTFOLIO_URL = "https://rajatworks1.vercel.app/";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DEVICE DETECTION — 2 tiers:
-//
-//   isMobileOrTablet  → MobilePage (orange cinematic — phones + tablets)
-//   desktop/laptop    → MainContainer + 3D CharacterModel (purple, unchanged)
-//
-// Layer 1 — Screen size: > 1024px is almost certainly a real desktop/laptop
-// Layer 2 — User Agent: Android/iPhone/iPad in UA = mobile/tablet hardware
-// Layer 3 — Hover capability: real laptops have mouse pointer, phones/tablets don't
+// DEVICE DETECTION — hardware/input based, NOT viewport-width based:
+// Phones/tablets use the cinematic portfolio even when the tablet is large.
+// Laptops keep the 3D desktop portfolio even when their browser is narrow/minimized.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** True on ALL phones and tablets — shows the orange cinematic experience */
@@ -27,30 +22,29 @@ const isMobileOrTablet: boolean = (() => {
 
   const ua = navigator.userAgent;
 
-  // Any Android/iOS/mobile UA = phone or tablet, never a real laptop
+  // Phones and Android/iOS tablets should always use the separate mobile portfolio.
   const mobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
 
-  // 1024px is safe: largest phone is ~932px (iPhone 15 Pro Max landscape),
-  // tablets in landscape are ~1024px but caught by Layer 2 UA above
-  const isWideScreen = window.innerWidth > 1024;
+  // iPadOS can present a desktop-style Macintosh UA; multiple touch points catches it.
+  const touchTablet = navigator.maxTouchPoints > 1 &&
+    (window.matchMedia("(pointer: coarse)").matches || /Macintosh/i.test(ua));
 
-  // Real mouse pointer = only desktop/laptop has this reliably
-  const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
-
-  // It's a laptop/desktop if: No mobile UA AND (wide screen OR has mouse)
-  const isDesktop = !mobileUA && (isWideScreen || hasFinePointer);
-
-  return !isDesktop;
+  // Do not route by viewport width: a narrow/minimized laptop must keep the
+  // desktop design and rely on its responsive CSS instead.
+  return mobileUA || touchTablet;
 })();
 
 const App = () => {
-  // ── Phone + Tablet → cinematic orange experience ──────────────────
+  // Direct visits to the desktop URL on a phone/tablet must reach the dedicated
+  // mobile portfolio. Narrow laptop windows intentionally stay on desktop.
+  useEffect(() => {
+    if (isMobileOrTablet) {
+      window.location.replace(MOBILE_PORTFOLIO_URL);
+    }
+  }, []);
+
   if (isMobileOrTablet) {
-    return (
-      <Suspense fallback={null}>
-        <MobilePage />
-      </Suspense>
-    );
+    return <div aria-live="polite" role="status">Opening the RajatWorks phone and tablet portfolio…</div>;
   }
 
   // ── Desktop / Laptop → existing purple 3D experience ─────────────
