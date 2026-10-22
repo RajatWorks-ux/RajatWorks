@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import "./App.css";
-import "./components/styles/MobileExperience.css";
+import "./components/styles/DesktopOnly.css";
 import { LoadingProvider } from "./context/LoadingProvider";
 
 // Desktop only — 3D character
