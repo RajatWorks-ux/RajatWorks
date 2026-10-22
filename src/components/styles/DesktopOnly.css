@@ -1,0 +1,14 @@
+/* Desktop-only guard: never mount phone/tablet art-direction into the laptop layout.
+   This intentionally applies at every viewport width, including a narrow browser window. */
+html[data-device="desktop"] .mobile-hero-experience,
+html[data-device="desktop"] .career-mobile-evolution,
+html[data-device="desktop"] .techstack-mobile,
+html[data-device="desktop"] .forge-section,
+html[data-device="desktop"] .mobile-page,
+html[data-device="desktop"] .mobile-cinematic-portfolio,
+html[data-device="desktop"] .mc-portfolio {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
